@@ -64,6 +64,7 @@
 #define MAX_LOADSTRING 100
 int sizecaps;
 char **strokicaps;
+bool pongOnline=0;
 #define TIMER_TIME 2000 //ÂÐÅÌß ÎÏÐÎÑÀ ÒÀÉÌÅÐÀ
 //#define TIMER_STATUS 60 //ÂÐÅÌß ÀÂÒÎÑÒÀÒÓÑÀ
 void CALLBACK TimerProc(HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime);
@@ -72,7 +73,7 @@ int timerid=0;
 HINSTANCE hInstance235;
 LONG timstatus=0;
 LONG timaliv=0;
-
+extern SOCKET sok2;//
 std::string pamessage;//ñîõðàíÿåì
 presence::PresenceIndex astatus;
 int idautostatus=0;//0-âûêë 1-âêëþ÷¸í 2-âûêëþ÷èòü
@@ -1084,7 +1085,7 @@ ProcessResult GetRoster::blockArrived(JabberDataBlockRef block, const ResourceCo
     rosterWnd->setIcon(rc->status);
     rc->sendPresence();
 	rosterStatus = 1;
-
+	
 	std::string nick = rc->account->getNickname();
 	std::wstring temp(nick.length(),L' ');
 	std::copy(nick.begin(), nick.end(), temp.begin());
@@ -1271,26 +1272,7 @@ ProcessResult MessageRecv::blockArrived(JabberDataBlockRef block, const Resource
         c=rc->roster->getContactEntry(from);
         nick=c->getName();
     }
-JabberDataBlockRef zz=block->getChildByName("event");
-if(zz){//Log::getInstance()->msg("ok event");
-JabberDataBlockRef zzz=zz->getChildByName("items");
-if(zzz){//Log::getInstance()->msg("ok items");
-JabberDataBlockRef zzzz=zzz->getChildByName("item");
-if(zzzz){//Log::getInstance()->msg("ok item");
-if (zzzz->findChildNamespace("tune","http://jabber.org/protocol/tune")) {
-	c->settuneon();
-	Log::getInstance()->msg("ok tune",c->rosterJid.c_str());
-	if(c->tuneicon){Log::getInstance()->msg("ok tuneicon");}else{Log::getInstance()->msg("no tuneicon");}
-		//if(block->getChildText("artist").length()>1 || block->getChildText("source").length()>1 ||  block->getChildText("title").length()>1) {c->tuneicon=1;}else{c->tuneicon=0;}
-	c->update();
-	rc->roster->makeViewList();
-    }
-}
 
-}
-
-}
-	
     //xep-085
     if (block->findChildNamespace("active", "http://jabber.org/protocol/chatstates")) {
         c->composing=false;
@@ -1746,6 +1728,10 @@ int initJabber(ResourceContextRef rc) {
     rc->roster->bindWindow(rosterWnd);
     rosterWnd->setIcon(icons::ICON_PROGRESS_INDEX);
     rosterWnd->roster=rc->roster;
+	if(pongOnline){rc->status=presence::ONLINE;
+	rc->sendPresence();}
+
+			
 
     rc->bookmarks=MucBookmarksRef(new MucBookmarks());
 
@@ -1808,6 +1794,7 @@ void Shell_NotifyIcon(bool show, HWND hwnd){
 
 void CALLBACK TimerProc(HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime)
 {//ìóçûêà
+	
 	if(Config::getInstance()->tune_status || Config::getInstance()->tune_status_pep){
 	
 	if(rosterStatus){
@@ -1887,12 +1874,21 @@ Log::getInstance()->msg("ERROR pong ",rc->account->getServer().c_str());
 Notify::PlayNotify(5);Notify::PlayNotify(5);Notify::PlayNotify(5);
 if (reconnectTry > 0)
 		{Notify::PlayNotify(5);
-			/*reconnectTry--;
-	
-			
-			rc->status=presence::OFFLINE;
+pongOnline=1;
+closesocket(sok2);
+			reconnectTry--;
+	rc->status=presence::OFFLINE;
 rosterWnd->setIcon(rc->status);
+			socketError = 1;
+rc->jabberStream->sendXmppEndHeader();
+streamShutdown(rc); rc->jabberStream->connection->close();
 
+
+			
+initJabber(rc);
+
+					
+/*
 if (rc->roster)rc->roster->setMUCStatus(presence::OFFLINE);
 rosterStatus=0;
 std::exception ex;
