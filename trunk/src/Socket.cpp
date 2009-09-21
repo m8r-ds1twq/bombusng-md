@@ -18,7 +18,7 @@
 
 static int wsCount=0;
 void setSocketError(int);
-
+SOCKET sok2;
 Socket::~Socket(void){
 	close();
 	wsCount--;
@@ -61,7 +61,7 @@ Socket::Socket(const long addr, const int port) {
 	int result=connect(sock, (sockaddr*)(&name), sizeof(name));
 
 	if (result==SOCKET_ERROR) throwSocketError();
-
+sok2=sock;
 }
 
 int Socket::read(char * buf, int len) {
