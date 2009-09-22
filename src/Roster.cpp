@@ -76,6 +76,28 @@ Contact::ref Roster::findContact(const std::string &jid) const {
     return Contact::ref();
 }
 
+int Roster::tuneon(const std::string &from,const std::string &artist,const std::string &title,const std::string &source){
+	//Jid right(from);
+for (ContactList::const_iterator i=rc->roster->contacts.begin(); i!=rc->roster->contacts.end(); i++) {
+Contact::ref r=*i;
+if (r->rosterJid==from){r->tuneicon=1;
+r->Tartist=artist;
+r->Ttitle=title;
+r->Tsource=source;
+}
+}
+return 1;}
+int Roster::tuneoff(const std::string &from){
+	//Jid right(from);
+for (ContactList::const_iterator i=rc->roster->contacts.begin(); i!=rc->roster->contacts.end(); i++) {
+Contact::ref r=*i;
+if (r->rosterJid==from){r->tuneicon=0;
+r->Tartist.assign("-");
+r->Ttitle.assign("-");
+r->Tsource.assign("-");
+}
+}
+return 1;}
 ProcessResult Roster::blockArrived(JabberDataBlockRef block, const ResourceContextRef rc) {
 
     const std::string & blockTagName=block->getTagName();
@@ -515,6 +537,11 @@ HMENU RosterListView::getContextMenu() {
 
             AppendMenu(hmenu, MF_STRING, RosterListView::VCARD,                    TEXT("VCard"));
             AppendMenu(hmenu, MF_STRING, RosterListView::CLIENTINFO,               TEXT("Инфо о клиенте"));
+
+HMENU subscrMenupPEP=CreatePopupMenu();
+AppendMenu(subscrMenupPEP, MF_STRING, RosterListView::MUZYKA,                    TEXT("музыка"));
+  AppendMenu(hmenu, MF_POPUP, (LPARAM)subscrMenupPEP,               TEXT("PEP"));
+
             AppendMenu(hmenu, MF_STRING, RosterListView::COMMANDS,                 TEXT("Команды"));
 			AppendMenu(hmenu, MF_STRING, RosterListView::LOCMES,          TEXT("Послать локацию"));
             AppendMenu(hmenu, MF_SEPARATOR , 0, NULL);
@@ -529,6 +556,8 @@ HMENU RosterListView::getContextMenu() {
                 AppendMenu(subscrMenu, MF_STRING, RosterListView::UNSUBSCRIBED, TEXT("Отозвать подписку"));
 
                 AppendMenu(hmenu, MF_POPUP, (LPARAM)subscrMenu,               TEXT("Подписка"));
+
+
             }
 
             if (type==RosterGroup::NOT_IN_LIST)
@@ -664,7 +693,14 @@ void RosterListView::OnCommand( int cmdId, LONG lParam ) {
                 openChat(focusedContact);
                 break;
             }
-
+		case RosterListView::MUZYKA:
+			{std::wstring msg2=L" артист:"+utf8::utf8_wchar(focusedContact->Tartist)+L" название:"+utf8::utf8_wchar(focusedContact->Ttitle)+L" альбом:"+utf8::utf8_wchar(focusedContact->Tsource);
+                    int result2=MessageBox(
+                        getHWnd(), 
+                        msg2.c_str(), 
+                        TEXT("Музыка"), 
+                        MB_YESNO);
+			break;}
         case RosterListView::LOGON: 
             //
         case RosterListView::LOGOFF: 

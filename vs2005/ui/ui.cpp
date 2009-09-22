@@ -1272,7 +1272,34 @@ ProcessResult MessageRecv::blockArrived(JabberDataBlockRef block, const Resource
         c=rc->roster->getContactEntry(from);
         nick=c->getName();
     }
+JabberDataBlockRef zz=block->getChildByName("event");
+if(zz){//Log::getInstance()->msg("ok event");
+JabberDataBlockRef zzz=zz->getChildByName("items");
+if(zzz){//Log::getInstance()->msg("ok items");
+JabberDataBlockRef zzzz=zzz->getChildByName("item");
+if(zzzz){//Log::getInstance()->msg("ok item");
+JabberDataBlockRef blocktune=zzzz->findChildNamespace("tune","http://jabber.org/protocol/tune");
+if (blocktune) {
 
+//if(c->tuneicon){Log::getInstance()->msg("ok tuneicon");}else{Log::getInstance()->msg("no tuneicon");}
+if(blocktune->getChildText("artist").length()>1 || blocktune->getChildText("source").length()>1 ||  blocktune->getChildText("title").length()>1) {
+c->settuneon();
+c->Tartist=blocktune->getChildText("artist");
+c->Ttitle=blocktune->getChildText("title");
+c->Tsource=blocktune->getChildText("source");
+rc->roster->tuneon(from,blocktune->getChildText("artist"),blocktune->getChildText("title"),blocktune->getChildText("source"));
+Log::getInstance()->msg("ok tune",c->rosterJid.c_str());}else{c->settuneoff();
+
+rc->roster->tuneoff(from);
+Log::getInstance()->msg("off tune",c->rosterJid.c_str());}
+c->update();
+rc->roster->makeViewList();
+}
+}
+
+}
+
+}
     //xep-085
     if (block->findChildNamespace("active", "http://jabber.org/protocol/chatstates")) {
         c->composing=false;

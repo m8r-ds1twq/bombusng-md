@@ -17,7 +17,7 @@ const std::string sysinfo::getOsVersion() {
     SystemParametersInfo(SPI_GETOEMINFO, sizeof(buf)/sizeof(wchar_t), buf, 0);  
     const std::string & platform=utf8::wchar_utf8( std::wstring(buf));
 
-    char *format = "%s (WCE%d.%d.%d)/%s memoryload=%d %%  total/free=%dMb/%dMb ";
+    char *format = "%s (WCE%d.%d.%d)/%s memoryload=%d %%  free/total=%dMb/%dMb ";
     char *name="Unknown";
 
     if (osv.dwMajorVersion<=3) name="PocketPC 2002";
@@ -37,8 +37,8 @@ unsigned long Avail=((unsigned long)lpBuffer->dwAvailPhys)>>20;
         % osv.dwBuildNumber
         % platform
 		% lpBuffer->dwMemoryLoad
-		% Total
 		% Avail
+		% Total
         );
 		   
 }
