@@ -78,6 +78,44 @@ void MucBookmarks::doQueryBookmarks( ResourceContextRef rc ) {
     rc->jabberStream->sendStanza(getBm);
 }
 MucBookmarkItem::ref MucBookmarks::get( int i ) { return bookmarks[i]; }
+
+void MucBookmarks::set(int i,MucBookmarkItem::ref bm) { 
+        bookmarks[i]=bm;
+}
+
+void MucBookmarks::save( const ResourceContextRef rc ) { 
+        Log::getInstance()->msg("Starting Bookmarks saving...");
+        id=strtime::getRandom();
+        JabberDataBlock SetBm("iq");
+    SetBm.setAttribute("type", "set");
+    SetBm.setAttribute("id", id.c_str());
+    SetBm.addChildNS("query","jabber:iq:private")->
+          addChildNS("storage","storage:bookmarks");
+
+        for (int i=0; i<getBookmarkCount(); i++)
+        {
+                MucBookmarkItem::ref bm=bookmarks[i];
+                JabberDataBlockRef item=JabberDataBlockRef(new JabberDataBlock("item"));;
+                //const std::string &tagName=item->getTagName();
+                item->setAttribute("name", bm->name);                   
+                if (!bm->url.empty()) {
+                        item->setTagName("url");
+                        item->setAttribute("url",bm->url);
+                } else {
+                        item->setTagName("conference");
+                        item->setAttribute("jid", bm->jid);
+//                      item->setAttribute("autojoin",(const std::string*)bm->autoJoin);
+                        item->setAttribute("autojoin",bm->autoJoin?"true":"false");
+                        item->addChild("nick",bm->nick.c_str());
+                        item->addChild("password", bm->password.c_str());
+                }
+
+                SetBm.getChildByName("query")->getChildByName("storage")->addChild(item);
+        }
+        
+        rc->jabberStream->sendStanza(SetBm);
+        Log::getInstance()->msg("Bookmarks save successfully");
+}
 int MucBookmarks::getBookmarkCount() const { return bookmarks.size(); }
 
 bool MucBookmarkItem::compare( MucBookmarkItem::ref l, MucBookmarkItem::ref r ) {
