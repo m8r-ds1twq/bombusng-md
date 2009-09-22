@@ -29,5 +29,10 @@ http://psi-dev.googlecode.com/caps
 http://jimm.net.ru/caps
 http://mchat.mgslab.com/
 http://pda.qip.ru/caps
-http://isida-bot.com
+isida
 http://bombusng-md.googlecode.com
+http://telepathy.freedesktop.org/caps
+http://rss2jabber.com/caps
+http://pyicqt.googlecode.com//protocol/caps
+svn.xmpp.ru/repos/mrim
+http://palringo.com/caps
