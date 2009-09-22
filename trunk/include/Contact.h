@@ -73,6 +73,10 @@ public:
 	const std::string getStatusMessage() const;
 	const std::string getClientIdIcon() const;
 	void settuneon();
+	void settuneoff();
+	std::string Tartist;
+	std::string Ttitle;
+	std::string Tsource;
 	//virtual void settuneoff() ;
     virtual void processPresence(JabberDataBlockRef block);
     void messageDelivered(const std::string & id);

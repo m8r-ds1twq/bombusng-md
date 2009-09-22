@@ -157,6 +157,7 @@ bool Contact::compareKT( Contact::ref left, Contact::ref right ) {
 }
 
 void Contact::settuneon(){tuneicon=1; update();}
+void Contact::settuneoff(){tuneicon=0; update();}
 void Contact::update() {
     std::string s=(nickname.empty())? jid.getBareJid():nickname;
     std::string resource=jid.getResource();

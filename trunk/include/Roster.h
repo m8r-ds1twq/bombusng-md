@@ -78,6 +78,8 @@ public:
 
     void addGroup( RosterGroup::ref group );
     RosterGroup::ref findGroup(const std::string &name);
+	int tuneon(const std::string &jid,const std::string &artist,const std::string &title,const std::string &source) ;
+	int tuneoff(const std::string &jid) ;
     RosterGroup::ref createGroup(const std::string &name, RosterGroup::Type type);
 
     bool needUpdateView;
@@ -164,7 +166,7 @@ public:
         MUCNONE, MUCMEMBER, MUCADMIN, MUCOWNER,
         MUCCONFIG, MLOUTCASTS, MLMEMBERS, MLADMINS, MLOWNERS,
         MUC_REENTER, MUC_LEAVE,
-        SSH_DEFAULT, SSH_ENABLED, SSH_DISABLED, OPENCHESS
+        SSH_DEFAULT, SSH_ENABLED, SSH_DISABLED, OPENCHESS, MUZYKA
     };
 private:
 };
