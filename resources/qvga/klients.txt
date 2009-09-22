@@ -1,5 +1,5 @@
 http://bombusng-qd.googlecode.com
-http://tkabber.jabber.ru/
+tkabber
 http://dev.jabbim.cz/jabbim/caps
 http://bombus.pl/caps
 http://bombus.org.ru/caps
@@ -13,7 +13,7 @@ http://psi-im.org/caps
 http://miranda-im.org/caps
 http://voffk.org.ru/bombus
 http://www.google.com/xmpp/client/caps
-????????????
+http://tkabber.jabber.ru/
 http://gajim.org
 http://qip.ru/
 http://pidgin.im
@@ -28,5 +28,11 @@ juick.com
 http://psi-dev.googlecode.com/caps
 http://jimm.net.ru/caps
 http://mchat.mgslab.com/
+http://pda.qip.ru/caps
+isida
 http://bombusng-md.googlecode.com
-none
+http://telepathy.freedesktop.org/caps
+http://rss2jabber.com/caps
+http://pyicqt.googlecode.com//protocol/caps
+svn.xmpp.ru/repos/mrim
+http://palringo.com/caps
