@@ -15,7 +15,7 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// Russian resources
+// русский resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_RUS)
 #ifdef _WIN32
@@ -191,11 +191,11 @@ BEGIN
     PUSHBUTTON      "Отмена",IDCANCEL,84,112,50,14
     EDITTEXT        IDC_E_HISTSZ,119,55,29,12,ES_AUTOHSCROLL | ES_NUMBER
     CONTROL         "",IDC_SPIN_HIST_SZ,"msctls_updown32",UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,109,54,11,14
-    PUSHBUTTON      "Сохр.",IDC_SAVE,102,81,42,11,WS_DISABLED
+    PUSHBUTTON      "Сохр.",IDC_SAVE,102,81,42,11
     PUSHBUTTON      "Удалить",IDC_DELETE,102,95,42,11,WS_DISABLED
     LTEXT           "История",-1,72,57,33,8
     LTEXT           "Комната",-1,7,3,31,8
-    CONTROL         "Автовход",IDC_X_AUTOJOIN,"Button",BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,14,95,49,10
+    CONTROL         "Автовход",IDC_X_AUTOJOIN,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,95,49,10
     GROUPBOX        "Закладки",-1,7,71,142,38
     LTEXT           "Сервер",-1,69,3,31,8
     LTEXT           "Пароль",-1,84,29,46,8
@@ -687,7 +687,7 @@ BEGIN
     IDS_SEND                "Send"
 END
 
-#endif    // Russian resources
+#endif    // русский resources
 /////////////////////////////////////////////////////////////////////////////
 
 

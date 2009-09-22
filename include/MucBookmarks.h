@@ -36,7 +36,8 @@ public:
     int getBookmarkCount() const;
     MucBookmarkItem::ref addNewBookmark();
     MucBookmarkItem::ref get(int i);
-
+    void set(int i,MucBookmarkItem::ref bm);
+    void save( ResourceContextRef rc );
     bool isBookmarksAvailable() const {return bookmarksAvailable;} ;
 private:
     bool bookmarksAvailable;

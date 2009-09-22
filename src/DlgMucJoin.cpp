@@ -89,6 +89,7 @@ INT_PTR CALLBACK DlgMucJoin::dialogProc(HWND hDlg, UINT message, WPARAM wParam, 
             SetDlgItemText(hDlg, IDC_E_ROOM, roomJid.getUserName());
             SetDlgItemText(hDlg, IDC_E_SERVER, roomJid.getServer());
             SetDlgItemText(hDlg, IDC_E_PASSWORD, bm->password);
+			SetDlgCheckBox(hDlg, IDC_X_AUTOJOIN, bm->autoJoin);
         }
 
 		if (LOWORD(wParam) == IDOK)
@@ -147,6 +148,23 @@ if(idautostatus==1)idautostatus=2;
             delete p;
 			return TRUE;
 		}
+		if (LOWORD(wParam) == IDC_SAVE) 
+        {
+            int bmi1=SendDlgItemMessage(hDlg, IDC_C_BOOKMARK, CB_GETCURSEL, 0, 0); 
+            if (bmi1==CB_ERR) return TRUE;
+            MucBookmarkItem::ref bm1=p->rc->bookmarks->get(bmi1);
+            
+            GetDlgItemText(hDlg, IDC_C_NICK, bm1->nick);
+            GetDlgItemText(hDlg, IDC_E_PASSWORD, bm1->password);
+            bm1->jid=GetDlgItemText(hDlg, IDC_E_ROOM) + "@" + GetDlgItemText(hDlg, IDC_E_SERVER);
+            if (SendMessage (GetDlgItem(hDlg,IDC_X_AUTOJOIN), BM_GETCHECK, 0, 0) == BST_CHECKED)
+                    bm1->autoJoin="true";
+            else
+                    bm1->autoJoin="false";
+
+            p->rc->bookmarks->set(bmi1, bm1);
+			p->rc->bookmarks->save(p->rc);
+        }
 		if (LOWORD(wParam) == IDCANCEL)
 		{
 			EndDialog(hDlg, LOWORD(wParam));
