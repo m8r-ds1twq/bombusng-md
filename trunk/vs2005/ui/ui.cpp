@@ -1272,6 +1272,7 @@ ProcessResult MessageRecv::blockArrived(JabberDataBlockRef block, const Resource
         c=rc->roster->getContactEntry(from);
         nick=c->getName();
     }
+	//tune
 JabberDataBlockRef zz=block->getChildByName("event");
 if(zz){//Log::getInstance()->msg("ok event");
 JabberDataBlockRef zzz=zz->getChildByName("items");
@@ -1386,7 +1387,7 @@ rc->roster->makeViewList();
 
 		
 		
-
+		if(c->jid.getResource()!=nick){
 
 //бяокшбюел ;)
 		
@@ -1485,7 +1486,7 @@ if (mucMessage) {Notify::PlayNotify(1);}else{
 			Notify::PlayNotify(0);}
 	}
 
-
+}
 
 
 
