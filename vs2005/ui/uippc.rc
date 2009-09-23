@@ -15,7 +15,7 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// русский resources
+// Russian resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_RUS)
 #ifdef _WIN32
@@ -62,6 +62,13 @@ BEGIN
             MENUITEM "Перезагрузить цвет. схему",   ID_TOOLS_COLORRE
         END
         MENUITEM SEPARATOR
+        POPUP "Сигналы"
+        BEGIN
+            MENUITEM "Звук+Вибра",                  ID_SIGNALS_SOUNDANDVIBRA
+            MENUITEM "Звук",                        ID_SIGNALS_SOUND
+            MENUITEM "Вибра",                       ID_SIGNALS_VIBRA
+            MENUITEM "Отключить",                   ID_SIGNALS_MUTE
+        END
         MENUITEM "Настройки",                   ID_JABBER_OPTIONS
         MENUITEM SEPARATOR
         POPUP "Справка"
@@ -70,7 +77,7 @@ BEGIN
             MENUITEM "Он-лайн поддержка",           ID_SUPP
             MENUITEM "Новости",                     NEWS
             MENUITEM SEPARATOR
-            MENUITEM "Благотворительность",         ID_BLAGO, GRAYED
+            MENUITEM "Благотворительность",         ID_BLAGO
         END
         MENUITEM "Выход",                       IDM_EXIT
     END
@@ -687,7 +694,7 @@ BEGIN
     IDS_SEND                "Send"
 END
 
-#endif    // русский resources
+#endif    // Russian resources
 /////////////////////////////////////////////////////////////////////////////
 
 

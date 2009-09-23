@@ -862,6 +862,30 @@ result=MessageBox(NULL, TEXT("Открыть новости? При неоходимости обновите страниц
                     streamShutdown();
                     break;*/
 
+					// Evtomax: Быстрое включение/отключение звука и вибро 
+				// Надо ещё сделать, чтобы галочки показывались..
+
+
+
+				case ID_SIGNALS_SOUNDANDVIBRA:
+						Config::getInstance()->sounds = true;	
+						Config::getInstance()->vibra = true;
+					break;
+				
+				case ID_SIGNALS_SOUND:
+						Config::getInstance()->sounds = true;	
+						Config::getInstance()->vibra = false;
+					break;
+
+				case ID_SIGNALS_VIBRA:
+						Config::getInstance()->sounds = false;	
+						Config::getInstance()->vibra = true;						
+					break;
+
+				case ID_SIGNALS_MUTE:
+						Config::getInstance()->sounds = false;	
+						Config::getInstance()->vibra = false;						
+					break;
                 case ID_JABBER_JOINCONFERENCE:
                     if (rc->isLoggedIn())
                         DlgMucJoin::createDialog(hWnd, rc, "");

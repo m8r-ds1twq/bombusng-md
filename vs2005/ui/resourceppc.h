@@ -195,16 +195,25 @@
 #define IDM_STATUS_AWAY                 32816
 #define IDM_STATUS_FFC                  32817
 #define IDM_SHOW_STATUS_IN_MUC          32818
+#define ID_Menu32818                    32818
 #define IDM_SHOW_STATUS_IN_SIMPLE_CHAT  32819
+#define ID_32815                        32819
 #define IDM_SAVE_HISTORY_MUC            32820
 #define IDC_X_HIS_MUC_D                 32820
+#define ID_32816                        32820
 #define IDM_SAVE_HISTORY_IN_HTML        32821
 #define CGETNICK                        32821
+#define ID_32817                        32821
 #define CQUOTE                          32822
+#define ID_32822                        32822
 #define CCLRMSGS                        32823
+#define ID_SIGNALS_SOUNDANDVIBRA        32823
 #define CCLPMSGS                        32824
+#define ID_SIGNALS_SOUND                32824
 #define CSAVECHAT                       32825
+#define ID_SIGNALS_VIBRA                32825
 #define GLOBAL_STATUS                   32826
+#define ID_SIGNALS_MUTE                 32826
 #define SB_                             36585
 #define ID_TOOLS_COLORRE                37801
 #define IDM_EXIT                        40000
@@ -218,15 +227,16 @@
 #define MOODS_AKTIV                     42358
 #define ID_32806                        42360
 #define NEWS                            42362
-#define CLEARMESS						42365
-#define CLEAR2M							42366
+#define CLEARMESS                       42365
+#define CLEAR2M                         42366
+
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NO_MFC                     1
 #define _APS_NEXT_RESOURCE_VALUE        140
-#define _APS_NEXT_COMMAND_VALUE         32814
+#define _APS_NEXT_COMMAND_VALUE         32827
 #define _APS_NEXT_CONTROL_VALUE         1073
 #define _APS_NEXT_SYMED_VALUE           116
 #endif
