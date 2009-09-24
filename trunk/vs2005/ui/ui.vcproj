@@ -113,6 +113,8 @@
 		</Configuration>
 		<Configuration
 			Name="Debug|Windows Mobile 5.0 Pocket PC SDK (ARMV4I)"
+			OutputDirectory="$(SolutionDir)Windows Mobile 5.0 Pocket PC SDK (ARMV4I)\$(ConfigurationName)"
+			IntermediateDirectory="Windows Mobile 5.0 Pocket PC SDK (ARMV4I)\$(ConfigurationName)"
 			ConfigurationType="1"
 			CharacterSet="1"
 			>
@@ -273,7 +275,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="UPX.exe &quot;$(TargetPath)&quot;"
+				CommandLine="$(ProjectDir)..\..\UPX.exe &quot;$(TargetPath)&quot;"
 			/>
 			<DeploymentTool
 				ForceDirty="-1"
