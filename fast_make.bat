@@ -5,5 +5,5 @@ vcbuild.exe /build vs2005\sockets\regex\regex.vcproj Release
 if ERRORLEVEL 1 goto :EOF
 vcbuild.exe /build vs2005\sockets\zlib\zlib.vcproj Release
 if ERRORLEVEL 1 goto :EOF
-vcbuild.exe /rebuild vs2005\ui\ui.vcproj Release
+vcbuild.exe /build vs2005\ui\ui.vcproj Release
 if ERRORLEVEL 1 goto :EOF

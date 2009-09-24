@@ -5,7 +5,7 @@ SET VERSION=0.0.5
 
 SET VPATH=vs2005\ui\version.rc
 
-svn up
+rem svn up
 
 mkdir tmp
 echo SET REVN=$WCREV$>tmp\1
