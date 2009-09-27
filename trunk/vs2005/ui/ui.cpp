@@ -731,6 +731,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     PAINTSTRUCT ps;
     HDC hdc;
 WndRef chat2;int result;
+//HMENU hMenu = ::GetSubMenu (hWnd);
     static SHACTIVATEINFO s_sai;
 	Serialize s(L"config\\status", Serialize::READ);
     switch (message) 
@@ -747,11 +748,11 @@ WndRef chat2;int result;
 				    break;
                 }
 
-				 case ID_BLAGO: {
+				/* case ID_BLAGO: {
 
                     DlgBLAG(g_hInst, hWnd);
 
-				    break;
+				    break;*/
                 }
 				case ID_TOOLS_COLORRE:
 					
@@ -868,21 +869,53 @@ result=MessageBox(NULL, TEXT("ќткрыть новости? ѕри неоходимости обновите страниц
 
 
 				case ID_SIGNALS_SOUNDANDVIBRA:
+//CheckMenuItem (hMenu, ID_SIGNALS_SOUNDANDVIBRA,
+//               MF_UNCHECKED);
+//CheckMenuItem (hMenu, ID_SIGNALS_SOUND,
+     /*             MF_CHECKED);
+CheckMenuItem (hMenu, ID_SIGNALS_VIBRA,
+                  MF_CHECKED);
+CheckMenuItem (hMenu, ID_SIGNALS_MUTE,
+                  MF_CHECKED);*/
 						Config::getInstance()->sounds = true;	
 						Config::getInstance()->vibra = true;
 					break;
 				
 				case ID_SIGNALS_SOUND:
+					/*CheckMenuItem (hMenu, ID_SIGNALS_SOUNDANDVIBRA,
+               MF_CHECKED);
+CheckMenuItem (hMenu, ID_SIGNALS_SOUND,
+                  MF_UNCHECKED);
+CheckMenuItem (hMenu, ID_SIGNALS_VIBRA,
+                  MF_CHECKED);
+CheckMenuItem (hMenu, ID_SIGNALS_MUTE,
+                  MF_CHECKED);*/
 						Config::getInstance()->sounds = true;	
 						Config::getInstance()->vibra = false;
 					break;
 
-				case ID_SIGNALS_VIBRA:
+				case ID_SIGNALS_VIBRA:/*
+					CheckMenuItem (hMenu, ID_SIGNALS_SOUNDANDVIBRA,
+               MF_CHECKED);
+CheckMenuItem (hMenu, ID_SIGNALS_SOUND,
+                  MF_CHECKED);
+CheckMenuItem (hMenu, ID_SIGNALS_VIBRA,
+                  MF_UNCHECKED);
+CheckMenuItem (hMenu, ID_SIGNALS_MUTE,
+                  MF_CHECKED);*/
 						Config::getInstance()->sounds = false;	
 						Config::getInstance()->vibra = true;						
 					break;
 
-				case ID_SIGNALS_MUTE:
+				case ID_SIGNALS_MUTE:/*
+					CheckMenuItem (hMenu, ID_SIGNALS_SOUNDANDVIBRA,
+               MF_CHECKED);
+CheckMenuItem (hMenu, ID_SIGNALS_SOUND,
+                  MF_CHECKED);
+CheckMenuItem (hMenu, ID_SIGNALS_VIBRA,
+                  MF_CHECKED);
+CheckMenuItem (hMenu, ID_SIGNALS_MUTE,
+                  MF_UNCHECKED);*/
 						Config::getInstance()->sounds = false;	
 						Config::getInstance()->vibra = false;						
 					break;
@@ -1252,7 +1285,7 @@ ProcessResult MessageRecv::blockArrived(JabberDataBlockRef block, const Resource
     const std::string & id=block->getAttribute("id");
     const std::string & body=block->getChildText("body");
     const std::string & subj=block->getChildText("subject");
-
+    std::string urlmail;
  
     //JabberDataBlockRef xfwd=block->findChildNamespace("x","jabber:x:forward");
     //if (xfwd) {
@@ -1313,7 +1346,7 @@ c->Tartist=blocktune->getChildText("artist");
 c->Ttitle=blocktune->getChildText("title");
 c->Tsource=blocktune->getChildText("source");
 rc->roster->tuneon(from,blocktune->getChildText("artist"),blocktune->getChildText("title"),blocktune->getChildText("source"));
-Log::getInstance()->msg("ok tune",c->rosterJid.c_str());}else{c->settuneoff();
+Log::getInstance()->msg("on tune",c->rosterJid.c_str());}else{c->settuneoff();
 
 rc->roster->tuneoff(from);
 Log::getInstance()->msg("off tune",c->rosterJid.c_str());}
@@ -1360,8 +1393,13 @@ rc->roster->makeViewList();
         if (block->findChildNamespace("received","urn:xmpp:receipts")) {
             c->messageDelivered(id);
         }
-    }
+	}
     //end of xep-0184
+	// вытащим ссылки от маил агента
+JabberDataBlockRef urlmailblock=block->findChildNamespace("x","jabber:x:oob");
+if(urlmailblock){
+	urlmail=" "+urlmailblock->getChildText("desc")+": "+urlmailblock->getChildText("url");
+Log::getInstance()->msg(c->rosterJid.c_str(),urlmail.c_str());}
 
     //processing jabber:x:event - deprecated xep-0022
     JabberDataBlockRef x=block->findChildNamespace("x","jabber:x:event");
@@ -1396,7 +1434,7 @@ rc->roster->makeViewList();
         if (composing) {
             //todo: repaint
         }
-    }
+	}
     // end of xep-0022
 
     Message::ref msg;
@@ -1404,11 +1442,18 @@ rc->roster->makeViewList();
     if (body.length() || subj.length() ) {
         //constructing message and raising message event
         Log::getInstance()->msg("Message from ", from.c_str()); 
+		std::string messbod;
 		if(body.length()){
-        msg=Message::ref(new Message(body, nick, mucMessage, Message::INCOMING, Message::extractXDelay(block) ));
-		}else{msg=Message::ref(new Message(subj, nick, mucMessage, Message::INCOMING, Message::extractXDelay(block) ));
-		}
+			messbod=body;
+			//msg=Message::ref(new Message(body, nick, mucMessage, Message::INCOMING, Message::extractXDelay(block) ));
+		}else{
+			messbod=subj;
+			//msg=Message::ref(new Message(subj, nick, mucMessage, Message::INCOMING, Message::extractXDelay(block) ));
 
+		}
+		if(urlmailblock)messbod+=urlmail;
+		msg=Message::ref(new Message(messbod, nick, mucMessage, Message::INCOMING, Message::extractXDelay(block) ));
+	
 		
 		
 		if(c->jid.getResource()!=nick){
