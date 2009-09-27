@@ -699,7 +699,7 @@ void RosterListView::OnCommand( int cmdId, LONG lParam ) {
                         getHWnd(), 
                         msg2.c_str(), 
                         TEXT("Музыка"), 
-                        MB_YESNO);
+                        MB_OK);
 			break;}
         case RosterListView::LOGON: 
             //
