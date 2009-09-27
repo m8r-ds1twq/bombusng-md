@@ -1,6 +1,6 @@
 @echo off
-call "%VS80COMNTOOLS%vsvars32.bat"
-call version.cmd
+rem call "%VS80COMNTOOLS%vsvars32.bat"
+rem call version.cmd
 del /s /q dist\asis\
 mkdir dist\asis
 xcopy /y "vs2005\ui\Pocket PC 2003 (ARMV4)\Release\Bombus.exe" dist\asis\
