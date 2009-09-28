@@ -408,31 +408,30 @@ std::string encloseHTML(std::string ostr) {
   }
   return str;
 }
-void sbros_title(void){std::string muz;
 
-muz+=utf8::wchar_utf8(out_title)+" "+utf8::wchar_utf8(out_OriginalArtist);
-rc->presenceMessage=" ";
-		out_OriginalArtist_st=out_OriginalArtist;
-		out_title_st=out_title;
-if(Config::getInstance()->tune_status){
-				Log::getInstance()->msg("set notstatus",muz.c_str());
-				rc->sendPresence();
-			rc->roster->setMUCStatus(rc->status);
+void sbros_title(void){std::string muz;	muz+=utf8::wchar_utf8(out_title) + " " + utf8::wchar_utf8(out_OriginalArtist);
+	rc->presenceMessage=" ";
+	out_OriginalArtist_st=out_OriginalArtist;
+	out_title_st=out_title;
+	if (Config::getInstance()->tune_status) {
+		Log::getInstance()->msg("set notstatus",muz.c_str());
+		rc->sendPresence();
+		rc->roster->setMUCStatus(rc->status);
 		}
-if(Config::getInstance()->tune_status_pep){
-JabberDataBlock iq=("iq");
+	if(Config::getInstance()->tune_status_pep){
+	JabberDataBlock iq=("iq");
 
-iq.setAttribute("type","set");
-iq.setAttribute("id",strtime::getRandom());
-JabberDataBlockRef pubsub=iq.addChildNS("pubsub","http://jabber.org/protocol/pubsub");
-JabberDataBlockRef publish=pubsub->addChild("publish");
-publish->setAttribute("node", "http://jabber.org/protocol/tune");
-JabberDataBlockRef item=publish->addChild("item");
-JabberDataBlockRef tune=item->addChildNS("tune","http://jabber.org/protocol/tune");
-//JabberDataBlockRef artist=tune->addChild("artist",utf8::wchar_utf8(out_OriginalArtist).c_str());
-//JabberDataBlockRef title=tune->addChild("title",utf8::wchar_utf8(out_title).c_str());
-rc->jabberStream->sendStanza(iq);
-Log::getInstance()->msg("set notPEP",muz.c_str());
+	iq.setAttribute("type","set");
+	iq.setAttribute("id",strtime::getRandom());
+	JabberDataBlockRef pubsub=iq.addChildNS("pubsub","http://jabber.org/protocol/pubsub");
+	JabberDataBlockRef publish=pubsub->addChild("publish");
+	publish->setAttribute("node", "http://jabber.org/protocol/tune");
+	JabberDataBlockRef item=publish->addChild("item");
+	JabberDataBlockRef tune=item->addChildNS("tune","http://jabber.org/protocol/tune");
+	//JabberDataBlockRef artist=tune->addChild("artist",utf8::wchar_utf8(out_OriginalArtist).c_str());
+	//JabberDataBlockRef title=tune->addChild("title",utf8::wchar_utf8(out_title).c_str());
+	rc->jabberStream->sendStanza(iq);
+	Log::getInstance()->msg("set notPEP",muz.c_str());
 }
 /*
 				<iq type="set" id="mni">
@@ -457,25 +456,25 @@ std::string muz;
 muz+=utf8::wchar_utf8(out_title)+" "+utf8::wchar_utf8(out_OriginalArtist);
 if(idautostatus==1){rc->presenceMessage=muz+"("+Config::getInstance()->avtomessage+strtime::toLocalTime(strtime::getCurrentUtc())+")";}else{rc->presenceMessage=muz;}
 		
-if(Config::getInstance()->tune_status){
-				Log::getInstance()->msg("set status",muz.c_str());
-				rc->sendPresence();
-			rc->roster->setMUCStatus(rc->status);
-		}
-if(Config::getInstance()->tune_status_pep){
-JabberDataBlock iq=("iq");
+	if(Config::getInstance()->tune_status){
+		Log::getInstance()->msg("set status",muz.c_str());
+		rc->sendPresence();
+		rc->roster->setMUCStatus(rc->status);
+	}
+	if(Config::getInstance()->tune_status_pep){
+	JabberDataBlock iq=("iq");
 
-iq.setAttribute("type","set");
-iq.setAttribute("id",strtime::getRandom());
-JabberDataBlockRef pubsub=iq.addChildNS("pubsub","http://jabber.org/protocol/pubsub");
-JabberDataBlockRef publish=pubsub->addChild("publish");
-publish->setAttribute("node", "http://jabber.org/protocol/tune");
-JabberDataBlockRef item=publish->addChild("item");
-JabberDataBlockRef tune=item->addChildNS("tune","http://jabber.org/protocol/tune");
-JabberDataBlockRef artist=tune->addChild("artist",utf8::wchar_utf8(out_OriginalArtist).c_str());
-JabberDataBlockRef title=tune->addChild("title",utf8::wchar_utf8(out_title).c_str());
-rc->jabberStream->sendStanza(iq);
-Log::getInstance()->msg("set PEP",muz.c_str());
+	iq.setAttribute("type","set");
+	iq.setAttribute("id",strtime::getRandom());
+	JabberDataBlockRef pubsub=iq.addChildNS("pubsub","http://jabber.org/protocol/pubsub");
+	JabberDataBlockRef publish=pubsub->addChild("publish");
+	publish->setAttribute("node", "http://jabber.org/protocol/tune");
+	JabberDataBlockRef item=publish->addChild("item");
+	JabberDataBlockRef tune=item->addChildNS("tune","http://jabber.org/protocol/tune");
+	JabberDataBlockRef artist=tune->addChild("artist",utf8::wchar_utf8(out_OriginalArtist).c_str());
+	JabberDataBlockRef title=tune->addChild("title",utf8::wchar_utf8(out_title).c_str());
+	rc->jabberStream->sendStanza(iq);
+	Log::getInstance()->msg("set PEP",muz.c_str());
 }
 /*
 				<iq type="set" id="mni">
@@ -498,32 +497,32 @@ Log::getInstance()->msg("set PEP",muz.c_str());
 }
 
 HRESULT AddNotification(HWND hWnd,LPCTSTR notmess,int flagvs)
-{    //окошки тут
+{    
+	//окошки тут
 	//flagvs:
 	//0-сообщение
 	//1-статус
- SHNOTIFICATIONDATA sn = {0};
- sn.cbStruct = sizeof(SHNOTIFICATIONDATA);
- sn.dwID = NOTIFY_ID;
- sn.clsid = APP_GUID;
- sn.hwndSink = hWnd;
- sn.npPriority = SHNP_INFORM;
+	SHNOTIFICATIONDATA sn = {0};
+	sn.cbStruct = sizeof(SHNOTIFICATIONDATA);
+	sn.dwID = NOTIFY_ID;
+	sn.clsid = APP_GUID;
+	sn.hwndSink = hWnd;
+	sn.npPriority = SHNP_INFORM;
  
- sn.grfFlags = SHNF_FORCEMESSAGE;
- if(flagvs==0){
-	 sn.csDuration = 15;
-	 sn.pszTitle = TEXT("Новое сообщение BombusQD");
-	 sn.hicon = LoadIcon(g_hInst, MAKEINTRESOURCE(IDI_MESS_IC));
- }
- if(flagvs==1){
-	 sn.csDuration = 3;
-	 sn.pszTitle = TEXT("Уведомление BombusQD");
-	 sn.hicon = LoadIcon(g_hInst, MAKEINTRESOURCE(IDI_BOMBUS));
- }
- sn.pszHTML = notmess;
-
-
- return SHNotificationAdd(&sn);
+	sn.grfFlags = SHNF_FORCEMESSAGE;
+	if(flagvs==0){
+		sn.csDuration = 15;
+		sn.pszTitle = TEXT("Новое сообщение BombusQD");
+		sn.hicon = LoadIcon(g_hInst, MAKEINTRESOURCE(IDI_MESS_IC));
+	}
+	
+	if(flagvs==1){
+		sn.csDuration = 3;
+		sn.pszTitle = TEXT("Уведомление BombusQD");
+		sn.hicon = LoadIcon(g_hInst, MAKEINTRESOURCE(IDI_BOMBUS));
+	}
+	sn.pszHTML = notmess;
+	return SHNotificationAdd(&sn);
 }
 HRESULT DeleteNotification()
 {
@@ -547,7 +546,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
                    int       nCmdShow)
 {
 	MSG msg;
-hInstance235=hInstance;
+	hInstance235=hInstance;
 	// Perform application initialization:
 	if (!InitInstance(hInstance, nCmdShow)) 
 	{
@@ -755,19 +754,14 @@ WndRef chat2;int result;
 				    break;*/
                 }
 				case ID_TOOLS_COLORRE:
-					
-
-//
 					 //colorsload();
 					break;
 				case NEWS:
-result=MessageBox(NULL, TEXT("Открыть новости? При неоходимости обновите страницу"), TEXT("NEWS"), MB_YESNO | MB_ICONWARNING );
+					result=MessageBox(NULL, TEXT("Открыть новости? При неоходимости обновите страницу"), TEXT("NEWS"), MB_YESNO | MB_ICONINFORMATION );
 					if (result==IDYES){
 						news_parse();
 					}
-					
-
-				break;
+					break;
 
 				case MOODS_AKTIV:
 					DlgMoods::createDialog(hWnd, rc);
