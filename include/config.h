@@ -13,17 +13,17 @@ public:
 
     static Config::ref getInstance();
 
-    bool showOfflines;
-    bool showGroups;
-    bool sortByStatus;
+    bool showOfflines;					// показывать отключенных
+    bool showGroups;					// показывать группы
+    bool sortByStatus;					// сортировать по статусу
 
-    bool composing;
-    bool delivered;
-    bool history;
+    bool composing;						// уведомление о наборе
+    bool delivered;						// уведомление о доставке
+    bool history;						// хранить ли историю локально
 	bool blink;
 	bool blink2;
-    bool vibra;
-    bool sounds;
+    bool vibra;							// включена ли вибра
+    bool sounds;						// включен ли звук
 	bool sounds_status;
 	bool vs_status;
 	bool vsmess;
