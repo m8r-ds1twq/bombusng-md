@@ -275,7 +275,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="$(ProjectDir)..\..\UPX.exe &quot;$(TargetPath)&quot;"
+				CommandLine="UPX.exe &quot;$(TargetPath)&quot;"
 			/>
 			<DeploymentTool
 				ForceDirty="-1"
@@ -435,6 +435,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\DlgAccount.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\DlgActivity.cpp"
 				>
 			</File>
 			<File
@@ -745,6 +749,10 @@
 			</File>
 			<File
 				RelativePath="..\..\include\DlgAccount.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\DlgActivity.h"
 				>
 			</File>
 			<File

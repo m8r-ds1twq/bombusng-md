@@ -38,6 +38,7 @@
 #include "DlgStatus.h"
 #include "DlgMucJoin.h"
 #include "DlgMoods.h"
+#include "DlgActivity.h"
 #include "VirtualListView.h"
 #include "ChatView.h"
 #include "TabCtrl.h"
@@ -739,7 +740,7 @@ WndRef chat2;int result;
             wmId    = LOWORD(wParam); 
             wmEvent = HIWORD(wParam); 
             // Parse the menu selections:
-            switch (wmId) {
+			switch (wmId) {
                 case IDM_HELP_ABOUT: {
 
                     DlgAbout(g_hInst, hWnd);
@@ -752,7 +753,7 @@ WndRef chat2;int result;
                     DlgBLAG(g_hInst, hWnd);
 
 				    break;*/
-             //   }
+               // }
 				case ID_TOOLS_COLORRE:
 					 //colorsload();
 					break;
@@ -765,6 +766,9 @@ WndRef chat2;int result;
 
 				case MOODS_AKTIV:
 					DlgMoods::createDialog(hWnd, rc);
+					break;
+				case AKTIV_PEP:
+					DlgActivity::createDialog(hWnd, rc);
 					break;
 				case AKTIVW:
 					SetForegroundWindow(mainWnd);
@@ -963,7 +967,7 @@ CheckMenuItem (hMenu, ID_SIGNALS_MUTE,
                 default:
                     if (tabs) tabs->fwdWMCommand(wmId);
                     //return DefWindowProc(hWnd, message, wParam, lParam);
-            }
+			}
             break;
         case WM_CREATE:
             SHMENUBARINFO mbi;
