@@ -1123,8 +1123,9 @@ bool MessageElement::OnMenuCommand(int cmdId, HWND parent, HWND edithwnd){
 
 				wcscpy(strurl2,strurl);
 				strurl2=wcstok(strurl2,L" \n;\,<>*\"\'\[\]\{\}");
+				strurl2[wcslen(strurl2)-1]='\0';
 				int result=MessageBox(NULL, strurl2, TEXT("Открыть URL?"), MB_YESNOCANCEL | MB_ICONWARNING );
-					if (result==IDYES){ExecFile(strurl2,L"");}
+				if (result==IDYES){ExecFile(strurl2,L"");return true;}
 					if (result==IDCANCEL){ return true;}
 				memset(strurl,20,2);
  //result=MessageBox(NULL, strurl, TEXT("Открыть URL?1"), MB_YESNO | MB_ICONWARNING );
