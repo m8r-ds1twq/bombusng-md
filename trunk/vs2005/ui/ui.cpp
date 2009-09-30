@@ -752,7 +752,7 @@ WndRef chat2;int result;
                     DlgBLAG(g_hInst, hWnd);
 
 				    break;*/
-                }
+             //   }
 				case ID_TOOLS_COLORRE:
 					 //colorsload();
 					break;
