@@ -58,6 +58,8 @@ void Config::serialize( Serialize &s ) {
 	s.streamBool(vstrymess, false);
     //SIP control
     s.streamBool(raiseSIP, false);
+	s.streamBool(sip2, true);
+
 	//std::string tempav=;
 	//s.streamString(avtomessage,tempav.c_str());
     s.streamString(avtomessage,(char *)"Autostatus: ");

@@ -123,6 +123,7 @@ INT_PTR CALLBACK DlgProcConfig(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
                 SetDlgCheckBox(hDlg, IDC_X_DELIVERY, cfg->delivered);
                 SetDlgCheckBox(hDlg, IDC_X_HISTORY, cfg->history);
                 SetDlgCheckBox(hDlg, IDC_X_SIP, cfg->raiseSIP);
+				SetDlgCheckBox(hDlg, IDC_SIP_2, cfg->sip2);
 
                 SetDlgCheckBox(hDlg, IDM_SAVE_HISTORY_MUC, cfg->saveHistoryMuc);
                 SetDlgCheckBox(hDlg, IDM_SAVE_HISTORY_IN_HTML, cfg->saveHistoryHtml);
@@ -207,6 +208,7 @@ INT_PTR CALLBACK DlgProcConfig(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
                     GetDlgCheckBox(hDlg, IDC_X_DELIVERY, cfg->delivered);
                     GetDlgCheckBox(hDlg, IDC_X_HISTORY, cfg->history);
                     GetDlgCheckBox(hDlg, IDC_X_SIP, cfg->raiseSIP);
+					GetDlgCheckBox(hDlg, IDC_SIP_2, cfg->sip2);
 					
                     GetDlgCheckBox(hDlg, IDM_SAVE_HISTORY_MUC, cfg->saveHistoryMuc);
 					GetDlgCheckBox(hDlg, IDM_SAVE_HISTORY_IN_HTML, cfg->saveHistoryHtml);

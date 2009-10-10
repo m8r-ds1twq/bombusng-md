@@ -132,6 +132,8 @@
 #define IDC_LIST1                       1060
 #define IDC_X_HIS_MUCD                  1061
 #define IDC_E_JID2                      1062
+#define IDC_X_HIS_MUCD2                 1062
+#define IDC_SIP_2                       1062
 #define IDC_E_SHIR                      1063
 #define IDOK3                           1064
 #define IDC_MOODS                       1065

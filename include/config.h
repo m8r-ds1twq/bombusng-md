@@ -30,6 +30,7 @@ public:
 	bool vstrymess;
 	bool scomposing;
     bool raiseSIP;
+	bool sip2;//скрывать клаву после посылки сообщения
 	bool editx2;
     bool connectOnStartup;
 	bool confchat;
