@@ -680,7 +680,7 @@ if (Config::getInstance()->saveHistoryMuc){
     LastActivity::update();
 
     SendMessage(editWnd, WM_SETTEXT, 1, (LPARAM) L"");
-	SipShowIM(SIPF_OFF);
+	if (Config::getInstance()->sip2)SipShowIM(SIPF_OFF);
 }
 
 
@@ -723,7 +723,7 @@ if(idautostatus==1)idautostatus=2;
     LastActivity::update();
 
     SendMessage(editWnd, WM_SETTEXT, 1, (LPARAM) L"");
-	SipShowIM(SIPF_OFF);
+	if (Config::getInstance()->sip2)SipShowIM(SIPF_OFF);
 }
 
 void ChatView::calcEditHeight() {

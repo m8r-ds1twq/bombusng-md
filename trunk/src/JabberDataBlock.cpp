@@ -8,7 +8,7 @@
 using namespace std;
 extern BOOL timealivid;
 extern LONG timaliv;
-
+extern std::string appVersion;
 JabberDataBlock::JabberDataBlock(void){}
 JabberDataBlock::JabberDataBlock(const char * _tagName){
 	tagName=_tagName;
@@ -62,7 +62,7 @@ JabberDataBlockRef JabberDataBlock::addnod(const char *_tagName, const char *nod
 	JabberDataBlockRef child=addChild(_tagName, NULL);
 	child->setAttribute("xmlns", "http://jabber.org/protocol/caps");
    child->setAttribute("node", nod);
-	child->setAttribute("ver", "25");
+	child->setAttribute("ver", appVersion);
    return child;}
 
 JabberDataBlockRef JabberDataBlock::addChildNS(const char *_tagName, const char *xmlns ) {
