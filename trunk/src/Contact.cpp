@@ -258,7 +258,7 @@ typevs=type;
         if (nick) {
             nickname=nick->getText();
             std::trim(nickname);
-        }
+		}
     }
 	
 	JabberDataBlockRef nodeBlock=block->findChildNamespace("c","http://jabber.org/protocol/caps");
@@ -266,7 +266,7 @@ typevs=type;
           nodeInfo = nodeBlock->getAttribute("node");
 		  //Log::getInstance()->msg("[***]Get node CLIENT: " + block->getAttribute("from") + " " + nodeInfo 
 		  //	  + " VERSION: " + nodeBlock->getAttribute("ver"));
-	   }
+	   }else{nodeInfo = "";}
 	
     update();
 
