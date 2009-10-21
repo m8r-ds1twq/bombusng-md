@@ -29,37 +29,36 @@ ULONG PowerState;
 // SetVideoPower - Turns on or off the display 
 // 
 int SetVideoPower (BOOL fOn) { 
-VIDEO_POWER_MANAGEMENT vpm; 
-int rc, fQueryEsc; 
-HDC hdc; 
+	VIDEO_POWER_MANAGEMENT vpm; 
+	int rc, fQueryEsc; 
+	HDC hdc; 
 
-// Get the display dc. 
-hdc = GetDC (NULL); 
-// See if supported. 
-fQueryEsc = SETPOWERMANAGEMENT; 
-rc = ExtEscape (hdc, QUERYESCSUPPORT, sizeof (fQueryEsc), 
-(LPSTR)&fQueryEsc, 0, 0); 
-if (rc == 0) { 
-// No support, fail. 
-ReleaseDC (NULL, hdc); 
-return -1; 
-} 
-// Fill in the power management structure. 
-vpm.Length = sizeof (vpm); 
-vpm.DPMSVersion = 1; 
-if (fOn) 
-vpm.PowerState = VideoPowerOn; 
-else 
-vpm.PowerState = VideoPowerOff; 
+	// Get the display dc. 
+	hdc = GetDC (NULL); 
+	// See if supported. 
+	fQueryEsc = SETPOWERMANAGEMENT; 
+	rc = ExtEscape (hdc, QUERYESCSUPPORT, sizeof (fQueryEsc), 
+	(LPSTR)&fQueryEsc, 0, 0); 
+	if (rc == 0) { 
+		// No support, fail. 
+		ReleaseDC (NULL, hdc); 
+		return -1; 
+	} 
+	// Fill in the power management structure. 
+	vpm.Length = sizeof (vpm); 
+	vpm.DPMSVersion = 1; 
+	if (fOn) 
+	vpm.PowerState = VideoPowerOn; 
+	else 
+	vpm.PowerState = VideoPowerOff; 
 
-// Tell the driver to turn on or off the display. 
-rc = ExtEscape (hdc, SETPOWERMANAGEMENT, sizeof (vpm), 
-(LPSTR)&vpm, 0, 0); 
+	// Tell the driver to turn on or off the display. 
+	rc = ExtEscape (hdc, SETPOWERMANAGEMENT, sizeof (vpm), (LPSTR)&vpm, 0, 0); 
 
-// Always release what you get. 
-ReleaseDC (NULL, hdc); 
-return 0; 
-} 
+	// Always release what you get. 
+	ReleaseDC (NULL, hdc); 
+	return 0; 
+}
 
 
 extern "C" { 
@@ -69,27 +68,48 @@ extern "C" {
 
 void doSmartPhoneVibra();
 
+//http://4pda.ru/forum/index.php?showtopic=112068
+//code by constv http://4pda.ru/forum/index.php?showuser=151002
+UINT GetVibratorLedNum(void)//-1 means no vibrator
+{ 
+    NLED_COUNT_INFO nci;  
+    UINT wCount = 0,
+        VibrLed = -1;  
+    NLED_SUPPORTS_INFO sup;  
+    if(NLedGetDeviceInfo(0, (PVOID) &nci))  
+        wCount = (UINT) nci.cLeds;     
+    for (UINT i=0;i<wCount;i++) 
+    {  
+        sup.LedNum = i;   
+        NLedGetDeviceInfo(1,&sup);  
+        if (sup.lCycleAdjust == -1)  
+        {   
+            VibrLed = i;   
+            break;
+        } 
+    } 
+    return VibrLed;
+}
 
 #ifdef _WIN32_WCE
-DWORD vibraThread(LPVOID param) {
+	DWORD vibraThread(LPVOID param) {
 #else
-DWORD WINAPI vibraThread(LPVOID param) {
+	DWORD WINAPI vibraThread(LPVOID param) {
 #endif
 
     NLED_SETTINGS_INFO nsi;
-    nsi.LedNum=1;
+    nsi.LedNum=GetVibratorLedNum();
     nsi.OnTime=1000;
     nsi.OffTime=300;
     nsi.TotalCycleTime=1300;
     nsi.MetaCycleOn=2;
     nsi.MetaCycleOff=2;
 
-    nsi.OffOnBlink=1;
-
+    nsi.OffOnBlink=1;	//включение вибры
     NLedSetDevice(NLED_SETTINGS_INFO_ID, &nsi);
     Sleep(400);
 
-    nsi.OffOnBlink=0;
+    nsi.OffOnBlink=0;	//выключение вибры
     NLedSetDevice(NLED_SETTINGS_INFO_ID, &nsi);
     Sleep(200);
 
@@ -101,7 +121,8 @@ DWORD WINAPI vibraThread(LPVOID param) {
 extern std::wstring appRootPath;
 
 
-void Notify::PlayNotify(int soundst) {//0-message.wav 1-conference.wav 2-composing.wav 3-connected.wav 4-disconnected.wav 5-reconnected.wav
+void Notify::PlayNotify(int soundst) {
+	//0-message.wav 1-conference.wav 2-composing.wav 3-connected.wav 4-disconnected.wav 5-reconnected.wav
     //doSmartPhoneVibra();
    int vid;
     std::wstring soundName(appRootPath);
@@ -117,29 +138,37 @@ void Notify::PlayNotify(int soundst) {//0-message.wav 1-conference.wav 2-composi
 	soundName5+=TEXT("sounds\\disconnected.wav");
 	soundName6+=TEXT("sounds\\reconnected.wav");
 	if(Config::getInstance()->blink){
-if(soundst==1){
-vid=SetVideoPower(TRUE);Sleep(200);
-		 vid=SetVideoPower(FALSE);
-		 if(!(Config::getInstance()->blink2)){
-		 Sleep(200);
-		 vid=SetVideoPower(TRUE);}
-		 
-		Sleep(0);}
-if(soundst==0){
-		vid=SetVideoPower(TRUE);
-		Sleep(200);
-		vid=SetVideoPower(FALSE);Sleep(200);
-		 
-		vid=SetVideoPower(TRUE);
-		Sleep(200);
-		 vid=SetVideoPower(FALSE);
-		 if(!(Config::getInstance()->blink2)){Sleep(200);
-		 vid=SetVideoPower(TRUE);}
-		 Sleep(0);
-	}
+		if(soundst==1)
+		{
+			vid=SetVideoPower(TRUE);
+			Sleep(200);
+			vid=SetVideoPower(FALSE);
+			if(!(Config::getInstance()->blink2))
+			{
+				Sleep(200);
+				vid=SetVideoPower(TRUE);
+			}
+			Sleep(0);
+		}
+		if(soundst==0)
+		{
+			vid=SetVideoPower(TRUE);
+			Sleep(200);
+			vid=SetVideoPower(FALSE);
+			Sleep(200);
+			vid=SetVideoPower(TRUE);
+			Sleep(200);
+			vid=SetVideoPower(FALSE);
+			if(!(Config::getInstance()->blink2))
+			{
+				Sleep(200);
+				vid=SetVideoPower(TRUE);
+			}
+			Sleep(0);
+		}
 	}
 	if (Config::getInstance()->sounds){
-	switch (soundst) {
+		switch (soundst) {
 			case 0:
 				PlaySound(soundName.c_str(), NULL, SND_ASYNC | /*SND_NOWAIT |*/SND_FILENAME);
 			 break;
@@ -158,7 +187,7 @@ if(soundst==0){
 			 case 5:
 				PlaySound(soundName6.c_str(), NULL, SND_ASYNC | /*SND_NOWAIT |*/SND_FILENAME);
 			 break;
-	}
+		}
 	}
 
     if (Notify::vibraOn) return;
