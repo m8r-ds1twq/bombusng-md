@@ -69,6 +69,8 @@ bool pongOnline=0;
 #define TIMER_TIME 2000 //ÂÐÅÌß ÎÏÐÎÑÀ ÒÀÉÌÅÐÀ
 //#define TIMER_STATUS 60 //ÂÐÅÌß ÀÂÒÎÑÒÀÒÓÑÀ
 void CALLBACK TimerProc(HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime);
+#define STREAM_READ_IDLE 50
+void recvStreamThread(void);//Ïîòîê îáðàáîòêè ïîòîêà jabber
 #define MAIN_TIMER_ID 7852
 int timerid=0;
 HINSTANCE hInstance235;
@@ -561,7 +563,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 	// Main message loop:
     //while (GetMessage(&msg, NULL, 0, 0)) {
-	while (true) {
+	/*while (true) {
         if (rc) if (rc->jabberStream) rc->jabberStream->parseStream();
 
         if (!PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {  Sleep(50); continue; }
@@ -571,10 +573,35 @@ int WINAPI WinMain(HINSTANCE hInstance,
             DispatchMessage(&msg);
 		}
 
+	}*/
+	
+	HANDLE hThread = CreateThread(0,0,(LPTHREAD_START_ROUTINE)recvStreamThread,0,0,0);//çàïóñòèì ïàðñåð îòäåëüíûì ïîòîêîì
+
+	while(GetMessage(&msg, NULL, 0, 0)){
+		if(msg.message==WM_QUIT) break;
+		if(!TranslateAccelerator(msg.hwnd, hAccelTable, &msg)){
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
+		}
 	}
+	TerminateThread(hThread,0);
+	
+	
     Shell_NotifyIcon(false, NULL);
     Config::getInstance()->save();
 	return (int) msg.wParam;
+}
+
+void recvStreamThread(void)//ñàì ïàðñåð ñîáñòâåííî
+{
+	while(1){
+		if (rc){
+			if(rc->jabberStream){
+				rc->jabberStream->parseStream();
+			}
+		}
+		Sleep(STREAM_READ_IDLE);
+	}
 }
 
 //
