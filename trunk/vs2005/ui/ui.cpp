@@ -563,7 +563,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 	// Main message loop:
     //while (GetMessage(&msg, NULL, 0, 0)) {
-	/*while (true) {
+	while (true) {
         if (rc) if (rc->jabberStream) rc->jabberStream->parseStream();
 
         if (!PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {  Sleep(50); continue; }
@@ -573,25 +573,27 @@ int WINAPI WinMain(HINSTANCE hInstance,
             DispatchMessage(&msg);
 		}
 
-	}*/
-	
+	}
+	/*
 	HANDLE hThread = CreateThread(0,0,(LPTHREAD_START_ROUTINE)recvStreamThread,0,0,0);//запустим парсер отдельным потоком
 
 	while(GetMessage(&msg, NULL, 0, 0)){
 		if(msg.message==WM_QUIT) break;
 		if(!TranslateAccelerator(msg.hwnd, hAccelTable, &msg)){
+			SuspendThread(hThread);
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
+			ResumeThread(hThread);
 		}
 	}
 	TerminateThread(hThread,0);
-	
+	*/
 	
     Shell_NotifyIcon(false, NULL);
     Config::getInstance()->save();
 	return (int) msg.wParam;
 }
-
+/*
 void recvStreamThread(void)//сам парсер собственно
 {
 	while(1){
@@ -603,7 +605,7 @@ void recvStreamThread(void)//сам парсер собственно
 		Sleep(STREAM_READ_IDLE);
 	}
 }
-
+*/
 //
 //  FUNCTION: MyRegisterClass()
 //
