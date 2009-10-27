@@ -2,7 +2,8 @@
 #include <utf8.hpp>
 #include "boostheaders.h"
 #include "Image.h"
-
+extern char ***strcom;
+extern int linesCountcom;
 #pragma comment(lib,"regex.lib")
 
 boost::regex e1("((?:(?:ht|f)tps?://|www\\.)[^<\\s\\n]+)(?<![]\\.,:;!\\})<-])");
@@ -22,7 +23,7 @@ Message::Message( std::string body, std::string fromName, bool appendFrom, int t
 
 
     //TODO: xml escaping
-    
+ 
     std::string tmp=boost::regex_replace(body, e1, std::string("\x01\\1\x02"));
 	if (tmp.find("/me")==0) {
         if (tmp.length()==3 || tmp[3]==' ') {
@@ -39,12 +40,31 @@ Message::Message( std::string body, std::string fromName, bool appendFrom, int t
     init();
 }
 
+
+
 JabberDataBlockRef Message::constructStanza(const std::string &to) const {
     JabberDataBlockRef out=JabberDataBlockRef(new JabberDataBlock("message"));
     out->setAttribute("type", "chat");
     out->setAttribute("to", to);
     out->setAttribute("id", id);
-    out->addChild("body", body.c_str());
+	size_t lencom;
+
+	std::string tmp=body;
+	size_t lenbody=tmp.length();
+	if(linesCountcom)for(int r=2;r<linesCountcom;r=r+2)//обрабатываем быстрые команды
+		{lencom=strlen(strcom[r][0]);
+			if (tmp.find(strcom[r][0])==0) 
+			{
+				 if (tmp.length()==lencom || tmp[lencom]==' ')
+				 {
+				  bool flgc=1;
+					if(lenbody>lencom+1)flgc=0;
+				  if(flgc){tmp.replace(0, lencom, strcom[r][1]);}else{tmp.replace(0, lencom, strcom[r+1][1]);}
+					tmp.insert(0, "/me ");
+		        }
+			}
+		}
+    out->addChild("body", tmp.c_str());
     return out;
 }
 
