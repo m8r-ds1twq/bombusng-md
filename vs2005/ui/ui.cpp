@@ -58,14 +58,19 @@
 #include "utf8.hpp"
 
 #include "config.h"
-
+#include "getconfig.h"
 #include "dnsquery.h"
 #include "boostheaders.h"
 
+#include "ChatView.h"
+char ***strcom;
+int linesCountcom;
 #define MAX_LOADSTRING 100
 int sizecaps;
+
 char **strokicaps;
 bool pongOnline=0;
+extern char ***getConfig(const wchar_t *fileName,int *count);
 #define TIMER_TIME 2000 //ÂÐÅÌß ÎÏÐÎÑÀ ÒÀÉÌÅÐÀ
 //#define TIMER_STATUS 60 //ÂÐÅÌß ÀÂÒÎÑÒÀÒÓÑÀ
 void CALLBACK TimerProc(HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime);
@@ -563,6 +568,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 	// Main message loop:
     //while (GetMessage(&msg, NULL, 0, 0)) {
+	/**/
 	while (true) {
         if (rc) if (rc->jabberStream) rc->jabberStream->parseStream();
 
@@ -573,21 +579,22 @@ int WINAPI WinMain(HINSTANCE hInstance,
             DispatchMessage(&msg);
 		}
 
-	}
-	/*
+	}/*
+	
 	HANDLE hThread = CreateThread(0,0,(LPTHREAD_START_ROUTINE)recvStreamThread,0,0,0);//çàïóñòèì ïàðñåð îòäåëüíûì ïîòîêîì
 
-	while(GetMessage(&msg, NULL, 0, 0)){
+	while(1){
+		if (!PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {  Sleep(50); continue; }
 		if(msg.message==WM_QUIT) break;
 		if(!TranslateAccelerator(msg.hwnd, hAccelTable, &msg)){
-			SuspendThread(hThread);
+			
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
-			ResumeThread(hThread);
+			
 		}
 	}
 	TerminateThread(hThread,0);
-	*/
+*/
 	
     Shell_NotifyIcon(false, NULL);
     Config::getInstance()->save();
@@ -604,8 +611,8 @@ void recvStreamThread(void)//ñàì ïàðñåð ñîáñòâåííî
 		}
 		Sleep(STREAM_READ_IDLE);
 	}
-}
-*/
+}*/
+
 //
 //  FUNCTION: MyRegisterClass()
 //
@@ -699,6 +706,12 @@ if(hInst2){
     appVersion=utf8::wchar_utf8(wbuf);
     appName="Bombusng-MD";//
      colorsload();//load color
+	 std::wstring compatch=appRootPath+TEXT("com.txt");
+    
+	
+//std::string moods_1;
+
+	strcom=getConfig(compatch.c_str(),&linesCountcom);
 timerid=SetTimer(0,MAIN_TIMER_ID,TIMER_TIME,TimerProc);
     if (!MyRegisterClass(hInstance, szWindowClass)) 	return FALSE;
 
@@ -896,6 +909,10 @@ WndRef chat2;int result;
 
 
 				case ID_SIGNALS_SOUNDANDVIBRA:
+					SendDlgItemMessage(hWnd,ID_SIGNALS_SOUNDANDVIBRA,BM_SETCHECK,1,0);
+					SendDlgItemMessage(hWnd,ID_SIGNALS_SOUND,BM_SETCHECK,0,0);
+					SendDlgItemMessage(hWnd,ID_SIGNALS_VIBRA,BM_SETCHECK,0,0);
+					SendDlgItemMessage(hWnd,ID_SIGNALS_MUTE,BM_SETCHECK,0,0);
 //CheckMenuItem (hMenu, ID_SIGNALS_SOUNDANDVIBRA,
 //               MF_UNCHECKED);
 //CheckMenuItem (hMenu, ID_SIGNALS_SOUND,
@@ -909,6 +926,10 @@ CheckMenuItem (hMenu, ID_SIGNALS_MUTE,
 					break;
 				
 				case ID_SIGNALS_SOUND:
+					SendDlgItemMessage(hWnd,ID_SIGNALS_SOUNDANDVIBRA,BM_SETCHECK,0,0);
+					SendDlgItemMessage(hWnd,ID_SIGNALS_SOUND,BM_SETCHECK,1,0);
+					SendDlgItemMessage(hWnd,ID_SIGNALS_VIBRA,BM_SETCHECK,0,0);
+					SendDlgItemMessage(hWnd,ID_SIGNALS_MUTE,BM_SETCHECK,0,0);
 					/*CheckMenuItem (hMenu, ID_SIGNALS_SOUNDANDVIBRA,
                MF_CHECKED);
 CheckMenuItem (hMenu, ID_SIGNALS_SOUND,
@@ -921,7 +942,12 @@ CheckMenuItem (hMenu, ID_SIGNALS_MUTE,
 						Config::getInstance()->vibra = false;
 					break;
 
-				case ID_SIGNALS_VIBRA:/*
+				case ID_SIGNALS_VIBRA:
+					SendDlgItemMessage(hWnd,ID_SIGNALS_SOUNDANDVIBRA,BM_SETCHECK,0,0);
+					SendDlgItemMessage(hWnd,ID_SIGNALS_SOUND,BM_SETCHECK,0,0);
+					SendDlgItemMessage(hWnd,ID_SIGNALS_VIBRA,BM_SETCHECK,1,0);
+					SendDlgItemMessage(hWnd,ID_SIGNALS_MUTE,BM_SETCHECK,0,0);
+					/*
 					CheckMenuItem (hMenu, ID_SIGNALS_SOUNDANDVIBRA,
                MF_CHECKED);
 CheckMenuItem (hMenu, ID_SIGNALS_SOUND,
@@ -934,7 +960,12 @@ CheckMenuItem (hMenu, ID_SIGNALS_MUTE,
 						Config::getInstance()->vibra = true;						
 					break;
 
-				case ID_SIGNALS_MUTE:/*
+				case ID_SIGNALS_MUTE:
+					SendDlgItemMessage(hWnd,ID_SIGNALS_SOUNDANDVIBRA,BM_SETCHECK,0,0);
+					SendDlgItemMessage(hWnd,ID_SIGNALS_SOUND,BM_SETCHECK,0,0);
+					SendDlgItemMessage(hWnd,ID_SIGNALS_VIBRA,BM_SETCHECK,0,0);
+					SendDlgItemMessage(hWnd,ID_SIGNALS_MUTE,BM_SETCHECK,1,0);
+					/*
 					CheckMenuItem (hMenu, ID_SIGNALS_SOUNDANDVIBRA,
                MF_CHECKED);
 CheckMenuItem (hMenu, ID_SIGNALS_SOUND,
@@ -1479,7 +1510,24 @@ Log::getInstance()->msg(c->rosterJid.c_str(),urlmail.c_str());}
 
 		}
 		if(urlmailblock)messbod+=urlmail;
-		msg=Message::ref(new Message(messbod, nick, mucMessage, Message::INCOMING, Message::extractXDelay(block) ));
+		size_t lencom;
+
+	std::string tmp=messbod;
+	size_t lenbody=tmp.length();
+	if(linesCountcom)for(int r=2;r<linesCountcom;r=r+2)//îáðàáàòûâàåì áûñòðûå êîìàíäû
+		{lencom=strlen(strcom[r][0]);
+			if (tmp.find(strcom[r][0])==0) 
+			{
+				 if (tmp.length()==lencom || tmp[lencom]==' ')
+				 {
+				  bool flgc=1;
+					if(lenbody>lencom+1)flgc=0;
+				  if(flgc){tmp.replace(0, lencom, strcom[r][1]);}else{tmp.replace(0, lencom, strcom[r+1][1]);}
+					tmp.insert(0, "/me ");
+		        }
+			}
+		}
+		msg=Message::ref(new Message(tmp, nick, mucMessage, Message::INCOMING, Message::extractXDelay(block) ));
 	
 		
 		
