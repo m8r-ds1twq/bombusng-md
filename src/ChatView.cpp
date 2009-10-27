@@ -40,6 +40,8 @@ extern TabsCtrlRef tabs;			/* to vCard ICO */
 HMENU g_hnicknames;
 extern LONG timstatus;
 extern int idautostatus;
+extern char ***strcom;
+extern int linesCountcom;
 //LONG tolshina=400;
 //////////////////////////////////////////////////////////////////////////
 // WARNING!!! ONLY FOR WM2003 and higher
@@ -49,6 +51,7 @@ extern int idautostatus;
 #endif
 //////////////////////////////////////////////////////////////////////////
 #define GOTOURL   1225
+#define COMMAND_STR   52205
 std::wstring filePathavatargo;
 LONG avWidthgo;
 LONG avHeightgo;
@@ -97,10 +100,10 @@ bool avatbool;
 namespace editbox {
     static bool editBoxShifts=false;
 }
-
+//wchar_t *strcom[5]={L"/me",L"/cry",L"/dance",L"/liver",L"/proba",};
 long WINAPI EditSubClassProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) { 
     WNDPROC OldWndProc=(WNDPROC) GetWindowLong(hWnd, GWL_USERDATA);
-   
+	
 	switch(msg) { 
     case WM_LBUTTONDOWN:
         {
@@ -121,15 +124,19 @@ long WINAPI EditSubClassProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) 
                 UINT undo= (SendMessage(hWnd, EM_CANUNDO, 0, 0))? MF_STRING : MF_STRING | MF_GRAYED;;
                 HMENU hmenu = CreatePopupMenu();
                 if (hmenu==NULL) break;
+                HMENU subscrMenupCom=CreatePopupMenu();//подменю команд
+				if(linesCountcom)for(int r=1;r<linesCountcom;r=r+2)AppendMenu(subscrMenupCom, MF_STRING,r+40000 , utf8::utf8_wchar(strcom[r][0]).c_str());//добавляем все подпункты
 
 				//Собственно окно набора сообщения
                 AppendMenu(hmenu, (smileParser->hasSmiles())? MF_STRING : MF_STRING | MF_GRAYED, ADD_SMILE, TEXT("Смайлы"));
+				AppendMenu(hmenu, MF_POPUP, (LPARAM)subscrMenupCom, TEXT("Команды"));
                 AppendMenu(hmenu, MF_SEPARATOR, 0, NULL);
                 AppendMenu(hmenu, cut, WM_CUT, TEXT("Вырезать") );
                 AppendMenu(hmenu, cut, WM_COPY, TEXT("Копировать") );
                 AppendMenu(hmenu, paste, WM_PASTE, TEXT("Вставить") );
-                AppendMenu(hmenu, MF_SEPARATOR, 0, NULL);
+                
                 AppendMenu(hmenu, undo, EM_UNDO, TEXT("Отмена") );
+				AppendMenu(hmenu, MF_SEPARATOR, 0, NULL);
 				AppendMenu(hmenu, MF_STRING, SB_, TEXT("ТЕМА") );
 
                 POINT pt={LOWORD(lParam), HIWORD(lParam) };
@@ -144,6 +151,8 @@ long WINAPI EditSubClassProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) 
                 if (cmdId==ADD_SMILE) SmileBox::showSmileBox(hWnd, pt.x, pt.y, smileParser);
 				 if (cmdId==SB_)PostMessage(GetParent(hWnd), WM_COMMAND, IDC_SB, 0);
                 DestroyMenu(hmenu);
+				if(cmdId>=40000 && cmdId<=40000 +linesCountcom)PostMessage(GetParent(hWnd), COMMAND_STR, cmdId-40000, 0);
+                
 				if (cmdId>0) PostMessage(hWnd, cmdId, 0, 0);
 
                 return 0;
@@ -434,7 +443,11 @@ Skin * il= dynamic_cast<Skin *>(skin.get());
 
             break; 
         } 
+	case COMMAND_STR://обработка вставки быстрых команд
+		{p->comstr((int)wParam);
+		
 
+		}
     case WM_COMMAND: 
 		{
             if (wParam==IDS_SEND) {
@@ -618,6 +631,12 @@ bool ChatView::autoScroll() {
 ATOM ChatView::windowClass=0;
 
 //////////////////////////////////////////////////////////////////////////
+
+void ChatView::comstr(int comnum){//вставляем команду
+
+	SendMessage(editWnd, EM_REPLACESEL, TRUE, (LPARAM)utf8::utf8_wchar(strcom[comnum][0]).c_str());
+					}
+
 void ChatView::sendJabberMessage() {
     int len=SendMessage(editWnd, WM_GETTEXTLENGTH, 0, 0);
     if (len==0) return;
@@ -630,6 +649,7 @@ void ChatView::sendJabberMessage() {
 
     std::trimTail(body);
     if (body.length()==0) return;
+	
 timstatus=0;
 if(idautostatus==1)idautostatus=2;
     Message::ref msg=Message::ref(new Message(body, rc->account->getNickname(), false, Message::SENT, strtime::getCurrentUtc() ));
