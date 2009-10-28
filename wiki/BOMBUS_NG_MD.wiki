@@ -1,0 +1,1 @@
+BOMBUS-NG MD - jabber-клиент для устройств на Windows Mobile.Является модом BOMBUS-NG,появился в результате обьединения BOMBUS-NG QD и BOMBUS-NG UFO
