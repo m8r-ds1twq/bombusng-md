@@ -56,7 +56,7 @@ std::wstring filePathavatargo;
 LONG avWidthgo;
 LONG avHeightgo;
 bool mucak=0;
-HWND chatHWND;
+//HWND chatHWND;
 void ExecFile(LPCTSTR link, LPCTSTR param)
 {
    SHELLEXECUTEINFO info;
@@ -125,17 +125,29 @@ long WINAPI EditSubClassProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) 
                 HMENU hmenu = CreatePopupMenu();
                 if (hmenu==NULL) break;
                 HMENU subscrMenupCom=CreatePopupMenu();//подменю команд
+				HMENU subscrMenupJUIC=CreatePopupMenu();
+				AppendMenu(subscrMenupJUIC, MF_STRING, 70000, TEXT("последние 10") );
+				AppendMenu(subscrMenupJUIC, MF_STRING, 70001, TEXT("последние 10 поп.") );
+				AppendMenu(subscrMenupJUIC, MF_STRING, 70002, TEXT("поп. теги") );
+				AppendMenu(subscrMenupJUIC, MF_STRING, 70003, TEXT("поп. блоги") );
+				AppendMenu(subscrMenupJUIC, MF_STRING, 70004, TEXT("удалить последний пост") );
+				AppendMenu(subscrMenupJUIC, MF_STRING, 70005, TEXT("логин") );
+				AppendMenu(subscrMenupJUIC, MF_STRING, 70006, TEXT("пинг") );
+				AppendMenu(subscrMenupJUIC, MF_STRING, 70007, TEXT("обн.инф. из vcard") );
+
 				if(linesCountcom)for(int r=1;r<linesCountcom;r=r+2)AppendMenu(subscrMenupCom, MF_STRING,r+40000 , utf8::utf8_wchar(strcom[r][0]).c_str());//добавляем все подпункты
 
 				//Собственно окно набора сообщения
                 AppendMenu(hmenu, (smileParser->hasSmiles())? MF_STRING : MF_STRING | MF_GRAYED, ADD_SMILE, TEXT("Смайлы"));
 				AppendMenu(hmenu, MF_POPUP, (LPARAM)subscrMenupCom, TEXT("Команды"));
                 AppendMenu(hmenu, MF_SEPARATOR, 0, NULL);
+				AppendMenu(hmenu, MF_POPUP, (LPARAM)subscrMenupJUIC, TEXT("juick"));
+				AppendMenu(hmenu, MF_SEPARATOR, 0, NULL);
                 AppendMenu(hmenu, cut, WM_CUT, TEXT("Вырезать") );
                 AppendMenu(hmenu, cut, WM_COPY, TEXT("Копировать") );
                 AppendMenu(hmenu, paste, WM_PASTE, TEXT("Вставить") );
-                
                 AppendMenu(hmenu, undo, EM_UNDO, TEXT("Отмена") );
+				AppendMenu(hmenu, MF_STRING, CLEARME, TEXT("Очистить") );
 				AppendMenu(hmenu, MF_SEPARATOR, 0, NULL);
 				AppendMenu(hmenu, MF_STRING, SB_, TEXT("ТЕМА") );
 
@@ -152,7 +164,8 @@ long WINAPI EditSubClassProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) 
 				 if (cmdId==SB_)PostMessage(GetParent(hWnd), WM_COMMAND, IDC_SB, 0);
                 DestroyMenu(hmenu);
 				if(cmdId>=40000 && cmdId<=40000 +linesCountcom)PostMessage(GetParent(hWnd), COMMAND_STR, cmdId-40000, 0);
-                
+                if(cmdId>=70000 && cmdId<=70007)PostMessage(GetParent(hWnd), JUICK_COMMAND, cmdId-70000, 0);
+				if (cmdId==CLEARME)PostMessage(GetParent(hWnd), WM_COMMAND, CLEARED, 0);
 				if (cmdId>0) PostMessage(hWnd, cmdId, 0, 0);
 
                 return 0;
@@ -167,12 +180,19 @@ long WINAPI EditSubClassProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) 
 		if ((wParam==VK_RIGHT) && (SendMessage (hWnd, EM_LINELENGTH,(WPARAM)0, (LPARAM)0)==0))  PostMessage(GetParent(GetParent(hWnd)), WM_COMMAND, TabsCtrl::NEXTTAB, 0);
              
         break; 
+
     case WM_KEYUP:
         editbox::editBoxShifts=false;
         break;
-	//case CLEAR2M:
-	//	PostMessage(GetParent(hWnd), CLEARMESS, 0, 0);
-     //       return 0;
+	case CLEARMESS:{
+			PostMessage(GetParent(hWnd), CLEARMESS, NULL, false);
+			return true;}
+
+	case JUICK_SEND:{
+			PostMessage(GetParent(hWnd), WM_COMMAND, IDS_SEND, 0);
+			return 0;}
+	
+   
     case WM_CHAR:
         if (wParam==VK_RETURN && !editbox::editBoxShifts) {
             PostMessage(GetParent(hWnd), WM_COMMAND, IDS_SEND, 0);
@@ -348,7 +368,7 @@ Skin * il= dynamic_cast<Skin *>(skin.get());
 					if(clientIcon)skin->drawElement(hdc, clientIcon, avWidth , iconwidth);
 				}
 
-		ExtTextOut(hdc, avWidth + iconwidth + 4, iconwidth, NULL, NULL,
+				ExtTextOut(hdc, avWidth + iconwidth + 4, iconwidth, NULL, NULL,
 					utf8::utf8_wchar(p->contact->getClientIdIcon()).c_str(),
 					p->contact->getClientIdIcon().length(),
 					NULL);
@@ -358,24 +378,6 @@ Skin * il= dynamic_cast<Skin *>(skin.get());
 					p->contact->getStatusMessage().length(),
 					NULL);
 
- /*
- 
- std::string s=(nickname.empty())? jid.getBareJid():nickname;
- const wchar_t * Contact::getText()  wjid = (utf8::utf8_wchar(s)).c_str();
-
-
-			  std::string rni=utf8::wchar_utf8(toWString(p->contact->nodeInfo));
-		      std::string rsm=utf8::wchar_utf8(toWString(p->contact->statusMessage));
-				ExtTextOutW(hdc, avataraWidth + iconwidth + 4, iconwidth, NULL, NULL,
-					toWString(rni).c_str(),
-					lstrlen(toWString(p->contact->nodeInfo).c_str())
-					,NULL);
-				
-			    ExtTextOutW(hdc, avataraWidth + 3, iconwidth*2, NULL, NULL,
-					toWString(rsm).c_str(),
-					lstrlen(toWString(p->contact->statusMessage).c_str()),
-					NULL);
-					*/
 			}
 
             skin->drawElement(hdc, icons::ICON_CLOSE,p->width-2-iconwidth, 0);
@@ -444,10 +446,37 @@ Skin * il= dynamic_cast<Skin *>(skin.get());
             break; 
         } 
 	case COMMAND_STR://обработка вставки быстрых команд
-		{p->comstr((int)wParam);
-		
+		{p->comstr((int)wParam);}
+	case JUICK_COMMAND:{
+		if((int)wParam==0)
+			{SendMessage(p->editWnd, WM_SETTEXT, 1, (LPARAM) L"#+");
+			SendMessage(p->editWnd, JUICK_SEND, 0, 0);}
+		if((int)wParam==1)
+			{SendMessage(p->editWnd, WM_SETTEXT, 1, (LPARAM) L"#");
+			SendMessage(p->editWnd, JUICK_SEND, 0, 0);}
+		if((int)wParam==2)
+			{SendMessage(p->editWnd, WM_SETTEXT, 1, (LPARAM) L"*");
+			SendMessage(p->editWnd, JUICK_SEND, 0, 0);}
+		if((int)wParam==3)
+			{SendMessage(p->editWnd, WM_SETTEXT, 1, (LPARAM) L"@");
+			SendMessage(p->editWnd, JUICK_SEND, 0, 0);}
+		if((int)wParam==4)
+			{SendMessage(p->editWnd, WM_SETTEXT, 1, (LPARAM) L"D L");
+			SendMessage(p->editWnd, JUICK_SEND, 0, 0);}
+		if((int)wParam==5)
+			{SendMessage(p->editWnd, WM_SETTEXT, 1, (LPARAM) L"LOGIN");
+			SendMessage(p->editWnd, JUICK_SEND, 0, 0);}
+		if((int)wParam==6)
+			{SendMessage(p->editWnd, WM_SETTEXT, 1, (LPARAM) L"PING");
+			SendMessage(p->editWnd, JUICK_SEND, 0, 0);}
+		if((int)wParam==7)
+			{SendMessage(p->editWnd, WM_SETTEXT, 1, (LPARAM) L"VCARD");
+			SendMessage(p->editWnd, JUICK_SEND, 0, 0);}
+					   
+					   }
 
-		}
+
+		
     case WM_COMMAND: 
 		{
             if (wParam==IDS_SEND) {
@@ -462,6 +491,9 @@ Skin * il= dynamic_cast<Skin *>(skin.get());
 
             if (wParam==IDC_COMPOSING) {
                 p->setComposingState(lParam!=0);
+            }
+			if (wParam==CLEARED) {
+                SendMessage(p->editWnd, WM_SETTEXT, 1, (LPARAM) L"");
             }
 
             break;             
@@ -574,7 +606,7 @@ ChatView::ChatView( HWND parent, Contact::ref contact )
         0, 0, 
 		CW_USEDEFAULT, CW_USEDEFAULT,//ширина+высота
 		parent, NULL, g_hInst, (LPVOID)this);
-chatHWND=thisHWnd;
+
 }
 
 //const wchar_t * ChatView::getWindowTitle() const{  return TEXT("stub"); }
@@ -1087,12 +1119,19 @@ HMENU MessageElement::getContextMenu( HMENU menu ) {
 		menu=CreatePopupMenu(); 
 	else
 		AppendMenu(menu, MF_SEPARATOR , 0, NULL);
+        HMENU subMenuju=CreatePopupMenu();//подменю juick
+		AppendMenu(subMenuju, MF_STRING, JUICK_NUM, L"#пост" );
+		AppendMenu(subMenuju, MF_STRING, JUICK_COM, L"#пост/коммент." );
+		AppendMenu(subMenuju, MF_STRING, JUICK_COM_K, L"пост+коммент." );
+		AppendMenu(subMenuju, MF_STRING, JUICK_NUM_U, L"отписаться #пост" );
 
 	if(mucak)AppendMenu(menu, MF_STRING , CGETNICK, L"Ответить" );
 	AppendMenu(menu, MF_STRING, CQUOTE, L"Цитировать" );
 	AppendMenu(menu, MF_SEPARATOR , 0, NULL);
 	AppendMenu(menu, MF_STRING, WM_COPY, L"Копировать" );
 	AppendMenu(menu, MF_STRING, GOTOURL, L"Открыть url" );
+	AppendMenu(menu, MF_SEPARATOR , 0, NULL);
+	AppendMenu(menu, MF_POPUP, (LPARAM)subMenuju, TEXT("juick"));
 	AppendMenu(menu, MF_SEPARATOR , 0, NULL);
 	AppendMenu(menu, (singleLine)? MF_STRING  :  MF_STRING | MF_CHECKED, IDOK, L"Свернуть" );
 	AppendMenu(menu, (smiles)? MF_STRING | MF_CHECKED  :  MF_STRING, IDM_SMILES, L"Смайлы" );
@@ -1129,7 +1168,8 @@ bool MessageElement::OnMenuCommand(int cmdId, HWND parent, HWND edithwnd){
                 } else LocalFree(hmem);
                 return true;
             }
-			
+
+		
      case GOTOURL:
 		 {
       
@@ -1163,7 +1203,160 @@ bool MessageElement::OnMenuCommand(int cmdId, HWND parent, HWND edithwnd){
 				if(!singleLine){init();return true;}
                 //
             }
-        case IDM_SMILES:
+		 case JUICK_COM_K:
+			 {std::wstring copy=wstr;
+                // striping formating
+                size_t i=0;
+                while (i<copy.length()) {
+                    if (copy[i]<0x09) {
+                        copy.erase(i,1);
+                        continue;
+                    }
+                    i++;
+                }
+								if(copy.find(L"http://juick.com/")!=-1){
+					
+					copy.erase(0,copy.rfind(L"http://juick.com/"));
+					copy.erase(0,copy.rfind('/')+1);
+					i=0;
+					while (i<copy.length()) {
+                    if (copy[i]==' ') {
+                        copy.erase(i,copy.length());
+                        continue;
+                    }
+                    i++;
+                }
+					i=0;
+					while (i<copy.length()) {
+						if (copy[i]=='#') {
+							copy.erase(i,copy.length());
+                        continue;
+                    }
+                    i++;
+					}
+					copy.insert(0,L"#");
+					copy+=L"+";
+				//if(copy.rfind(' '))copy.erase(copy.rfind(' '));
+					SendMessage(edithwnd, WM_SETTEXT, 1, (LPARAM)copy.c_str());
+					SendMessage(edithwnd, JUICK_SEND, 0, 0);
+								}
+				SetFocus(edithwnd);
+					  return true;
+			 }
+			 case JUICK_NUM_U:
+			 {std::wstring copy=wstr;
+                // striping formating
+                size_t i=0;
+                while (i<copy.length()) {
+                    if (copy[i]<0x09) {
+                        copy.erase(i,1);
+                        continue;
+                    }
+                    i++;
+                }
+								if(copy.find(L"http://juick.com/")!=-1){
+					
+					copy.erase(0,copy.rfind(L"http://juick.com/"));
+					copy.erase(0,copy.rfind('/')+1);
+					i=0;
+					while (i<copy.length()) {
+                    if (copy[i]==' ') {
+                        copy.erase(i,copy.length());
+                        continue;
+                    }
+                    i++;
+                }
+					i=0;
+					while (i<copy.length()) {
+						if (copy[i]=='#') {
+							copy.erase(i,copy.length());
+                        continue;
+                    }
+                    i++;
+					}
+					copy.insert(0,L"U #");
+				//if(copy.rfind(' '))copy.erase(copy.rfind(' '));
+					SendMessage(edithwnd, WM_SETTEXT, 1, (LPARAM)copy.c_str());}
+				SetFocus(edithwnd);
+					  return true;
+			 }
+			 case JUICK_NUM:
+			 {std::wstring copy=wstr;
+                // striping formating
+                size_t i=0;
+                while (i<copy.length()) {
+                    if (copy[i]<0x09) {
+                        copy.erase(i,1);
+                        continue;
+                    }
+                    i++;
+                }
+								if(copy.find(L"http://juick.com/")!=-1){
+					
+					copy.erase(0,copy.rfind(L"http://juick.com/"));
+					copy.erase(0,copy.rfind('/')+1);
+					i=0;
+					while (i<copy.length()) {
+                    if (copy[i]==' ') {
+                        copy.erase(i,copy.length());
+                        continue;
+                    }
+                    i++;
+                }
+					i=0;
+					while (i<copy.length()) {
+						if (copy[i]=='#') {
+							copy.erase(i,copy.length());
+                        continue;
+                    }
+                    i++;
+					}
+					copy.insert(0,L"#");
+				//if(copy.rfind(' '))copy.erase(copy.rfind(' '));
+					SendMessage(edithwnd, WM_SETTEXT, 1, (LPARAM)copy.c_str());}
+				SetFocus(edithwnd);
+					  return true;
+			 }
+		 case JUICK_COM:
+			 {std::wstring copy=wstr;
+                // striping formating
+                size_t i=0;
+                while (i<copy.length()) {
+                    if (copy[i]<0x09) {
+                        copy.erase(i,1);
+                        continue;
+                    }
+                    i++;
+                }
+				if(copy.find(L"http://juick.com/")!=-1){
+					
+					copy.erase(0,copy.rfind(L"http://juick.com/"));
+					copy.erase(0,copy.rfind('/')+1);
+					i=0;
+					while (i<copy.length()) {
+                    if (copy[i]==' ') {
+                        copy.erase(i,copy.length());
+                        continue;
+                    }
+                    i++;
+                }
+					i=0;
+					while (i<copy.length()) {
+						if (copy[i]=='#') {
+							copy.replace(i,1,L"/");
+                        continue;
+                    }
+                    i++;
+					}
+					copy.insert(0,L"#");
+				//if(copy.rfind(' '))copy.erase(copy.rfind(' '));
+					SendMessage(edithwnd, WM_SETTEXT, 1, (LPARAM)copy.c_str());}
+				SetFocus(edithwnd);
+					  return true;
+			 
+			 }
+			
+         case IDM_SMILES:
             {
                 smiles=!smiles;
 				if(smiles){init();return true;}
@@ -1175,7 +1368,7 @@ bool MessageElement::OnMenuCommand(int cmdId, HWND parent, HWND edithwnd){
                 return true;
             }
 		case CCLRMSGS:{
-			PostMessage(chatHWND, CLEARMESS, NULL, false);
+			PostMessage(edithwnd, CLEARMESS, NULL, false);
 			return true;}
 		case CGETNICK:{
 			if (!edithwnd) return true;

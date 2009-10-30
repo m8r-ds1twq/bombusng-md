@@ -235,7 +235,14 @@
 #define ID_32806                        42360
 #define NEWS                            42362
 #define CLEARMESS                       42365
-#define CLEAR2M                         42366
+#define JUICK_COM                       42366
+#define JUICK_NUM                       42367
+#define JUICK_SEND						42368
+#define CLEARME						    42369
+#define CLEARED					    	42370
+#define JUICK_COM_K                     42371
+#define JUICK_COMMAND                   42372
+#define JUICK_NUM_U                     42373
 
 // Next default values for new objects
 // 
