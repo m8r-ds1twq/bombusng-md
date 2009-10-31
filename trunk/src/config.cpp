@@ -84,19 +84,23 @@ void Config::serialize( Serialize &s ) {
 	s.streamInt(tolshina, 400);							// толщина ? 
 
 	// настройка высоты и ширины шрифтов для qVGA для VGA 
-	if (sysinfo::screenIsVGA())
+	if (sysinfo::screenIsWVGA())
 	{
+		s.streamInt(msg_font_height,26);					// высота
+		s.streamInt(msg_font_width,12);
+		s.streamInt(roster_font_height,26);
+		s.streamInt(roster_font_width,12);
+	} else if (sysinfo::screenIsVGA())	{
 		s.streamInt(msg_font_height,24);					// высота
 		s.streamInt(msg_font_width,10);
 		s.streamInt(roster_font_height,24);
 		s.streamInt(roster_font_width,10);
-	} else {
+	} else 	{
 		s.streamInt(msg_font_height,14);					// высота
 		s.streamInt(msg_font_width,5);
-
 		s.streamInt(roster_font_height,16);
 		s.streamInt(roster_font_width,6);
-	}
+	};
 
 	s.streamInt(time_avtostatus,300);
 	s.streamInt(ping_aliv,150);
@@ -109,6 +113,7 @@ void Config::serialize( Serialize &s ) {
 	s.streamBool(his_ch_d, true);
 	s.streamBool(tune_status_pep, true);
     s.streamBool(xmllog, false);
+	s.streamInt(vibra_port, 0);
 
 }
 

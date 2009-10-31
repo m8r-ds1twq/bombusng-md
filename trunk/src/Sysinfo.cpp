@@ -25,12 +25,12 @@ const std::string sysinfo::getOsVersion() {
     if (osv.dwMajorVersion==4 && osv.dwMinorVersion>=21) name="WindowsMobile 2003 SE";
     if (osv.dwMajorVersion==5 && osv.dwMinorVersion==1) name="WindowsMobile 5";
     if (osv.dwMajorVersion==5 && osv.dwMinorVersion==2) name="WindowsMobile 6/6.1";
-LPMEMORYSTATUS lpBuffer;
-lpBuffer->dwLength=sizeof(MEMORYSTATUS);
-GlobalMemoryStatus( lpBuffer);
-unsigned long Total=((unsigned long)lpBuffer->dwTotalPhys)>>20;
-unsigned long Avail=((unsigned long)lpBuffer->dwAvailPhys)>>20;
-		return boost::str(boost::format(format) 
+	LPMEMORYSTATUS lpBuffer;
+	lpBuffer->dwLength=sizeof(MEMORYSTATUS);
+	GlobalMemoryStatus( lpBuffer);
+	unsigned long Total=((unsigned long)lpBuffer->dwTotalPhys)>>20;
+	unsigned long Avail=((unsigned long)lpBuffer->dwAvailPhys)>>20;
+	return boost::str(boost::format(format) 
         % name 
         % osv.dwMajorVersion 
         % osv.dwMinorVersion
@@ -39,8 +39,8 @@ unsigned long Avail=((unsigned long)lpBuffer->dwAvailPhys)>>20;
 		% lpBuffer->dwMemoryLoad
 		% Avail
 		% Total
-        );
-		   
+    );
+	   
 }
 
 bool sysinfo::screenIsRotate()
@@ -56,4 +56,15 @@ bool sysinfo::screenIsVGA() {
     RECT ws;
     SystemParametersInfo(SPI_GETWORKAREA, sizeof(ws), &ws, 0);
     return (ws.right - ws.left > 320); // VGA will have 480 or 640 pixels width
+}
+
+bool sysinfo::screenIsWVGA() {
+	RECT ws;
+	SystemParametersInfo(SPI_GETWORKAREA, sizeof(ws), &ws, 0);
+	return ((ws.right==480) & (ws.bottom>=800));
+/*	{	return true;	
+	}	else	{
+		return false;
+	}
+//	ws.*/
 }

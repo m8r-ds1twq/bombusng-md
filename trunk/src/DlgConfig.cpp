@@ -16,6 +16,8 @@
 #include "utf8.hpp"
 #include "stringutils.h"
 
+#include <nled.h>
+
 //////////////////////////////////////////////////////////////////////////////////
 wchar_t *statusNames2 []= { TEXT(" "),
     TEXT("Online"),         TEXT("Free for chat"),  TEXT("Away"), 
@@ -93,6 +95,33 @@ void DialogConfigMP(HINSTANCE g_hInst, HWND parent) {
     Config::getInstance()->save();
 }
 
+extern "C" { 
+    BOOL WINAPI NLedGetDeviceInfo( UINT nInfoId, void *pOutput ); 
+    BOOL WINAPI NLedSetDevice( UINT nDeviceId, void *pInput ); 
+};
+
+//http://4pda.ru/forum/index.php?showtopic=112068
+//code by constv http://4pda.ru/forum/index.php?showuser=151002
+UINT GetVibratorLedNum(void)//-1 means no vibrator
+{ 
+    NLED_COUNT_INFO nci;  
+    UINT wCount = 0,
+        VibrLed = -1;  
+    NLED_SUPPORTS_INFO sup;  
+    if(NLedGetDeviceInfo(0, (PVOID) &nci))  
+        wCount = (UINT) nci.cLeds;     
+    for (UINT i=0; i<wCount; i++) 
+    {  
+        sup.LedNum = i;   
+        NLedGetDeviceInfo(1,&sup);  
+        if (sup.lCycleAdjust == -1)  
+        {   
+            VibrLed = i;   
+            break;
+        } 
+    } 
+    return VibrLed;
+}
 
 INT_PTR CALLBACK DlgProcConfig(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam, int npage) {
     switch (message) {
@@ -114,7 +143,7 @@ INT_PTR CALLBACK DlgProcConfig(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
                 SetDlgCheckBox(hDlg, IDC_X_CLIENT, cfg->confclient);
 				SetDlgCheckBox(hDlg, IDC_XML_LOG, cfg->xmllog);
 				SetDlgItemInt(hDlg, IDC_X_AWAT,cfg->avatarWidth, false);
-				
+				SetDlgItemInt(hDlg, IDC_VIBRA, cfg->vibra_port, false);
 
 				
             }
@@ -170,15 +199,14 @@ INT_PTR CALLBACK DlgProcConfig(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
 				SetDlgCheckBox(hDlg, IDC_X_PRESENCESORT, cfg->sortByStatus);
 				SetDlgCheckBox(hDlg, IDC_AVTOSTATUS, cfg->avtostatus);
 				SetDlgItemInt(hDlg, IDC_TIME_AVTOSTATUS,cfg->time_avtostatus, false);
- for (int i=0; i<6; i++)
-                SendDlgItemMessage(hDlg,IDC_ID_AVTOSTATUS, CB_ADDSTRING, 0, (LPARAM) statusNames2[i]);
-            SendDlgItemMessage(hDlg, IDC_ID_AVTOSTATUS, CB_SETCURSEL, cfg->id_avtostatus, 0);
-            SetDlgItemText(hDlg, IDC_AVTOSTATUS_MESS, cfg->avtomessage);
-			SetDlgCheckBox(hDlg, IDM_SHOW_STATUS_IN_MUC, cfg->showMucPresences);
-                SetDlgCheckBox(hDlg, IDM_SHOW_STATUS_IN_SIMPLE_CHAT, cfg->showStatusInSimpleChat);
+				for (int i=0; i<6; i++)
+					SendDlgItemMessage(hDlg,IDC_ID_AVTOSTATUS, CB_ADDSTRING, 0, (LPARAM) statusNames2[i]);
+				SendDlgItemMessage(hDlg, IDC_ID_AVTOSTATUS, CB_SETCURSEL, cfg->id_avtostatus, 0);
+				SetDlgItemText(hDlg, IDC_AVTOSTATUS_MESS, cfg->avtomessage);
+				SetDlgCheckBox(hDlg, IDM_SHOW_STATUS_IN_MUC, cfg->showMucPresences);
+				SetDlgCheckBox(hDlg, IDM_SHOW_STATUS_IN_SIMPLE_CHAT, cfg->showStatusInSimpleChat);
 				SetDlgCheckBox(hDlg, IDC_TUN_STATUS, cfg->tune_status);
 				SetDlgCheckBox(hDlg, IDC_TUN_PEP, cfg->tune_status_pep);
-			
 			}
             //finally
         }
@@ -200,7 +228,9 @@ INT_PTR CALLBACK DlgProcConfig(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
 					
 					cfg->avatarWidth = GetDlgItemInt(hDlg, IDC_X_AWAT, &awat1 , false);
 					if (!awat1) cfg->avatarWidth = 50;
-
+					BOOL vibra_port;
+					cfg->vibra_port = GetDlgItemInt(hDlg, IDC_VIBRA, &vibra_port, false);
+					if (!vibra_port) cfg->vibra_port = 0;
 				
                 }
                 if (npage==1) {
@@ -295,6 +325,9 @@ INT_PTR CALLBACK DlgProcConfig(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
         if (LOWORD(wParam) == IDCANCEL) {
             return TRUE;
         }
+		if (LOWORD(wParam) == IDC_GETVIBRA) {
+			SetDlgItemInt(hDlg, IDC_VIBRA, GetVibratorLedNum(), false);
+		}
         break;
     }
     return (INT_PTR)FALSE;

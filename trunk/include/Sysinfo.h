@@ -5,5 +5,6 @@
 namespace sysinfo {
 const std::string getOsVersion();
 bool screenIsVGA();
+bool screenIsWVGA();
 bool screenIsRotate();
 }

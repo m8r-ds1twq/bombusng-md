@@ -15,7 +15,7 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// Russian resources
+// русский resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_RUS)
 #ifdef _WIN32
@@ -279,7 +279,10 @@ BEGIN
     LTEXT           "Размер аватарок",-1,11,44,69,10
     EDITTEXT        IDC_X_AWAT,87,42,18,12,ES_LOWERCASE | ES_AUTOHSCROLL
     CONTROL         "Показ клиентов",IDC_X_CLIENT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,11,31,70,10
-    CONTROL         "XML лог",IDC_XML_LOG,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,11,58,42,10
+    CONTROL         "XML лог",IDC_XML_LOG,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,11,67,42,10
+    LTEXT           "Порт вибры",-1,11,56,69,10
+    EDITTEXT        IDC_VIBRA,87,55,18,12,ES_LOWERCASE | ES_AUTOHSCROLL
+    PUSHBUTTON      "Авто",IDC_GETVIBRA,107,54,45,14
 END
 
 IDD_OPTIONS2 DIALOG  0, 0, 156, 129
@@ -718,7 +721,7 @@ BEGIN
     IDS_SEND                "Send"
 END
 
-#endif    // Russian resources
+#endif    // русский resources
 /////////////////////////////////////////////////////////////////////////////
 
 
