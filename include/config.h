@@ -129,6 +129,7 @@ pathes from extraterrestrial:
 	bool saveHistoryHtml;
 	int id_avtostatus;
     void save();
+	int vibra_port;
 private:
     void serialize(Serialize &s);
     static Config::ref instance;

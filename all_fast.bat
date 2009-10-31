@@ -1,4 +1,4 @@
-rem @echo off
+@echo off
 del /s /q dist
 mkdir dist
 mkdir dist/asis

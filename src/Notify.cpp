@@ -68,29 +68,6 @@ extern "C" {
 
 void doSmartPhoneVibra();
 
-//http://4pda.ru/forum/index.php?showtopic=112068
-//code by constv http://4pda.ru/forum/index.php?showuser=151002
-UINT GetVibratorLedNum(void)//-1 means no vibrator
-{ 
-    NLED_COUNT_INFO nci;  
-    UINT wCount = 0,
-        VibrLed = -1;  
-    NLED_SUPPORTS_INFO sup;  
-    if(NLedGetDeviceInfo(0, (PVOID) &nci))  
-        wCount = (UINT) nci.cLeds;     
-    for (UINT i=0;i<wCount;i++) 
-    {  
-        sup.LedNum = i;   
-        NLedGetDeviceInfo(1,&sup);  
-        if (sup.lCycleAdjust == -1)  
-        {   
-            VibrLed = i;   
-            break;
-        } 
-    } 
-    return VibrLed;
-}
-
 #ifdef _WIN32_WCE
 	DWORD vibraThread(LPVOID param) {
 #else
@@ -98,7 +75,7 @@ UINT GetVibratorLedNum(void)//-1 means no vibrator
 #endif
 
     NLED_SETTINGS_INFO nsi;
-    nsi.LedNum=GetVibratorLedNum();
+    nsi.LedNum=Config::getInstance()->vibra_port;//GetVibratorLedNum();
     nsi.OnTime=1000;
     nsi.OffTime=300;
     nsi.TotalCycleTime=1300;

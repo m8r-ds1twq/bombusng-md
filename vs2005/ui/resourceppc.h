@@ -126,6 +126,7 @@
 #define IDC_SOUND_STATUS2               1057
 #define IDC_VS_STATUS                   1057
 #define IDC_TIME_AVTOSTATUS             1057
+#define IDC_VIBRA                       1057
 #define IDC_VS_CONFCHAT                 1058
 #define IDC_AVTOSTATUS_MESS             1058
 #define IDC_ID_AVTOSTATUS               1059
@@ -147,6 +148,8 @@
 #define IDC_MES_ACTIV                   1074
 #define IDOK_3                          1075
 #define IDOK_1                          1076
+#define IDC_BUTTON1                     1077
+#define IDC_GETVIBRA                    1077
 #define IDC_AHW                         1095
 #define IDC_X_HISTORY                   1098
 #define IDC_X_SIP                       1099
@@ -251,7 +254,7 @@
 #define _APS_NO_MFC                     1
 #define _APS_NEXT_RESOURCE_VALUE        140
 #define _APS_NEXT_COMMAND_VALUE         32827
-#define _APS_NEXT_CONTROL_VALUE         1077
+#define _APS_NEXT_CONTROL_VALUE         1078
 #define _APS_NEXT_SYMED_VALUE           116
 #endif
 #endif
