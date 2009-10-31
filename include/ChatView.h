@@ -25,6 +25,7 @@ public:
 	void sendJabberMessagesb();//c темой
     void mucNickComplete();
     void setComposingState(bool composing);
+	void comstr(int comnum);
     //virtual const wchar_t * getWindowTitle() const;
     virtual const ODR * getODR() const;
 
