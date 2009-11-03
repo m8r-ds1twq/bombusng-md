@@ -446,7 +446,7 @@ Skin * il= dynamic_cast<Skin *>(skin.get());
             break; 
         } 
 	case COMMAND_STR://обработка вставки быстрых команд
-		{p->comstr((int)wParam);}
+		{p->comstr((int)wParam);break;}
 	case JUICK_COMMAND:{
 		if((int)wParam==0)
 			{SendMessage(p->editWnd, WM_SETTEXT, 1, (LPARAM) L"#+");
