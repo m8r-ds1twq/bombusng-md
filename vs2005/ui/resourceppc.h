@@ -101,11 +101,13 @@
 #define IDC_X_COMPOSING                 1045
 #define IDC_AVTOSTATUS                  1045
 #define IDC_X_SOUNDS                    1046
+#define IDC_DOPINFA                     1046
 #define IDC_X_VIBRA                     1047
 #define IDC_X_DIALUP                    1048
 #define IDC_SIP1                        1049
 #define IDC_X_BLINK1                    1049
 #define IDC_X_AUTOCONNECT               1050
+#define IDC_X_SMUC                      1050
 #define IDC_X_MSG_FONT_HEIGHT           1051
 #define IDC_X_SOUNDS3                   1051
 #define IDC_X_BLINK2                    1051
@@ -150,6 +152,7 @@
 #define IDOK_1                          1076
 #define IDC_BUTTON1                     1077
 #define IDC_GETVIBRA                    1077
+#define IDC_AUTOJOINROOM2               1078
 #define IDC_AHW                         1095
 #define IDC_X_HISTORY                   1098
 #define IDC_X_SIP                       1099
@@ -240,13 +243,13 @@
 #define CLEARMESS                       42365
 #define JUICK_COM                       42366
 #define JUICK_NUM                       42367
-#define JUICK_SEND						42368
-#define CLEARME						    42369
-#define CLEARED					    	42370
+#define JUICK_SEND                      42368
+#define CLEARME                         42369
+#define CLEARED                         42370
 #define JUICK_COM_K                     42371
 #define JUICK_COMMAND                   42372
 #define JUICK_NUM_U                     42373
-#define MSGListFocus					42374
+#define MSGListFocus                    42374
 
 // Next default values for new objects
 // 
@@ -255,7 +258,7 @@
 #define _APS_NO_MFC                     1
 #define _APS_NEXT_RESOURCE_VALUE        140
 #define _APS_NEXT_COMMAND_VALUE         32827
-#define _APS_NEXT_CONTROL_VALUE         1078
+#define _APS_NEXT_CONTROL_VALUE         1079
 #define _APS_NEXT_SYMED_VALUE           116
 #endif
 #endif
