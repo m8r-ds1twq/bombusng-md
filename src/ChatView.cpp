@@ -178,7 +178,16 @@ long WINAPI EditSubClassProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) 
         if (wParam==VK_SHIFT)   editbox::editBoxShifts=true;
 		if ((wParam==VK_LEFT) && (SendMessage (hWnd, EM_LINELENGTH,(WPARAM)0, (LPARAM)0)==0)) PostMessage(GetParent(GetParent(hWnd)), WM_COMMAND, TabsCtrl::PREVTAB, 0);
 		if ((wParam==VK_RIGHT) && (SendMessage (hWnd, EM_LINELENGTH,(WPARAM)0, (LPARAM)0)==0))  PostMessage(GetParent(GetParent(hWnd)), WM_COMMAND, TabsCtrl::NEXTTAB, 0);
-             
+		if (wParam==VK_UP) //выводит фокус обратно в сообщения
+		{
+			//этот способ реализации подсказал skipyrich :)
+			int ndx1 = 0, ndx2 = 0;
+			SendMessage (hWnd, EM_GETSEL, (WPARAM)&ndx1, (LPARAM)&ndx2);
+			int len = SendMessage (hWnd, EM_LINELENGTH,(WPARAM)0, (LPARAM)0);	//вычисляем длину строки 
+			if (ndx1<=len) //отправляем сообщение о необходимости выделить MessageList
+				PostMessage(GetParent(hWnd), WM_COMMAND, (WPARAM)MSGListFocus, (LPARAM)0);	
+		}
+
         break; 
 
     case WM_KEYUP:
@@ -283,21 +292,25 @@ LRESULT CALLBACK ChatView::WndProc( HWND hWnd, UINT message, WPARAM wParam, LPAR
 			 }*/
 			 RECT rc ;
 			rc.top=0;rc.left=0;
-if (!sysinfo::screenIsVGA()) {
-	rc.right=200;
-	rc.bottom=(boost::dynamic_pointer_cast<MucRoom>(p->contact)?tabHeight:50) ;}else{rc.right=390;
-	rc.bottom=(boost::dynamic_pointer_cast<MucRoom>(p->contact)?tabHeight:50) ;}
+			if (!sysinfo::screenIsVGA()) {
+					rc.right=200;
+					rc.bottom=(boost::dynamic_pointer_cast<MucRoom>(p->contact)?tabHeight:50) ;
+			} else {
+					rc.right=390;
+					rc.bottom=(boost::dynamic_pointer_cast<MucRoom>(p->contact)?tabHeight:50) ;
+			}
 			SetBkMode(hdc, TRANSPARENT);
-            SetTextColor(hdc, p->contact->getColor());
+			SetTextColor(hdc, p->contact->getColor());
             //p->contact->draw(hdc, rc);
-LONG avWidth=0;
-LONG avHeight=0;
+			LONG avWidth=0;
+			LONG avHeight=0;
 			int iconIdx=p->contact->getIconIndex();
-			if(!muc){std::string avatarsjid=p->contact->rosterJid;
-size_t i2=0;
+			if(!muc){
+				std::string avatarsjid=p->contact->rosterJid;
+				size_t i2=0;
                 while (i2<avatarsjid.length()) {
                     if (avatarsjid[i2]=='/') {
-                       avatarsjid[i2]='.';
+						avatarsjid[i2]='.';
                         continue;
                     }
                     i2++;
@@ -495,6 +508,21 @@ Skin * il= dynamic_cast<Skin *>(skin.get());
 			if (wParam==CLEARED) {
                 SendMessage(p->editWnd, WM_SETTEXT, 1, (LPARAM) L"");
             }
+			
+			if (wParam==MSGListFocus) {
+				/*
+				ODRRef a = p->msgList->getCursorPos();
+				// определить что a несуществует
+				// тоесть ничего не выделено
+				// иначе приходится два раза нажимать чтобы было видно курсор в поле 
+				if (a ???? )
+				{
+					p->msgList->moveCursorEnd();
+					p->msgList->notifyListUpdate(true);
+				}
+				*/
+				SendMessage(p->msgList->getHWnd(), MSGListFocus, 0, 0);
+			}
 
             break;             
         }
