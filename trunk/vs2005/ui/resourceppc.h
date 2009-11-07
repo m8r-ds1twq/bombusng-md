@@ -246,6 +246,7 @@
 #define JUICK_COM_K                     42371
 #define JUICK_COMMAND                   42372
 #define JUICK_NUM_U                     42373
+#define MSGListFocus					42374
 
 // Next default values for new objects
 // 

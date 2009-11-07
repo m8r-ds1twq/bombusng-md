@@ -11,6 +11,7 @@ extern TabsCtrlRef tabs;
 extern HINSTANCE			g_hInst;
 #define VK_3 0x33
 #define VK_9 0x39
+#define MSGListFocus					42374
 extern int tabHeight;
 extern int COLORS[];
 ATOM VirtualListView::RegisterWindowClass() {
@@ -171,13 +172,20 @@ LRESULT CALLBACK VirtualListView::WndProc( HWND hWnd, UINT message, WPARAM wPara
             break; 
         } 
 
+	case MSGListFocus:
+		{
+			SetFocus(hWnd);
+			break;
+		}
+
+
     case WM_LBUTTONDOWN:
         {
-            SetFocus(hWnd);
+			SetFocus(hWnd);
             ODRRef focused=p->moveCursorTo(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
             if (!(focused)) break;
             InvalidateRect(p->getHWnd(), NULL, true);
-
+			
             SHRGINFO    shrg;
             shrg.cbSize = sizeof(shrg);
             shrg.hwndClient = hWnd;
@@ -211,6 +219,7 @@ LRESULT CALLBACK VirtualListView::WndProc( HWND hWnd, UINT message, WPARAM wPara
 
                 DestroyMenu(hmenu);
             }
+			
             break;
         }
     case WM_LBUTTONDBLCLK:
@@ -313,16 +322,17 @@ LRESULT CALLBACK VirtualListView::WndProc( HWND hWnd, UINT message, WPARAM wPara
                 p->moveCursor(-1);
                 break;
 				case VK_DOWN: 
-                p->moveCursor(1);
+					/* UFO START */
+					// переключаем фокус в поле ввода после второго нажатия кнопки вниз на последнем сообщении
+					if (p->cursorAtEnd() && IsWindow(p->hEditBox) ) SetFocus(p->hEditBox);
+					/* UFO END */
+					p->moveCursor(1);
                 break;
 
-           
-
-
-                        case VK_RETURN:
-                if (lkeyData &0xc0000000) break;
-                p->eventOk();
-                                break;
+                case VK_RETURN:
+					if (lkeyData &0xc0000000) break;
+					p->eventOk();
+				break;
 			}
             if(kl2)p->cursorFit();
             InvalidateRect(p->getHWnd(), NULL, true);
