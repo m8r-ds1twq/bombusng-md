@@ -137,6 +137,7 @@ INT_PTR CALLBACK DlgProcConfig(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
             Config::ref cfg=Config::getInstance();
 
             if (npage==0) {
+				SetDlgCheckBox(hDlg, IDC_AUTOJOINROOM2, cfg->autojoinroom);
                 SetDlgCheckBox(hDlg, IDC_X_OFFLINES, cfg->showOfflines);
                 SetDlgCheckBox(hDlg, IDC_X_GROUPS, cfg->showGroups);
                 
@@ -144,7 +145,7 @@ INT_PTR CALLBACK DlgProcConfig(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
 				SetDlgCheckBox(hDlg, IDC_XML_LOG, cfg->xmllog);
 				SetDlgItemInt(hDlg, IDC_X_AWAT,cfg->avatarWidth, false);
 				SetDlgItemInt(hDlg, IDC_VIBRA, cfg->vibra_port, false);
-
+				SetDlgCheckBox(hDlg, IDC_DOPINFA, cfg->dop_infa);
 				
             }
             if (npage==1) {
@@ -173,6 +174,7 @@ INT_PTR CALLBACK DlgProcConfig(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
 				SetDlgCheckBox(hDlg, IDC_X_VSMESS, cfg->vsmess);
 				SetDlgCheckBox(hDlg, IDC_X_VSTRYMESS, cfg->vstrymess);
 				SetDlgCheckBox(hDlg, IDC_VS_CONFCHAT, cfg->confchat);
+				SetDlgCheckBox(hDlg, IDC_X_SMUC, cfg->signals_muc );
 
 			}
             if (npage==3) {
@@ -195,7 +197,7 @@ INT_PTR CALLBACK DlgProcConfig(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
 				*/
             }
 			if (npage==4) {
-				SetDlgCheckBox(hDlg, IDC_AUTOJOINROOM, cfg->autojoinroom);				
+								
 				SetDlgCheckBox(hDlg, IDC_X_PRESENCESORT, cfg->sortByStatus);
 				SetDlgCheckBox(hDlg, IDC_AVTOSTATUS, cfg->avtostatus);
 				SetDlgItemInt(hDlg, IDC_TIME_AVTOSTATUS,cfg->time_avtostatus, false);
@@ -222,10 +224,10 @@ INT_PTR CALLBACK DlgProcConfig(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
                 if (npage==0) {BOOL awat1;
                     GetDlgCheckBox(hDlg, IDC_X_OFFLINES, cfg->showOfflines);
                     GetDlgCheckBox(hDlg, IDC_X_GROUPS, cfg->showGroups);
-
+					GetDlgCheckBox(hDlg, IDC_AUTOJOINROOM2, cfg->autojoinroom);
                     GetDlgCheckBox(hDlg, IDC_X_CLIENT, cfg->confclient);
 					GetDlgCheckBox(hDlg, IDC_XML_LOG, cfg->xmllog);
-					
+					GetDlgCheckBox(hDlg, IDC_DOPINFA, cfg->dop_infa);
 					cfg->avatarWidth = GetDlgItemInt(hDlg, IDC_X_AWAT, &awat1 , false);
 					if (!awat1) cfg->avatarWidth = 50;
 					BOOL vibra_port;
@@ -247,6 +249,7 @@ INT_PTR CALLBACK DlgProcConfig(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
 					GetDlgCheckBox(hDlg, IDC_X_HIS_MUCD, cfg->his_muc_d);
 					GetDlgCheckBox(hDlg, IDC_X_HIS_CH_D, cfg->his_ch_d);
 					
+					
 
                 }
                 if (npage==2) {
@@ -260,6 +263,7 @@ INT_PTR CALLBACK DlgProcConfig(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
 					GetDlgCheckBox(hDlg, IDC_X_VSMESS, cfg->vsmess);
 					GetDlgCheckBox(hDlg, IDC_X_VSTRYMESS, cfg->vstrymess);
 					GetDlgCheckBox(hDlg, IDC_VS_CONFCHAT, cfg->confchat);
+					GetDlgCheckBox(hDlg, IDC_X_SMUC, cfg->signals_muc);
                 }
                 if (npage==3) {
                     GetDlgCheckBox(hDlg, IDC_X_AUTOCONNECT, cfg->connectOnStartup);
@@ -297,7 +301,7 @@ INT_PTR CALLBACK DlgProcConfig(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
 
 				}
 				if (npage==4) {BOOL stat2;
-				GetDlgCheckBox(hDlg, IDC_AUTOJOINROOM, cfg->autojoinroom);
+				
 				GetDlgCheckBox(hDlg, IDC_X_PRESENCESORT, cfg->sortByStatus);
 				GetDlgCheckBox(hDlg, IDC_AVTOSTATUS, cfg->avtostatus);
 					cfg->time_avtostatus = GetDlgItemInt(hDlg, IDC_TIME_AVTOSTATUS, &stat2 , false);

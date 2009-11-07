@@ -1238,7 +1238,7 @@ ProcessResult Version::blockArrived(JabberDataBlockRef block, const ResourceCont
 	std::string vga;
 	if(sysinfo::screenIsVGA()){vga.append(" VGA ");}else{vga.append(" QVGA ");}
 	std::string version=sysinfo::getOsVersion()+vga;
-
+	
  
 
     JabberDataBlock result("iq");
@@ -1249,7 +1249,7 @@ ProcessResult Version::blockArrived(JabberDataBlockRef block, const ResourceCont
 
     query->addChild("name",::appName.c_str());
     query->addChild("version",::appVersion.c_str());
-    query->addChild("os",version.c_str());
+    if(Config::getInstance()->dop_infa)query->addChild("os",version.c_str());
 
     rc->jabberStream->sendStanza(result);
     return BLOCK_PROCESSED;
@@ -1626,7 +1626,7 @@ AddNotification(hwnvs,(LPCTSTR)messn1.c_str(),0);
 		}
 
 		}
-if (mucMessage) {Notify::PlayNotify(1);}else{
+if (mucMessage) {if(Config::getInstance()->signals_muc)Notify::PlayNotify(1);}else{
 			Notify::PlayNotify(0);}
 	}
 
