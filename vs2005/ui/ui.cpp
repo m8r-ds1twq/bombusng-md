@@ -883,6 +883,7 @@ WndRef chat2;int result;
 					case IDM_STATUS_OFFLINE:
 						rc->status=presence::OFFLINE;
 						if (rc->roster)rc->roster->setMUCStatus(presence::OFFLINE);
+						
 						break;
 					}
 					idautostatus=0;
@@ -891,7 +892,13 @@ WndRef chat2;int result;
 					s.streamInt(rc->priority, 0);
 					rosterWnd->setIcon(rc->status);
 					rc->sendPresence();
+					
 					initJabber(rc);
+					if(wmId==IDM_STATUS_OFFLINE){closesocket(sok2);//закроем соединение чтоб не висеть невидимкой
+						rc->jabberStream->sendXmppEndHeader();
+						streamShutdown(rc); rc->jabberStream->connection->close();
+					
+					}
 					break;
 				/* !КОНЕЦ! статусов */ 
 			
@@ -909,10 +916,10 @@ WndRef chat2;int result;
 
 
 				case ID_SIGNALS_SOUNDANDVIBRA:
-					SendDlgItemMessage(hWnd,ID_SIGNALS_SOUNDANDVIBRA,BM_SETCHECK,1,0);
-					SendDlgItemMessage(hWnd,ID_SIGNALS_SOUND,BM_SETCHECK,0,0);
-					SendDlgItemMessage(hWnd,ID_SIGNALS_VIBRA,BM_SETCHECK,0,0);
-					SendDlgItemMessage(hWnd,ID_SIGNALS_MUTE,BM_SETCHECK,0,0);
+					SendDlgItemMessage(mainWnd,ID_SIGNALS_SOUNDANDVIBRA,BM_SETCHECK,1,0);
+					SendDlgItemMessage(mainWnd,ID_SIGNALS_SOUND,BM_SETCHECK,0,0);
+					SendDlgItemMessage(mainWnd,ID_SIGNALS_VIBRA,BM_SETCHECK,0,0);
+					SendDlgItemMessage(mainWnd,ID_SIGNALS_MUTE,BM_SETCHECK,0,0);
 //CheckMenuItem (hMenu, ID_SIGNALS_SOUNDANDVIBRA,
 //               MF_UNCHECKED);
 //CheckMenuItem (hMenu, ID_SIGNALS_SOUND,
@@ -926,10 +933,10 @@ CheckMenuItem (hMenu, ID_SIGNALS_MUTE,
 					break;
 				
 				case ID_SIGNALS_SOUND:
-					SendDlgItemMessage(hWnd,ID_SIGNALS_SOUNDANDVIBRA,BM_SETCHECK,0,0);
-					SendDlgItemMessage(hWnd,ID_SIGNALS_SOUND,BM_SETCHECK,1,0);
-					SendDlgItemMessage(hWnd,ID_SIGNALS_VIBRA,BM_SETCHECK,0,0);
-					SendDlgItemMessage(hWnd,ID_SIGNALS_MUTE,BM_SETCHECK,0,0);
+					SendDlgItemMessage(mainWnd,ID_SIGNALS_SOUNDANDVIBRA,BM_SETCHECK,0,0);
+					SendDlgItemMessage(mainWnd,ID_SIGNALS_SOUND,BM_SETCHECK,1,0);
+					SendDlgItemMessage(mainWnd,ID_SIGNALS_VIBRA,BM_SETCHECK,0,0);
+					SendDlgItemMessage(mainWnd,ID_SIGNALS_MUTE,BM_SETCHECK,0,0);
 					/*CheckMenuItem (hMenu, ID_SIGNALS_SOUNDANDVIBRA,
                MF_CHECKED);
 CheckMenuItem (hMenu, ID_SIGNALS_SOUND,
@@ -943,10 +950,10 @@ CheckMenuItem (hMenu, ID_SIGNALS_MUTE,
 					break;
 
 				case ID_SIGNALS_VIBRA:
-					SendDlgItemMessage(hWnd,ID_SIGNALS_SOUNDANDVIBRA,BM_SETCHECK,0,0);
-					SendDlgItemMessage(hWnd,ID_SIGNALS_SOUND,BM_SETCHECK,0,0);
-					SendDlgItemMessage(hWnd,ID_SIGNALS_VIBRA,BM_SETCHECK,1,0);
-					SendDlgItemMessage(hWnd,ID_SIGNALS_MUTE,BM_SETCHECK,0,0);
+					SendDlgItemMessage(mainWnd,ID_SIGNALS_SOUNDANDVIBRA,BM_SETCHECK,0,0);
+					SendDlgItemMessage(mainWnd,ID_SIGNALS_SOUND,BM_SETCHECK,0,0);
+					SendDlgItemMessage(mainWnd,ID_SIGNALS_VIBRA,BM_SETCHECK,1,0);
+					SendDlgItemMessage(mainWnd,ID_SIGNALS_MUTE,BM_SETCHECK,0,0);
 					/*
 					CheckMenuItem (hMenu, ID_SIGNALS_SOUNDANDVIBRA,
                MF_CHECKED);
@@ -961,10 +968,10 @@ CheckMenuItem (hMenu, ID_SIGNALS_MUTE,
 					break;
 
 				case ID_SIGNALS_MUTE:
-					SendDlgItemMessage(hWnd,ID_SIGNALS_SOUNDANDVIBRA,BM_SETCHECK,0,0);
-					SendDlgItemMessage(hWnd,ID_SIGNALS_SOUND,BM_SETCHECK,0,0);
-					SendDlgItemMessage(hWnd,ID_SIGNALS_VIBRA,BM_SETCHECK,0,0);
-					SendDlgItemMessage(hWnd,ID_SIGNALS_MUTE,BM_SETCHECK,1,0);
+					SendDlgItemMessage(mainWnd,ID_SIGNALS_SOUNDANDVIBRA,BM_SETCHECK,0,0);
+					SendDlgItemMessage(mainWnd,ID_SIGNALS_SOUND,BM_SETCHECK,0,0);
+					SendDlgItemMessage(mainWnd,ID_SIGNALS_VIBRA,BM_SETCHECK,0,0);
+					SendDlgItemMessage(mainWnd,ID_SIGNALS_MUTE,BM_SETCHECK,1,0);
 					/*
 					CheckMenuItem (hMenu, ID_SIGNALS_SOUNDANDVIBRA,
                MF_CHECKED);
@@ -1236,7 +1243,8 @@ ProcessResult Version::blockArrived(JabberDataBlockRef block, const ResourceCont
 
     Log::getInstance()->msg("version request ", block->getAttribute("from").c_str());
 	std::string vga;
-	if(sysinfo::screenIsVGA()){vga.append(" VGA ");}else{vga.append(" QVGA ");}
+	if(sysinfo::screenIsVGA()){
+		vga.append(" VGA ");}else{vga.append(" QVGA ");}
 	std::string version=sysinfo::getOsVersion()+vga;
 	
  
@@ -2041,8 +2049,8 @@ if(timealivid  ){if(timaliv>=(TIMER_ALIV+TIMER_ALIVP)){
 timealivid=0;//непришло
 timaliv=0;
 Log::getInstance()->msg("ERROR pong ",rc->account->getServer().c_str());
-//тут както надо реконект что ниже не пашет
-//MessageBox(mainWnd,  TEXT("Потеря связи перезапустите программу"),TEXT("Ошибка "), 0);
+//тут всё заработало уже-и незачем смеяца)))
+
 Notify::PlayNotify(5);Notify::PlayNotify(5);Notify::PlayNotify(5);
 if (reconnectTry > 0)
 		{Notify::PlayNotify(5);

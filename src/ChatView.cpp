@@ -1224,13 +1224,7 @@ bool MessageElement::OnMenuCommand(int cmdId, HWND parent, HWND edithwnd){
 
                 return true;
 		 }
-         case IDOK:
-            {
-                singleLine=!singleLine;
-                smiles=TRUE;
-				if(!singleLine){init();return true;}
-                //
-            }
+        
 		 case JUICK_COM_K:
 			 {std::wstring copy=wstr;
                 // striping formating
@@ -1383,7 +1377,13 @@ bool MessageElement::OnMenuCommand(int cmdId, HWND parent, HWND edithwnd){
 					  return true;
 			 
 			 }
-			
+		 case IDOK://это должно быть обязательно перед смайлами-они связаны
+            {
+                singleLine=!singleLine;
+                smiles=TRUE;
+				if(!singleLine){init();return true;}
+                //
+            }
          case IDM_SMILES:
             {
                 smiles=!smiles;

@@ -11,6 +11,7 @@ extern TabsCtrlRef tabs;
 extern HINSTANCE			g_hInst;
 #define VK_3 0x33
 #define VK_9 0x39
+#define VK_5 0x35
 #define MSGListFocus					42374
 extern int tabHeight;
 extern int COLORS[];
@@ -245,7 +246,37 @@ LRESULT CALLBACK VirtualListView::WndProc( HWND hWnd, UINT message, WPARAM wPara
             if (lkeyData & 0x80000000) break; //keyRelease 
             switch (vKey) {
                         /* UFO START */
-                        
+						case VK_5:{ODRRef focused=p->cursorPos;
+           if (!(focused)) break;
+            InvalidateRect(p->getHWnd(), NULL, true);
+			
+            
+
+                HMENU hmenu = p->getContextMenu();
+
+                VirtualListElement *velement=dynamic_cast<VirtualListElement *>(focused.get());
+                if (velement) hmenu=velement->getContextMenu(hmenu);
+
+                if (hmenu==NULL) break;
+
+                POINT pt={LOWORD(lParam), HIWORD(lParam) };
+                ClientToScreen(hWnd, &pt);
+                int cmdId=TrackPopupMenuEx(hmenu,
+                    /*TPM_LEFTALIGN |*/ TPM_TOPALIGN | TPM_RETURNCMD, 
+                    pt.x, pt.y,
+                    hWnd,
+                    NULL);
+
+                bool cmdProcessed=false;
+                if (velement) 
+					cmdProcessed=velement->OnMenuCommand(cmdId, p->getHWnd(), p->hEditBox);
+
+                if (!cmdProcessed)
+                    p->OnCommand(cmdId, NULL);
+
+                DestroyMenu(hmenu); break;
+							}
+
                         case VK_RIGHT:
                                 PostMessage(tabs->getHWnd(), WM_COMMAND, TabsCtrl::NEXTTAB, 0);
                                 break;
