@@ -135,7 +135,7 @@ long WINAPI EditSubClassProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) 
 				AppendMenu(subscrMenupJUIC, MF_STRING, 70006, TEXT("пинг") );
 				AppendMenu(subscrMenupJUIC, MF_STRING, 70007, TEXT("обн.инф. из vcard") );
 
-				if(linesCountcom)for(int r=1;r<linesCountcom;r=r+2)AppendMenu(subscrMenupCom, MF_STRING,r+40000 , utf8::utf8_wchar(strcom[r][0]).c_str());//добавляем все подпункты
+				if(linesCountcom)for(int r=0;r<linesCountcom;r=r+3)AppendMenu(subscrMenupCom, MF_STRING,r+40000 , utf8::utf8_wchar(strcom[r][1]).c_str());//добавляем все подпункты
 
 				//Собственно окно набора сообщения
                 AppendMenu(hmenu, (smileParser->hasSmiles())? MF_STRING : MF_STRING | MF_GRAYED, ADD_SMILE, TEXT("Смайлы"));
@@ -694,7 +694,7 @@ ATOM ChatView::windowClass=0;
 
 void ChatView::comstr(int comnum){//вставляем команду
 
-	SendMessage(editWnd, EM_REPLACESEL, TRUE, (LPARAM)utf8::utf8_wchar(strcom[comnum][0]).c_str());
+	SendMessage(editWnd, EM_REPLACESEL, TRUE, (LPARAM)utf8::utf8_wchar(strcom[(comnum)?comnum:comnum+1][0]).c_str());
 					}
 
 void ChatView::sendJabberMessage() {
@@ -1411,7 +1411,7 @@ bool MessageElement::OnMenuCommand(int cmdId, HWND parent, HWND edithwnd){
                     i++;
                 }
 				copy.erase(0,11);
-				copy.replace(copy.find('>'),copy.length(),L":");
+				copy.replace(copy.find('>'),copy.length(),L": ");
 				SendMessage(edithwnd, EM_REPLACESEL, TRUE, (LPARAM)copy.c_str());
 				SetFocus(edithwnd);
 					  return true;}

@@ -51,7 +51,7 @@ JabberDataBlockRef Message::constructStanza(const std::string &to) const {
 
 	std::string tmp=body;
 	size_t lenbody=tmp.length();
-	if(linesCountcom)for(int r=2;r<linesCountcom;r=r+2)//обрабатываем быстрые команды
+	if(linesCountcom)for(int r=3;r<linesCountcom;r=r+3)//обрабатываем быстрые команды
 		{lencom=strlen(strcom[r][0]);
 			if (tmp.find(strcom[r][0])==0) 
 			{
@@ -59,7 +59,7 @@ JabberDataBlockRef Message::constructStanza(const std::string &to) const {
 				 {
 				  bool flgc=1;
 					if(lenbody>lencom+1)flgc=0;
-				  if(flgc){tmp.replace(0, lencom, strcom[r][1]);}else{tmp.replace(0, lencom, strcom[r+1][1]);}
+				  if(flgc){tmp.replace(0, lencom, strcom[r+1][1]);}else{tmp.replace(0, lencom, strcom[r+2][1]);}
 					tmp.insert(0, "/me ");
 		        }
 			}
