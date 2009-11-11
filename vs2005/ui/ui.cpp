@@ -773,7 +773,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     PAINTSTRUCT ps;
     HDC hdc;
 WndRef chat2;int result;
-//HMENU hMenu = ::GetSubMenu (hWnd);
+
+HMENU hMenu = GetSubMenu(::GetMenu(mainWnd),1);
     static SHACTIVATEINFO s_sai;
 	Serialize s(L"config\\status", Serialize::READ);
     switch (message) 
@@ -916,18 +917,18 @@ WndRef chat2;int result;
 
 
 				case ID_SIGNALS_SOUNDANDVIBRA:
+					   
+					 /*  
 					SendDlgItemMessage(mainWnd,ID_SIGNALS_SOUNDANDVIBRA,BM_SETCHECK,1,0);
 					SendDlgItemMessage(mainWnd,ID_SIGNALS_SOUND,BM_SETCHECK,0,0);
 					SendDlgItemMessage(mainWnd,ID_SIGNALS_VIBRA,BM_SETCHECK,0,0);
 					SendDlgItemMessage(mainWnd,ID_SIGNALS_MUTE,BM_SETCHECK,0,0);
-//CheckMenuItem (hMenu, ID_SIGNALS_SOUNDANDVIBRA,
-//               MF_UNCHECKED);
-//CheckMenuItem (hMenu, ID_SIGNALS_SOUND,
-     /*             MF_CHECKED);
-CheckMenuItem (hMenu, ID_SIGNALS_VIBRA,
-                  MF_CHECKED);
-CheckMenuItem (hMenu, ID_SIGNALS_MUTE,
-                  MF_CHECKED);*/
+*/
+				CheckMenuItem (hMenu, ID_SIGNALS_SOUNDANDVIBRA,MF_UNCHECKED);
+				CheckMenuItem (hMenu, ID_SIGNALS_SOUND,MF_CHECKED);
+				CheckMenuItem (hMenu, ID_SIGNALS_VIBRA,MF_CHECKED);
+				CheckMenuItem (hMenu, ID_SIGNALS_MUTE,MF_CHECKED);
+				DrawMenuBar(mainWnd);
 						Config::getInstance()->sounds = true;	
 						Config::getInstance()->vibra = true;
 					break;
@@ -1522,7 +1523,7 @@ Log::getInstance()->msg(c->rosterJid.c_str(),urlmail.c_str());}
 
 	std::string tmp=messbod;
 	size_t lenbody=tmp.length();
-	if(linesCountcom)for(int r=2;r<linesCountcom;r=r+2)//обрабатываем быстрые команды
+	if(linesCountcom)for(int r=3;r<linesCountcom;r=r+3)//обрабатываем быстрые команды
 		{lencom=strlen(strcom[r][0]);
 			if (tmp.find(strcom[r][0])==0) 
 			{
@@ -1530,7 +1531,7 @@ Log::getInstance()->msg(c->rosterJid.c_str(),urlmail.c_str());}
 				 {
 				  bool flgc=1;
 					if(lenbody>lencom+1)flgc=0;
-				  if(flgc){tmp.replace(0, lencom, strcom[r][1]);}else{tmp.replace(0, lencom, strcom[r+1][1]);}
+				  if(flgc){tmp.replace(0, lencom, strcom[r+1][1]);}else{tmp.replace(0, lencom, strcom[r+2][1]);}
 					tmp.insert(0, "/me ");
 		        }
 			}
