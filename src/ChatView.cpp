@@ -1400,18 +1400,29 @@ bool MessageElement::OnMenuCommand(int cmdId, HWND parent, HWND edithwnd){
 			return true;}
 		case CGETNICK:{
 			if (!edithwnd) return true;
+			
 				std::wstring copy=wstr;
+				
                 // striping formating
-                size_t i=0;
+                size_t i=0;bool okflag=0;
                 while (i<copy.length()) {
+					if(copy[i]=='>')okflag=1;
                     if (copy[i]<0x09) {
                         copy.erase(i,1);
                         continue;
                     }
                     i++;
                 }
+				
 				copy.erase(0,11);
-				copy.replace(copy.find('>'),copy.length(),L": ");
+				
+				if(okflag){
+					copy.replace(copy.find('>'),copy.length(),L": ");
+				}
+				else
+				{	if(copy[0]=='*')copy.erase(0,1);
+					copy.replace(copy.find(' '),copy.length(),L": ");
+				}
 				SendMessage(edithwnd, EM_REPLACESEL, TRUE, (LPARAM)copy.c_str());
 				SetFocus(edithwnd);
 					  return true;}
