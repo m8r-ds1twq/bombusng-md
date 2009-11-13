@@ -204,8 +204,22 @@ long WINAPI EditSubClassProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) 
    
     case WM_CHAR:
         if (wParam==VK_RETURN && !editbox::editBoxShifts) {
-            PostMessage(GetParent(hWnd), WM_COMMAND, IDS_SEND, 0);
-            return 0;
+            if (Config::getInstance()->enter2) 
+			{
+				int ndx1 = 0, ndx2 = 0;
+				SendMessage (hWnd, EM_GETSEL, (WPARAM)&ndx1, (LPARAM)&ndx2); // возвращяет позиции символом с которых начинается и заканчивается выделение
+				int len = SendMessage (hWnd, EM_LINELENGTH, (WPARAM)-1, (LPARAM)0); // длина текста в текущей строке 
+				int nlines = SendMessage (hWnd, EM_GETLINECOUNT, (WPARAM)0, (LPARAM)0); // сколько всего линий
+				int cline = SendMessage (hWnd, EM_LINEINDEX, (WPARAM)nlines+1, (LPARAM)0); // тут минус -1 когда след строки не существует что нам и надо 
+				if ((ndx1 == ndx2) & (len == 0) & (cline == -1)) { // проверяем чтобы небыло выделения, длинна = 0 и следующий строки не существует
+					PostMessage(GetParent(hWnd), WM_COMMAND, IDS_SEND, 0);
+					return 0;
+				}
+			} else {
+					PostMessage(GetParent(hWnd), WM_COMMAND, IDS_SEND, 0);
+					return 0;				
+			}
+
         }
         if (wParam==VK_TAB) {
             PostMessage(GetParent(hWnd), WM_COMMAND, IDC_COMPLETE, 0);
@@ -315,35 +329,37 @@ LRESULT CALLBACK ChatView::WndProc( HWND hWnd, UINT message, WPARAM wParam, LPAR
                     }
                     i2++;
 				}
-std::wstring filePathavatar6=appRootPath+L"userdata\\avatars\\"+utf8::utf8_wchar(avatarsjid)+L".jpg";
-HBITMAP bmp4=SHLoadImageFile(filePathavatar6.c_str());
-filePathavatargo=filePathavatar6;
-//int result2=MessageBox(NULL, filePathavatar6.c_str(), TEXT("Открыть"), MB_YESNOCANCEL | MB_ICONWARNING );
-BITMAP bm4;
-GetObject(bmp4, sizeof(bm4), &bm4);
-LONG avataraWidthL = Config::getInstance()->avatarWidth ;
-avatbool=0;
-if (bmp4) {
-	avatbool=1;
-	if(bm4.bmWidth==bm4.bmHeight){avWidth=avataraWidthL;
-	avHeight=avWidth;}else{
-	if(bm4.bmWidth>bm4.bmHeight){
-	avWidth=avataraWidthL;
-    avHeight=(avataraWidthL*bm4.bmHeight*100)/(100*bm4.bmWidth);
-		}else{
-	avHeight=avataraWidthL;
-	avWidth=(avataraWidthL*bm4.bmWidth*100)/(100*bm4.bmHeight);
-	}}
+			std::wstring filePathavatar6=appRootPath+L"userdata\\avatars\\"+utf8::utf8_wchar(avatarsjid)+L".jpg";
+			HBITMAP bmp4=SHLoadImageFile(filePathavatar6.c_str());
+			filePathavatargo=filePathavatar6;
+			//int result2=MessageBox(NULL, filePathavatar6.c_str(), TEXT("Открыть"), MB_YESNOCANCEL | MB_ICONWARNING );
+			BITMAP bm4;
+			GetObject(bmp4, sizeof(bm4), &bm4);
+			LONG avataraWidthL = Config::getInstance()->avatarWidth ;
+			avatbool=0;
+			if (bmp4) {
+				avatbool=1;
+				if(bm4.bmWidth==bm4.bmHeight){avWidth=avataraWidthL;
+				avHeight=avWidth;
+				} else {
+				if(bm4.bmWidth>bm4.bmHeight)
+				{
+					avWidth=avataraWidthL;
+					avHeight=(avataraWidthL*bm4.bmHeight*100)/(100*bm4.bmWidth);
+				}else{
+					avHeight=avataraWidthL;
+					avWidth=(avataraWidthL*bm4.bmWidth*100)/(100*bm4.bmHeight);
+				}}
 
- HDC hdcImage2=CreateCompatibleDC(NULL);
-    SelectObject(hdc, bmp4);
-SelectObject(hdcImage2, bmp4);
-COLORREF transparentColor2=GetPixel(hdcImage2, 0, 0);DeleteDC(hdcImage2);
- avWidthgo= avWidth;avHeightgo=avHeight;
-TransparentImage(hdc,rc.top,rc.left,avWidth, avHeight, bmp4, 0, 0,  bm4.bmWidth, bm4.bmHeight, transparentColor2);
-rc.left+=avWidth+1;
-}
-if (bmp4) DeleteObject(bmp4);
+				HDC hdcImage2=CreateCompatibleDC(NULL);
+				SelectObject(hdc, bmp4);
+				SelectObject(hdcImage2, bmp4);
+				COLORREF transparentColor2=GetPixel(hdcImage2, 0, 0);DeleteDC(hdcImage2);
+				avWidthgo= avWidth;avHeightgo=avHeight;
+				TransparentImage(hdc,rc.top,rc.left,avWidth, avHeight, bmp4, 0, 0,  bm4.bmWidth, bm4.bmHeight, transparentColor2);
+				rc.left+=avWidth+1;
+			}
+			if (bmp4) DeleteObject(bmp4);
 			
 			}
 			
@@ -372,11 +388,11 @@ if (bmp4) DeleteObject(bmp4);
 			if(!muc)
 			{//Если конфа,убираем инфо панель
 				if(Config::getInstance()->confclient){
-int clientIcon;					
-Skin * il= dynamic_cast<Skin *>(skin.get());
- std::string ClientI=p->contact->getClientIdIcon();
+				int clientIcon;					
+				Skin * il= dynamic_cast<Skin *>(skin.get());
+				std::string ClientI=p->contact->getClientIdIcon();
 
- if(ClientI.length()>2){if (il) clientIcon=il->getKlientIndex((char*)ClientI.c_str());}else clientIcon=0;
+				if(ClientI.length()>2){if (il) clientIcon=il->getKlientIndex((char*)ClientI.c_str());}else clientIcon=0;
 
 					if(clientIcon)skin->drawElement(hdc, clientIcon, avWidth , iconwidth);
 				}

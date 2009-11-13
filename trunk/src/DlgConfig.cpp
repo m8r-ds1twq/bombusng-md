@@ -161,6 +161,7 @@ INT_PTR CALLBACK DlgProcConfig(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
 				
 				SetDlgCheckBox(hDlg, IDC_X_HIS_CH_D, cfg->his_ch_d);
 				SetDlgCheckBox(hDlg, IDC_X_HIS_MUCD, cfg->his_muc_d);
+				SetDlgCheckBox(hDlg, IDC_2ENTER, cfg->enter2);
 
             }
             if (npage==2) {
@@ -248,7 +249,7 @@ INT_PTR CALLBACK DlgProcConfig(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
 					
 					GetDlgCheckBox(hDlg, IDC_X_HIS_MUCD, cfg->his_muc_d);
 					GetDlgCheckBox(hDlg, IDC_X_HIS_CH_D, cfg->his_ch_d);
-					
+					GetDlgCheckBox(hDlg, IDC_2ENTER, cfg->enter2);
 					
 
                 }

@@ -27,6 +27,7 @@
 #define IDD_ACCNT1                      113
 #define IDC_COMPLETE                    114
 #define IDD_ACCNT2                      114
+#define IDC_2ENTER                      114
 #define IDC_COMPOSING                   115
 #define IDD_OPTIONS1                    115
 #define IDD_OPTIONS2                    116
@@ -152,7 +153,8 @@
 #define IDOK_1                          1076
 #define IDC_BUTTON1                     1077
 #define IDC_GETVIBRA                    1077
-#define IDC_AUTOJOINROOM2               1078
+#define IDC_CHECK2                      1078
+#define IDC_AUTOJOINROOM2               1079
 #define IDC_AHW                         1095
 #define IDC_X_HISTORY                   1098
 #define IDC_X_SIP                       1099

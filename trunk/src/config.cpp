@@ -116,6 +116,7 @@ void Config::serialize( Serialize &s ) {
 	s.streamInt(vibra_port, 0);
 	s.streamBool(dop_infa, false);
 	s.streamBool(signals_muc, true);
+	s.streamBool(enter2, true);
 
 }
 
