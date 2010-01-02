@@ -65,6 +65,7 @@ public:
 	bool dop_infa;
 	bool signals_muc;
 	bool enter2;
+	std::string colorfile;
 private:
     void serialize(Serialize &s);
     static Config::ref instance;

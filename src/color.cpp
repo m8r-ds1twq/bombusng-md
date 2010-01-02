@@ -19,20 +19,22 @@ extern std::wstring appRootPath;
         0x808080,
 		0xffeeff,//bkColor= (oddIndex)?
 		0xffffff
-    }; */
+    }; 
+*/
 
-int COLORS[];
+extern int COLORS[];
+
 int chartoint(char liter){
-	if(liter>='a' && liter<='f')return (liter+10-'a');
-if(liter>='0' && liter<='9')return (liter-'0');
-return 0;
+	if(liter>='a' && liter<='f')	return (liter+10-'a');
+	if(liter>='0' && liter<='9')	return (liter-'0');
+	return 0;
 }
 ///char colorch[]="000000 39358b 008080 535353 800000 000000 000000 000000 ffffff 800000 808080 ffeeff ffffff";
 int iii;
 
-void colorsload(){
-std::wstring pathc=appRootPath;
-    pathc+=L"color\\color.txt";
+void colorsload(std::wstring txtname){
+	std::wstring pathc=appRootPath;
+	pathc+=L"color\\"+txtname;
 
     HANDLE filec=CreateFile(pathc.c_str(), 
         GENERIC_READ , 
@@ -45,15 +47,14 @@ std::wstring pathc=appRootPath;
     if (size>64000) {CloseHandle(filec); return; }
 
     char *colorch=new char[size+1];
-DWORD rd;
+	DWORD rd;
     ReadFile(filec, colorch, size, &rd, NULL);     
     CloseHandle(filec);
 
     colorch[rd]=NULL;
 
-for ( int fff=0 ; fff<=18 ; fff++ ){
-	iii=fff*7;
-COLORS[fff]=1048576*chartoint(colorch[iii])+65536*chartoint(colorch[iii+1])+4096*chartoint(colorch[iii+2])+256*chartoint(colorch[iii+3])+16*chartoint(colorch[iii+4])+chartoint(colorch[iii+5]);
-
-}
+	for ( int fff=0 ; fff<=18 ; fff++ ){
+		iii=fff*7;
+		COLORS[fff]=1048576*chartoint(colorch[iii])+65536*chartoint(colorch[iii+1])+4096*chartoint(colorch[iii+2])+256*chartoint(colorch[iii+3])+16*chartoint(colorch[iii+4])+chartoint(colorch[iii+5]);
+	}
 }

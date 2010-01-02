@@ -117,6 +117,7 @@ void Config::serialize( Serialize &s ) {
 	s.streamBool(dop_infa, false);
 	s.streamBool(signals_muc, true);
 	s.streamBool(enter2, true);
+	s.streamString(colorfile,(char *)"color.txt");
 
 }
 
