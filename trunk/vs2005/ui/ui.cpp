@@ -659,10 +659,10 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
     int namePos=appRootPath.find_last_of(_T("\\"))+1;
     appRootPath.erase(namePos, appRootPath.length()-namePos);
-/*std::wstring dllname(appRootPath);//ме оюьер :(
-dllname+=TEXT("lang.dll");
-HINSTANCE hInst2 = LoadLibrary(dllname.c_str());
-if(hInst2){
+	/*std::wstring dllname(appRootPath);//ме оюьер :(
+	dllname+=TEXT("lang.dll");
+	HINSTANCE hInst2 = LoadLibrary(dllname.c_str());
+	if(hInst2){
 	AfxSetResourceHandle(hInst2);}else{int result2=MessageBox(NULL, dllname.c_str(), TEXT("error dll"), MB_OKCANCEL | MB_ICONEXCLAMATION );}
    */
 	TCHAR szTitle[MAX_LOADSTRING];		// title bar text
@@ -704,20 +704,21 @@ if(hInst2){
 
     LoadString(g_hInst, IDS_VERSION, wbuf, sizeof(wbuf));
     appVersion=utf8::wchar_utf8(wbuf);
-    appName="Bombusng-MD";//
-     colorsload();//load color
-	 std::wstring compatch=appRootPath+TEXT("com.txt");
+    appName="Bombusng-MD"; //
+    //colorsload(L"color.txt"); //load color
+	colorsload(utf8::utf8_wchar(Config::getInstance()->colorfile));
+	std::wstring compatch=appRootPath+TEXT("com.txt");
     
 	
-//std::string moods_1;
+	//std::string moods_1;
 
 	strcom=getConfig(compatch.c_str(),&linesCountcom);
-timerid=SetTimer(0,MAIN_TIMER_ID,TIMER_TIME,TimerProc);
+	timerid=SetTimer(0,MAIN_TIMER_ID,TIMER_TIME,TimerProc);
     if (!MyRegisterClass(hInstance, szWindowClass)) 	return FALSE;
 
     mainWnd=hWnd = CreateWindow(szWindowClass, szTitle, WS_VISIBLE,
         CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, NULL, NULL, hInstance, NULL);
-hwnvs=mainWnd;
+	hwnvs=mainWnd;
     if (!hWnd)
     {
         return FALSE;

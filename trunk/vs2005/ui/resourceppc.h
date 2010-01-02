@@ -155,6 +155,8 @@
 #define IDC_GETVIBRA                    1077
 #define IDC_CHECK2                      1078
 #define IDC_AUTOJOINROOM2               1079
+#define IDC_COMBO1                      1080
+#define IDC_LISTCOLORS                  1080
 #define IDC_AHW                         1095
 #define IDC_X_HISTORY                   1098
 #define IDC_X_SIP                       1099
@@ -252,6 +254,7 @@
 #define JUICK_COMMAND                   42372
 #define JUICK_NUM_U                     42373
 #define MSGListFocus                    42374
+#define IDC_STATIC                      -1
 
 // Next default values for new objects
 // 
@@ -260,7 +263,7 @@
 #define _APS_NO_MFC                     1
 #define _APS_NEXT_RESOURCE_VALUE        140
 #define _APS_NEXT_COMMAND_VALUE         32827
-#define _APS_NEXT_CONTROL_VALUE         1079
+#define _APS_NEXT_CONTROL_VALUE         1081
 #define _APS_NEXT_SYMED_VALUE           116
 #endif
 #endif

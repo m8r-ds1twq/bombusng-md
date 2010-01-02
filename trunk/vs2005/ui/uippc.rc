@@ -15,7 +15,7 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// Russian resources
+// русский resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_RUS)
 #ifdef _WIN32
@@ -276,15 +276,17 @@ FONT 8, "MS Shell Dlg"
 BEGIN
     CONTROL         "Показ групп",IDC_X_GROUPS,"Button",BS_AUTOCHECKBOX | BS_NOTIFY | WS_DISABLED | WS_TABSTOP,11,17,57,10
     CONTROL         "Показ offline контактов",IDC_X_OFFLINES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,11,7,96,10
-    LTEXT           "Размер аватарок",-1,11,44,69,10
+    LTEXT           "Размер аватарок",IDC_STATIC,11,44,69,10
     EDITTEXT        IDC_X_AWAT,87,42,18,12,ES_LOWERCASE | ES_AUTOHSCROLL
     CONTROL         "Показ клиентов",IDC_AUTOJOINROOM,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,11,31,70,10
     CONTROL         "XML лог",IDC_XML_LOG,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,11,67,42,10
-    LTEXT           "Порт вибры",-1,11,56,69,10
+    LTEXT           "Порт вибры",IDC_STATIC,11,56,69,10
     EDITTEXT        IDC_VIBRA,87,55,18,12,ES_LOWERCASE | ES_AUTOHSCROLL
     PUSHBUTTON      "Авто",IDC_GETVIBRA,107,54,45,14
     CONTROL         "Автовход в комнату",IDC_AUTOJOINROOM2,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,11,77,135,12
     CONTROL         "Показывать доп.инфу о клиенте",IDC_DOPINFA,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,11,89,135,12
+    COMBOBOX        IDC_LISTCOLORS,37,101,115,30,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Цвета",IDC_STATIC,11,103,22,8
 END
 
 IDD_OPTIONS2 DIALOG  0, 0, 156, 129
@@ -300,11 +302,11 @@ BEGIN
     CONTROL         "История комнаты",IDM_SAVE_HISTORY_MUC,"Button",BS_AUTOCHECKBOX | BS_NOTIFY | WS_TABSTOP,11,63,72,11
     CONTROL         "Хранить историю в  HTML",IDM_SAVE_HISTORY_IN_HTML,
                     "Button",BS_AUTOCHECKBOX | BS_NOTIFY | WS_TABSTOP,11,75,110,10
-    CONTROL         "Поле ввода x2",IDC_EDITX2,"Button",BS_AUTOCHECKBOX | BS_NOTIFY | WS_TABSTOP,11,91,65,11
+    CONTROL         "Поле ввода x2",IDC_EDITX2,"Button",BS_AUTOCHECKBOX | BS_NOTIFY | WS_TABSTOP,11,85,65,11
     CONTROL         "Фильтр дат",IDC_X_HIS_CH_D,"Button",BS_AUTOCHECKBOX | BS_NOTIFY | WS_TABSTOP,90,28,52,11
     CONTROL         "Фильтр дат",IDC_X_HIS_MUCD,"Button",BS_AUTOCHECKBOX | BS_NOTIFY | WS_TABSTOP,90,64,62,10
     CONTROL         "прятать кл.",IDC_SIP_2,"Button",BS_AUTOCHECKBOX | BS_NOTIFY | WS_TABSTOP,90,43,62,10
-    CONTROL         "Отправка 2-й enter",IDC_2ENTER,"Button",BS_AUTOCHECKBOX | BS_NOTIFY | WS_TABSTOP,11,107,86,12
+    CONTROL         "Отправка сообщ. 2х Вводом`ом",IDC_2ENTER,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,11,96,124,10
 END
 
 IDD_OPTIONS3 DIALOG  0, 0, 156, 129
@@ -728,7 +730,7 @@ BEGIN
     IDS_SEND                "Send"
 END
 
-#endif    // Russian resources
+#endif    // русский resources
 /////////////////////////////////////////////////////////////////////////////
 
 

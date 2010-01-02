@@ -18,6 +18,9 @@
 
 #include <nled.h>
 
+extern std::wstring appRootPath;
+extern void colorsload(std::wstring txtname);
+
 //////////////////////////////////////////////////////////////////////////////////
 wchar_t *statusNames2 []= { TEXT(" "),
     TEXT("Online"),         TEXT("Free for chat"),  TEXT("Away"), 
@@ -133,6 +136,22 @@ INT_PTR CALLBACK DlgProcConfig(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
             shidi.dwFlags = SHIDIF_SIPDOWN | SHIDIF_SIZEDLGFULLSCREEN | SHIDIF_EMPTYMENU;
             shidi.hDlg = hDlg;
             //SHInitDialog(&shidi);
+			
+			//смотрим какие цветовые схемы есть в наличии
+			WIN32_FIND_DATA FindFileData;
+			HANDLE hFind;
+
+			FindFileData.dwFileAttributes=FILE_ATTRIBUTE_NORMAL;
+			std::wstring ffp=appRootPath+L"color\\*.txt";
+			hFind=FindFirstFile(ffp.c_str(),&FindFileData);
+			if (hFind!=INVALID_HANDLE_VALUE){
+				do {
+					//MessageBox(NULL,FindFileData.cFileName,"",MB_ICONINFORMATION);
+					//std::wstring fn=utf8::utf8_wchar(FindFileData.cFileName );
+                    SendDlgItemMessage(hDlg, IDC_LISTCOLORS, CB_ADDSTRING, 0, (LPARAM) FindFileData.cFileName);
+				} while (FindNextFile(hFind,&FindFileData));
+				FindClose(hFind);
+			}
 
             Config::ref cfg=Config::getInstance();
 
@@ -146,6 +165,7 @@ INT_PTR CALLBACK DlgProcConfig(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
 				SetDlgItemInt(hDlg, IDC_X_AWAT,cfg->avatarWidth, false);
 				SetDlgItemInt(hDlg, IDC_VIBRA, cfg->vibra_port, false);
 				SetDlgCheckBox(hDlg, IDC_DOPINFA, cfg->dop_infa);
+				SetDlgItemText(hDlg, IDC_LISTCOLORS, cfg->colorfile);
 				
             }
             if (npage==1) {
@@ -222,6 +242,8 @@ INT_PTR CALLBACK DlgProcConfig(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
 
                 Config::ref cfg=Config::getInstance();
 
+				colorsload(utf8::utf8_wchar(GetDlgItemText(hDlg, IDC_LISTCOLORS)));
+
                 if (npage==0) {BOOL awat1;
                     GetDlgCheckBox(hDlg, IDC_X_OFFLINES, cfg->showOfflines);
                     GetDlgCheckBox(hDlg, IDC_X_GROUPS, cfg->showGroups);
@@ -234,6 +256,7 @@ INT_PTR CALLBACK DlgProcConfig(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
 					BOOL vibra_port;
 					cfg->vibra_port = GetDlgItemInt(hDlg, IDC_VIBRA, &vibra_port, false);
 					if (!vibra_port) cfg->vibra_port = 0;
+					GetDlgItemText(hDlg, IDC_LISTCOLORS, cfg->colorfile);
 				
                 }
                 if (npage==1) {
@@ -294,7 +317,7 @@ INT_PTR CALLBACK DlgProcConfig(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
 					cfg->roster_font_width = GetDlgItemInt(hDlg, IDC_X_ROSTER_FONT_WIDTH, &f4Int , false);
 					    if (!f4Int) cfg->roster_font_width = 5;
 
-						cfg->ping_aliv = GetDlgItemInt(hDlg, IDC_PINGAKIV, &pingal1 , false);
+					cfg->ping_aliv = GetDlgItemInt(hDlg, IDC_PINGAKIV, &pingal1 , false);
 					if (!pingal1) cfg->ping_aliv = 150;
 
 					cfg->pong_aliv = GetDlgItemInt(hDlg, IDC_PONGALIV, &pongal2 , false);
