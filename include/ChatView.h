@@ -36,6 +36,7 @@ public:
     void moveEnd();
 
     virtual bool showWindow(bool show);
+	
 
     void redraw();
 

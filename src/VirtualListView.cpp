@@ -27,7 +27,7 @@ ATOM VirtualListView::RegisterWindowClass() {
     wc.hCursor       = 0;
     wc.hbrBackground = NULL;//(HBRUSH)COLOR_WINDOW;
     wc.lpszMenuName  = 0;
-    wc.lpszClassName = _T("BombusVLV");
+    wc.lpszClassName = _T("BombusaVLV");
 
     return RegisterClass(&wc);
 }

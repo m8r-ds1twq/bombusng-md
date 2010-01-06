@@ -346,8 +346,9 @@ void TabsCtrl::showActiveTab() {
     for (unsigned int i=0; i < tabs.size(); i++) {
         TabInfoRef tab=tabs[i];
         tab->wndChild->showWindow( i == activeTab ); 
-    }
+	}
 }
+
 
 void TabsCtrl::updateChildsLayout() {
     HDWP hdwp; 

@@ -104,6 +104,7 @@
 #define IDC_X_SOUNDS                    1046
 #define IDC_DOPINFA                     1046
 #define IDC_X_VIBRA                     1047
+#define IDC_X_ANIM_SMILE                1047
 #define IDC_X_DIALUP                    1048
 #define IDC_SIP1                        1049
 #define IDC_X_BLINK1                    1049
@@ -157,6 +158,7 @@
 #define IDC_AUTOJOINROOM2               1079
 #define IDC_COMBO1                      1080
 #define IDC_LISTCOLORS                  1080
+#define IDC_TIMER_INT                   1081
 #define IDC_AHW                         1095
 #define IDC_X_HISTORY                   1098
 #define IDC_X_SIP                       1099
@@ -263,7 +265,7 @@
 #define _APS_NO_MFC                     1
 #define _APS_NEXT_RESOURCE_VALUE        140
 #define _APS_NEXT_COMMAND_VALUE         32827
-#define _APS_NEXT_CONTROL_VALUE         1081
+#define _APS_NEXT_CONTROL_VALUE         1082
 #define _APS_NEXT_SYMED_VALUE           116
 #endif
 #endif

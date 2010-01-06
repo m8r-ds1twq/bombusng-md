@@ -42,6 +42,8 @@ extern LONG timstatus;
 extern int idautostatus;
 extern char ***strcom;
 extern int linesCountcom;
+extern int smile_anim_ind;
+extern bool nofocus;
 //LONG tolshina=400;
 //////////////////////////////////////////////////////////////////////////
 // WARNING!!! ONLY FOR WM2003 and higher
@@ -160,7 +162,7 @@ long WINAPI EditSubClassProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) 
                     hWnd,
                     NULL);
 
-                if (cmdId==ADD_SMILE) SmileBox::showSmileBox(hWnd, pt.x, pt.y, smileParser);
+                if (cmdId==ADD_SMILE) PostMessage(GetParent(hWnd), WM_COMMAND, 8000, 0);//SmileBox::showSmileBox(hWnd, pt.x, pt.y, smileParser);
 				 if (cmdId==SB_)PostMessage(GetParent(hWnd), WM_COMMAND, IDC_SB, 0);
                 DestroyMenu(hmenu);
 				if(cmdId>=40000 && cmdId<=40000 +linesCountcom)PostMessage(GetParent(hWnd), COMMAND_STR, cmdId-40000, 0);
@@ -282,6 +284,7 @@ LRESULT CALLBACK ChatView::WndProc( HWND hWnd, UINT message, WPARAM wParam, LPAR
 
             p->msgList=VirtualListView::ref(new VirtualListView(hWnd, std::string("Chat")));
             p->msgList->setParent(hWnd);
+			nofocus=0;
             p->msgList->showWindow(true);
             p->msgList->wrapList=false;
             p->msgList->colorInterleaving=true;
@@ -290,6 +293,7 @@ LRESULT CALLBACK ChatView::WndProc( HWND hWnd, UINT message, WPARAM wParam, LPAR
             p->calcEditHeight();
 
             p->msgList->bindODRList(p->contact->messageList);
+			
             break;
         }
 
@@ -397,12 +401,12 @@ LRESULT CALLBACK ChatView::WndProc( HWND hWnd, UINT message, WPARAM wParam, LPAR
 					if(clientIcon)skin->drawElement(hdc, clientIcon, avWidth , iconwidth);
 				}
 
-				ExtTextOut(hdc, avWidth + iconwidth + 4, iconwidth, NULL, NULL,
+				/*ExtTextOut(hdc, avWidth + iconwidth + 4, iconwidth, NULL, NULL,
 					utf8::utf8_wchar(p->contact->getClientIdIcon()).c_str(),
 					p->contact->getClientIdIcon().length(),
 					NULL);
-
-				ExtTextOut(hdc, avWidth + 3, iconwidth*2, NULL, NULL,
+				*/
+				ExtTextOut(hdc, avWidth + iconwidth + 4, iconwidth, NULL, NULL,
 					utf8::utf8_wchar(p->contact->getStatusMessage()).c_str(),
 					p->contact->getStatusMessage().length(),
 					NULL);
@@ -507,7 +511,8 @@ LRESULT CALLBACK ChatView::WndProc( HWND hWnd, UINT message, WPARAM wParam, LPAR
 
 		
     case WM_COMMAND: 
-		{
+		{   if( wParam==8000){SmileBox::showSmileBox(p->editWnd, 0, 0,p->msgList->getHWnd(), smileParser);
+		}
             if (wParam==IDS_SEND) {
                 p->sendJabberMessage();
             }
@@ -684,7 +689,7 @@ bool ChatView::showWindow( bool show ) {
     if (show) msgList->notifyListUpdate(true);
     //if (show) InvalidateRect(msgList->getHWnd(), NULL, false);
 
-    if (show) SetFocus(editWnd);
+  if (show && !nofocus) SetFocus(editWnd);//нефокусировать при перерисовке по таймеру 
 
     return oldState;
 }
@@ -1100,7 +1105,7 @@ void MessageElement::render( HDC hdc, RECT &rt, bool measure ) const{
 
 						if (!measure) {
 							if (ypos<rt.bottom && ypos+smileWidth>=rt.top)
-								smileParser->icons->drawElement(hdc, smileIndex, xpos, ypos);
+								smileParser->icons->drawElement(hdc,4*smileIndex+smile_anim_ind, xpos, ypos);
 						}
 
 						xpos=xbegin;
@@ -1228,7 +1233,7 @@ bool MessageElement::OnMenuCommand(int cmdId, HWND parent, HWND edithwnd){
 				wcscpy(strurl2,strurl);
 				strurl2=wcstok(strurl2,L" \n;\,<>*\"\'\[\]\{\}");
 				strurl2[wcslen(strurl2)-1]='\0';
-				int result=MessageBox(NULL, strurl2, TEXT("Открыть URL?"), MB_YESNOCANCEL | MB_ICONWARNING );
+				int result=MessageBox(GetParent(edithwnd), strurl2, TEXT("Открыть URL?"), MB_YESNOCANCEL | MB_ICONWARNING );
 				if (result==IDYES){ExecFile(strurl2,L"");return true;}
 					if (result==IDCANCEL){ return true;}
 				memset(strurl,20,2);

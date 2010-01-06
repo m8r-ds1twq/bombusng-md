@@ -159,7 +159,8 @@ LRESULT CALLBACK SmileBox::WndProc( HWND hWnd, UINT message, WPARAM wParam, LPAR
             p=(SmileBox *) (((CREATESTRUCT *)lParam)->lpCreateParams);
             SetWindowLong(hWnd, GWL_USERDATA, (LONG) p );
             p->num=0;
-            break;
+			
+           
         }
 
     case WM_PAINT:
@@ -173,7 +174,7 @@ LRESULT CALLBACK SmileBox::WndProc( HWND hWnd, UINT message, WPARAM wParam, LPAR
             int iconWidth=p->parser->icons->getElementWidth() + 4;
             
             for (size_t i=p->num; i < p->parser->smileAscii.size(); i++){
-                p->parser->icons->drawElement(hdc, i, x,y);
+                p->parser->icons->drawElement(hdc, i*4, x,y);
                 x+=iconWidth; rowcnt++;
                 if (rowcnt == p->nwidth ) {
                     rowcnt=0; y+=iconWidth;
@@ -275,7 +276,7 @@ LRESULT CALLBACK SmileBox::WndProc( HWND hWnd, UINT message, WPARAM wParam, LPAR
     return 0;
 }
 
-void SmileBox::showSmileBox(HWND editBoxWnd, int x, int y, SmileParser *parser) {
+void SmileBox::showSmileBox(HWND editBoxWnd, int x, int y,HWND parents, SmileParser *parser) {
     SmileBox *b=new SmileBox();
     b->editBoxWnd=editBoxWnd;
     b->parser=parser;
@@ -285,7 +286,7 @@ void SmileBox::showSmileBox(HWND editBoxWnd, int x, int y, SmileParser *parser) 
 
     //calculate client rect
     RECT parent;
-    GetClientRect(editBoxWnd, &parent);
+    GetClientRect(parents, &parent);
 
     b->nwidth=(int)sqrt(parser->smileAscii.size());
     int total=parser->smileAscii.size();
@@ -313,6 +314,8 @@ void SmileBox::showSmileBox(HWND editBoxWnd, int x, int y, SmileParser *parser) 
     }
 
     if (windowClass==0) throw std::exception("Can't create window class");
-    b->thisHwnd=CreateWindow((LPCTSTR)windowClass, _T("SmileBox"), WS_POPUP | WS_DLGFRAME  |WS_VSCROLL |WS_BORDER | WS_VISIBLE ,
-        2, y, width, height, editBoxWnd, NULL, g_hInst, (LPVOID)b);
+    b->thisHwnd=CreateWindow((LPCTSTR)windowClass, _T("SmileBox"), WS_DLGFRAME | WS_VSCROLL |WS_BORDER | WS_VISIBLE ,
+        0, 0, width, height,parents, NULL, g_hInst, (LPVOID)b);
+	
+	
 }

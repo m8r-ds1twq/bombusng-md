@@ -22,6 +22,7 @@ const ODR * Wnd::getODR() const { return NULL; }
 WndTitle::WndTitle( Wnd * wnd, int IconIndex ) {
     this->wnd=wnd;
     this->iconIndex=IconIndex;
+	
     init();
 }
 int WndTitle::getColor() const{ return 0; }

@@ -65,6 +65,8 @@ public:
 	bool dop_infa;
 	bool signals_muc;
 	bool enter2;
+	bool anim_smile;
+	int  timer_int;
 	std::string colorfile;
 private:
     void serialize(Serialize &s);
