@@ -1,3 +1,3 @@
 #pragma once
-void colorsload();
+void colorsload(std::wstring txtname);
 

@@ -67,11 +67,11 @@ char ***strcom;
 int linesCountcom;
 #define MAX_LOADSTRING 100
 int sizecaps;
-
+bool nofocus=0;
 char **strokicaps;
 bool pongOnline=0;
 extern char ***getConfig(const wchar_t *fileName,int *count);
-#define TIMER_TIME 2000 //ВРЕМЯ ОПРОСА ТАЙМЕРА
+//#define TIMER_TIME 700 //ВРЕМЯ ОПРОСА ТАЙМЕРА
 //#define TIMER_STATUS 60 //ВРЕМЯ АВТОСТАТУСА
 void CALLBACK TimerProc(HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime);
 #define STREAM_READ_IDLE 50
@@ -86,137 +86,22 @@ std::string pamessage;//сохраняем
 presence::PresenceIndex astatus;
 int idautostatus=0;//0-выкл 1-включён 2-выключить
 
-#define TIMER_ALIV Config::getInstance()->ping_aliv//ВРЕМЯ ПОСЛАНИЯ
-#define TIMER_ALIVP Config::getInstance()->pong_aliv //ВРЕМЯ ОЖИДАНИЯ
+#define TIMER_ALIV 1000*Config::getInstance()->ping_aliv//ВРЕМЯ ПОСЛАНИЯ
+#define TIMER_ALIVP 1000*Config::getInstance()->pong_aliv //ВРЕМЯ ОЖИДАНИЯ
+#define TIMER_INT_ Config::getInstance()->timer_int //ВРЕМЯ ТАЙМЕРА
 std::wstring out_title;//чё играет
 std::wstring out_OriginalArtist;
 std::wstring out_title_st;
 std::wstring out_OriginalArtist_st;
 std::string newsstring;
-#define AKTIV_PLAY 15  //ВРЕМЯ НА РЕАГИРОВАНИЕ
+#define AKTIV_PLAY 10000  //ВРЕМЯ НА РЕАГИРОВАНИЕ
 int  aktiv_wp=0;
-long aktiv_wp_sc=0;//плеер играет-значение растёт 1-2 сек 2-4 сек 3-6сек 4-8сек
-long aktiv_wp_sc_not=0;//плеер не играет-значение растёт 1-2 сек 2-4 сек 3-6сек 4-8сек
+long aktiv_wp_sc=0;//плеер играет-значение растёт 
+long aktiv_wp_sc_not=0;//плеер не играет-значение растёт 
 bool aktiv_wp_sc_flag=1;//0-не играет 1-играет
 int aktiv_wp_s=1;//
-/*
-typedef struct {
-  char date[32];
-  char title[1024];
-  char text[5120];
-  char author[32];
-} ITEM;
-
-ITEM *it;
 
 
-char *html_decode(char *s)
-{
-  int l=strlen(s);
-  int c;
-  char *d, *dest;
-  d=dest=(char*)malloc(l+1);
-  char *tag_strip=NULL;
-  while((c=*s++))
-  {
-  L_START:
-    if (c=='<')
-    {
-      if (!strncmp(s,"br>",3))
-      {
-        *d++=13;
-        s+=3;
-        continue;
-      }
-      if (!strncmp(s,"br />",5))
-      {
-        *d++=13;
-        s+=5;
-        continue;
-      }
-      if (!strncmp(s,"/td>",4))
-      {
-        *d++=' ';
-        s+=4;
-        continue;
-      }
-      if (!strncmp(s,"p>",2))
-      {
-        *d++=13;
-        s+=2;
-        continue;
-      }
-      // Иначе какой то левый тэг, режем нахуй Ж)
-      tag_strip=d;
-      continue;
-    }
-    if (c=='>')
-    {
-      if (tag_strip)
-      {
-        d=tag_strip;
-        tag_strip=NULL;
-        continue;
-      }
-    }
-    if (c=='&')
-    {
-      if (!strncmp(s,"quot;",5))
-      {
-        c='\"';
-        s+=5;
-        goto L_START;
-      }
-      if (!strncmp(s,"nbsp;",5))
-      {
-        c='_';
-        s+=5;
-        goto L_START;
-      }
-      if (!strncmp(s,"lt;",3))
-      {
-        c='<';
-        s+=3;
-        goto L_START;
-      }
-      if (!strncmp(s,"gt;",3))
-      {
-        c='>';
-        s+=3;
-        goto L_START;
-      }
-      if (!strncmp(s,"amp;",4))
-      {
-        c='&';
-        s+=4;
-        goto L_START;
-      }
-      if (!strncmp(s,"copy;",5))
-      {
-        c=0xA9;
-        s+=5;
-        goto L_START;
-      }
-      if (*s=='#')
-      {
-        int k;
-        s++;
-        c=0;
-        while((k=*s++)!=';')
-        {
-          c*=10;
-          c+=k-'0';
-        }
-        //c=char16to8(c);
-        goto L_START;
-      }
-    }
-    *d++=c;
-  }
-  *d=0;
-  return dest;
-}
-*/
 
 BOOL regmuz_mp(void){
 HKEY rKey;
@@ -240,10 +125,10 @@ RegQueryValueEx(rKey, L"Elapsed", NULL,  &dwType2, (LPBYTE)&aktiv_wp, &RegetPath
 RegCloseKey(rKey);
 out_title.assign(title);
 out_OriginalArtist.assign(OriginalArtist);
-if(aktiv_wp_sc>500)aktiv_wp_sc=0;
-if(aktiv_wp_sc_not>500)aktiv_wp_sc_not=0;
-if(aktiv_wp2 ==aktiv_wp && !aktiv_wp_sc_flag){++aktiv_wp_sc_not;aktiv_wp_sc=0;}
-if(aktiv_wp2 !=aktiv_wp && aktiv_wp_sc_flag){++aktiv_wp_sc;aktiv_wp_sc_not=0;}
+if(aktiv_wp_sc>1000000)aktiv_wp_sc=0;
+if(aktiv_wp_sc_not>1000000)aktiv_wp_sc_not=0;
+if(aktiv_wp2 ==aktiv_wp && !aktiv_wp_sc_flag){aktiv_wp_sc_not+=TIMER_INT_;aktiv_wp_sc=0;}
+if(aktiv_wp2 !=aktiv_wp && aktiv_wp_sc_flag){aktiv_wp_sc+=TIMER_INT_;aktiv_wp_sc_not=0;}
 /*if(out_OriginalArtist_st!=out_OriginalArtist || out_title_st!=out_title){aktiv_wp_s=2;}else{
 	if(aktiv_wp_s!=1 && aktiv_wp2 !=aktiv_wp){aktiv_wp_s=2;}}
 if(aktiv_wp2 ==aktiv_wp){++aktiv_wp_sc_not;aktiv_wp_sc=0;}else{++aktiv_wp_sc;aktiv_wp_sc_not=0;}
@@ -278,7 +163,7 @@ HINSTANCE m_hInstanceDll;
 ImgListRef skin;
 
 SmileParser *smileParser;
-
+int smile_anim_ind=0;//номер кадра
 std::wstring appRootPath;
 std::wstring skinRootPath;
 std::string appVersion;
@@ -659,10 +544,10 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
     int namePos=appRootPath.find_last_of(_T("\\"))+1;
     appRootPath.erase(namePos, appRootPath.length()-namePos);
-	/*std::wstring dllname(appRootPath);//НЕ ПАШЕТ :(
-	dllname+=TEXT("lang.dll");
-	HINSTANCE hInst2 = LoadLibrary(dllname.c_str());
-	if(hInst2){
+/*std::wstring dllname(appRootPath);//НЕ ПАШЕТ :(
+dllname+=TEXT("lang.dll");
+HINSTANCE hInst2 = LoadLibrary(dllname.c_str());
+if(hInst2){
 	AfxSetResourceHandle(hInst2);}else{int result2=MessageBox(NULL, dllname.c_str(), TEXT("error dll"), MB_OKCANCEL | MB_ICONEXCLAMATION );}
    */
 	TCHAR szTitle[MAX_LOADSTRING];		// title bar text
@@ -704,21 +589,21 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
     LoadString(g_hInst, IDS_VERSION, wbuf, sizeof(wbuf));
     appVersion=utf8::wchar_utf8(wbuf);
-    appName="Bombusng-MD"; //
-    //colorsload(L"color.txt"); //load color
+    appName="Bombusng-MD";//
+     //colorsload();//load color
 	colorsload(utf8::utf8_wchar(Config::getInstance()->colorfile));
-	std::wstring compatch=appRootPath+TEXT("com.txt");
+	 std::wstring compatch=appRootPath+TEXT("com.txt");
     
 	
-	//std::string moods_1;
+//std::string moods_1;
 
 	strcom=getConfig(compatch.c_str(),&linesCountcom);
-	timerid=SetTimer(0,MAIN_TIMER_ID,TIMER_TIME,TimerProc);
+timerid=SetTimer(0,MAIN_TIMER_ID,Config::getInstance()->timer_int,TimerProc);
     if (!MyRegisterClass(hInstance, szWindowClass)) 	return FALSE;
 
     mainWnd=hWnd = CreateWindow(szWindowClass, szTitle, WS_VISIBLE,
         CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, NULL, NULL, hInstance, NULL);
-	hwnvs=mainWnd;
+hwnvs=mainWnd;
     if (!hWnd)
     {
         return FALSE;
@@ -1975,8 +1860,21 @@ void Shell_NotifyIcon(bool show, HWND hwnd){
 
 
 void CALLBACK TimerProc(HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime)
-{//музыка
-	
+{//аним смайлы перерисовка
+	if(Config::getInstance()->anim_smile)
+	{
+		if(smile_anim_ind>=3)
+			{smile_anim_ind=0;
+			}
+		else
+			{smile_anim_ind++;
+			 }
+		nofocus=1;
+		tabs->showActiveTab();
+		nofocus=0;
+	}
+	nofocus=0;
+	//музыка
 	if(Config::getInstance()->tune_status || Config::getInstance()->tune_status_pep){
 	
 	if(rosterStatus){
@@ -2000,16 +1898,16 @@ void CALLBACK TimerProc(HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime)
 presence::PresenceIndex avnstatusconf;
 
 
-timaliv=timaliv+2;
+timaliv=timaliv+TIMER_INT_;
 if(Config::getInstance()->avtostatus){
-timstatus=timstatus+2;
+timstatus=timstatus+TIMER_INT_;
 if(Config::getInstance()->id_avtostatus==1){avnstatusconf=presence::ONLINE;}else{
 	if(Config::getInstance()->id_avtostatus==2){avnstatusconf=presence::CHAT;}else{
 		if(Config::getInstance()->id_avtostatus==3){avnstatusconf=presence::AWAY;}else{
 			if(Config::getInstance()->id_avtostatus==4){avnstatusconf=presence::XA;}else{
 			if(Config::getInstance()->id_avtostatus==5){avnstatusconf=presence::DND;}}}}
 }
-if(timstatus>=(Config::getInstance()->time_avtostatus)){
+if(timstatus>=1000*(Config::getInstance()->time_avtostatus)){
 	timstatus=0;
 
 if(idautostatus==0 &&(rosterStatus)){
@@ -2047,7 +1945,7 @@ std::string idVer;
 
 //кипалив
 ///хз -всё пашет-кроме реконекта
-if(timealivid  ){if(timaliv>=(TIMER_ALIV+TIMER_ALIVP)){
+if(timealivid  ){if(timaliv>=1000*(TIMER_ALIV+TIMER_ALIVP)){
 timealivid=0;//непришло
 timaliv=0;
 Log::getInstance()->msg("ERROR pong ",rc->account->getServer().c_str());
@@ -2104,7 +2002,7 @@ rc->sendPresence();
 
 }}
 
-if(!timealivid &&(rosterStatus)){if(timaliv>=TIMER_ALIV){timealivid=1;//послали пинг
+if(!timealivid &&(rosterStatus)){if(timaliv>=1000*TIMER_ALIV){timealivid=1;//послали пинг
 JabberDataBlockRef qry;
 Log::getInstance()->msg("ping ",rc->account->getServer().c_str());
 JabberDataBlock req("iq");
