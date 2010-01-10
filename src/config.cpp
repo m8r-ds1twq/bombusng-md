@@ -81,23 +81,23 @@ void Config::serialize( Serialize &s ) {
 	s.streamInt(tabconf, 1);							// размер табов
 	
 	s.streamInt(reconnectTries, 3);						// кол-во попыток реконнекта
-	s.streamInt(tolshina, 400);							// толщина ? 
+	s.streamInt(tolshina, 600);							// толщина ? 
 
 	// настройка высоты и ширины шрифтов для qVGA для VGA 
 	if (sysinfo::screenIsWVGA())
 	{
-		s.streamInt(msg_font_height,26);					// высота
-		s.streamInt(msg_font_width,12);
-		s.streamInt(roster_font_height,26);
-		s.streamInt(roster_font_width,12);
-	} else if (sysinfo::screenIsVGA())	{
-		s.streamInt(msg_font_height,24);					// высота
+		s.streamInt(msg_font_height,30);					// высота
 		s.streamInt(msg_font_width,10);
-		s.streamInt(roster_font_height,24);
+		s.streamInt(roster_font_height,30);
+		s.streamInt(roster_font_width,10);
+	} else if (sysinfo::screenIsVGA())	{
+		s.streamInt(msg_font_height,30);					// высота
+		s.streamInt(msg_font_width,10);
+		s.streamInt(roster_font_height,30);
 		s.streamInt(roster_font_width,10);
 	} else 	{
-		s.streamInt(msg_font_height,14);					// высота
-		s.streamInt(msg_font_width,5);
+		s.streamInt(msg_font_height,15);					// высота
+		s.streamInt(msg_font_width,6);
 		s.streamInt(roster_font_height,16);
 		s.streamInt(roster_font_width,6);
 	};
@@ -106,20 +106,19 @@ void Config::serialize( Serialize &s ) {
 	s.streamInt(ping_aliv,150);
 	s.streamInt(pong_aliv,90);
 	s.streamInt(id_avtostatus,3);
-	s.streamBool(autojoinroom,true);
-	s.streamBool(avtostatus, true);
-	s.streamBool(tune_status, true);
+	s.streamBool(autojoinroom,false);
+	s.streamBool(avtostatus, false);
+	s.streamBool(tune_status, false);
 	s.streamBool(his_muc_d, true);
 	s.streamBool(his_ch_d, true);
-	s.streamBool(tune_status_pep, true);
+	s.streamBool(tune_status_pep, false);
     s.streamBool(xmllog, false);
 	s.streamInt(vibra_port, 0);
 	s.streamBool(dop_infa, false);
 	s.streamBool(signals_muc, true);
 	s.streamBool(enter2, true);
 	s.streamBool(anim_smile, true);
-	s.streamInt(timer_int, 700);
+	s.streamInt(timer_int, 350);
 	s.streamString(colorfile,(char *)"color.txt");
 
 }
-
