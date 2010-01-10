@@ -165,7 +165,9 @@ INT_PTR CALLBACK DlgProcConfig(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
 				SetDlgItemInt(hDlg, IDC_X_AWAT,cfg->avatarWidth, false);
 				SetDlgItemInt(hDlg, IDC_VIBRA, cfg->vibra_port, false);
 				SetDlgCheckBox(hDlg, IDC_DOPINFA, cfg->dop_infa);
-				SetDlgItemText(hDlg, IDC_LISTCOLORS, cfg->colorfile);
+				SendDlgItemMessage(hDlg, IDC_LISTCOLORS, CB_SELECTSTRING,-1,(LPARAM)utf8::utf8_wchar(cfg->colorfile).c_str());//Ставим фокус на выбранной схеми -а то при нажатии на ок не будет схемы
+				
+				//SetDlgItemText(hDlg, IDC_LISTCOLORS, (LPCWSTR)utf8::utf8_wchar(cfg->colorfile).c_str());
 				
             }
             if (npage==1) {
@@ -259,7 +261,8 @@ INT_PTR CALLBACK DlgProcConfig(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
 					BOOL vibra_port;
 					cfg->vibra_port = GetDlgItemInt(hDlg, IDC_VIBRA, &vibra_port, false);
 					if (!vibra_port) cfg->vibra_port = 0;
-					GetDlgItemText(hDlg, IDC_LISTCOLORS, cfg->colorfile);
+					GetDlgItemText(hDlg, IDC_LISTCOLORS,cfg->colorfile );
+					
 				
                 }
                 if (npage==1) {

@@ -455,7 +455,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
     //while (GetMessage(&msg, NULL, 0, 0)) {
 	/**/
 	while (true) {
-        if (rc) if (rc->jabberStream) rc->jabberStream->parseStream();
+       // if (rc) if (rc->jabberStream) rc->jabberStream->parseStream();
 
         if (!PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {  Sleep(50); continue; }
         if (msg.message==WM_QUIT) break;
@@ -1860,7 +1860,9 @@ void Shell_NotifyIcon(bool show, HWND hwnd){
 
 
 void CALLBACK TimerProc(HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime)
-{//аним смайлы перерисовка
+{if (rc) if (rc->jabberStream) rc->jabberStream->parseStream();// ахтунг это было в самом верху в бесконечном цикле-но так позволяет не зависать программе на настройках и всплыв менюшках
+	
+	//аним смайлы перерисовка
 	if(Config::getInstance()->anim_smile)
 	{
 		if(smile_anim_ind>=3)
