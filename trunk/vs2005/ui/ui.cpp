@@ -86,8 +86,8 @@ std::string pamessage;//ñîõğàíÿåì
 presence::PresenceIndex astatus;
 int idautostatus=0;//0-âûêë 1-âêëş÷¸í 2-âûêëş÷èòü
 
-#define TIMER_ALIV 1000*Config::getInstance()->ping_aliv//ÂĞÅÌß ÏÎÑËÀÍÈß
-#define TIMER_ALIVP 1000*Config::getInstance()->pong_aliv //ÂĞÅÌß ÎÆÈÄÀÍÈß
+#define TIMER_ALIV Config::getInstance()->ping_aliv//ÂĞÅÌß ÏÎÑËÀÍÈß
+#define TIMER_ALIVP Config::getInstance()->pong_aliv //ÂĞÅÌß ÎÆÈÄÀÍÈß
 #define TIMER_INT_ Config::getInstance()->timer_int //ÂĞÅÌß ÒÀÉÌÅĞÀ
 std::wstring out_title;//÷¸ èãğàåò
 std::wstring out_OriginalArtist;
@@ -1067,7 +1067,7 @@ ProcessResult MTForwarder::blockArrived(JabberDataBlockRef block, const Resource
     //rc->jabberStanzaDispatcher2->dispatchDataBlock(block);
     PostMessage(mainWnd, WM_FORWARD_STANZA, 0, (LPARAM)p);
 
-    return BLOCK_PROCESSED;
+    return BLOCK_PROCESSED
 }*/
 //////////////////////////////////////////////////////////////
 class GetRoster : public JabberDataBlockListener {
@@ -1863,7 +1863,7 @@ void CALLBACK TimerProc(HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime)
 {if (rc) if (rc->jabberStream) rc->jabberStream->parseStream();// àõòóíã ıòî áûëî â ñàìîì âåğõó â áåñêîíå÷íîì öèêëå-íî òàê ïîçâîëÿåò íå çàâèñàòü ïğîãğàììå íà íàñòğîéêàõ è âñïëûâ ìåíşøêàõ
 	
 	//àíèì ñìàéëû ïåğåğèñîâêà
-	if(Config::getInstance()->anim_smile)
+	if(Config::getInstance()->anim_smile && hwnvs == GetActiveWindow())//åñëè áîìáóñ íå â ôîêóñå òî è íàõ íå íàäî
 	{
 		if(smile_anim_ind>=3)
 			{smile_anim_ind=0;

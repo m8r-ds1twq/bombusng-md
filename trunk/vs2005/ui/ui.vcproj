@@ -275,7 +275,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="UPX.exe &quot;$(TargetPath)&quot;"
+				CommandLine="..\..\UPX.exe &quot;$(TargetPath)&quot;"
 			/>
 			<DeploymentTool
 				ForceDirty="-1"
