@@ -1,7 +1,7 @@
 #include "Notify.h"
 
 #include "config.h"
-
+#include <utf8.hpp>
 #include <nled.h>
 
 //#include <Pwinuser.h>
@@ -96,19 +96,47 @@ void doSmartPhoneVibra();
 }
 
 extern std::wstring appRootPath;
-
-
+extern char ***snd;
+extern int linesCountsnd;
+extern std::string soundjid;
 void Notify::PlayNotify(int soundst) {
 	//0-message.wav 1-conference.wav 2-composing.wav 3-connected.wav 4-disconnected.wav 5-reconnected.wav
     //doSmartPhoneVibra();
    int vid;
     std::wstring soundName(appRootPath);
+	bool snd0=0;
 	std::wstring soundName2(appRootPath);
 	std::wstring soundName3(appRootPath);
 	std::wstring soundName4(appRootPath);
 	std::wstring soundName5(appRootPath);
 	std::wstring soundName6(appRootPath);
-    soundName+=TEXT("sounds\\message.wav");
+	soundName+=TEXT("sounds\\");
+	if(soundst==0)//если приватное
+	{
+		if(linesCountsnd)//если вообще есть
+		{
+			for(int r=0;r<linesCountsnd;r=r+1)
+			{
+				if (soundjid.find(snd[r][0])==0)
+				{
+				snd0=1;
+				
+				
+				//MessageBox(NULL, utf8::utf8_wchar(snd[r][0]).c_str(), TEXT("NEWS"), MB_YESNO | MB_ICONINFORMATION );
+				
+				
+				//MessageBox(NULL,utf8::utf8_wchar(snd[r][1]).c_str(), TEXT("NEWS"), MB_YESNO | MB_ICONINFORMATION );
+				soundName+=utf8::utf8_wchar(snd[r][1]).c_str();//находим путь до его мелодии
+				//MessageBox(NULL, soundName.c_str(), TEXT("2"), 0);
+				r=linesCountsnd+1;//прервём цикл
+				}
+
+			
+			}
+			
+		}
+	}
+   if(!snd0)soundName=appRootPath+TEXT("sounds\\message.wav");
     soundName2+=TEXT("sounds\\conference.wav");
 	soundName3+=TEXT("sounds\\composing.wav");
 	soundName4+=TEXT("sounds\\connected.wav");

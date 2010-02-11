@@ -406,9 +406,10 @@ LRESULT CALLBACK ChatView::WndProc( HWND hWnd, UINT message, WPARAM wParam, LPAR
 					p->contact->getClientIdIcon().length(),
 					NULL);
 				*/
+				std::wstring statuschat=utf8::utf8_wchar(p->contact->getStatusMessage());
 				ExtTextOut(hdc, avWidth + iconwidth + 4, iconwidth, NULL, NULL,
-					utf8::utf8_wchar(p->contact->getStatusMessage()).c_str(),
-					p->contact->getStatusMessage().length(),
+					statuschat.c_str(),
+					statuschat.length(),
 					NULL);
 
 			}
@@ -730,11 +731,12 @@ void ChatView::sendJabberMessage() {
 
     std::trimTail(body);
     if (body.length()==0) return;
-	
+	bool muc=boost::dynamic_pointer_cast<MucRoom>(contact);
+	if (!muc){body.insert(0,"ME>");}// Свои сообщения в привате отображать с ME> в начале чтобы было понятно где сам писал
 timstatus=0;
 if(idautostatus==1)idautostatus=2;
     Message::ref msg=Message::ref(new Message(body, rc->account->getNickname(), false, Message::SENT, strtime::getCurrentUtc() ));
-    bool muc=boost::dynamic_pointer_cast<MucRoom>(contact);
+
 if (Config::getInstance()->history)
 {if (!muc){
 			History::getInstance()->appendHistory(contact, msg,false);}}
@@ -750,7 +752,7 @@ if (Config::getInstance()->saveHistoryMuc){
         
        }
 	}
- 
+if(!muc)msg->body.erase(0,3);//перед отправкой убираем ME> 
     msgList->moveCursorEnd();
     redraw();
 

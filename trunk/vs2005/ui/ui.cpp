@@ -63,8 +63,11 @@
 #include "boostheaders.h"
 
 #include "ChatView.h"
-char ***strcom;
-int linesCountcom;
+char ***strcom;//массив быстрых команд
+char ***snd;//массив персональных мелодий
+int linesCountcom;//количество быстрых команд
+int linesCountsnd;//количество персональных мелодий
+std::string soundjid;
 #define MAX_LOADSTRING 100
 int sizecaps;
 bool nofocus=0;
@@ -592,12 +595,14 @@ if(hInst2){
     appName="Bombusng-MD";//
      //colorsload();//load color
 	colorsload(utf8::utf8_wchar(Config::getInstance()->colorfile));
-	 std::wstring compatch=appRootPath+TEXT("com.txt");
+	 std::wstring compatch=appRootPath+TEXT("com.txt");//путь до файла быстрых команд
+	 std::wstring sndpatch=appRootPath+TEXT("sounds\\sounds.txt");//путь до файла персональных мелодий
     
 	
 //std::string moods_1;
 
-	strcom=getConfig(compatch.c_str(),&linesCountcom);
+	strcom=getConfig(compatch.c_str(),&linesCountcom);//загрузка быстрых команд в массив
+	snd=getConfig(sndpatch.c_str(),&linesCountsnd);//загрузка персональных мелодий в массив
 timerid=SetTimer(0,MAIN_TIMER_ID,Config::getInstance()->timer_int,TimerProc);
     if (!MyRegisterClass(hInstance, szWindowClass)) 	return FALSE;
 
@@ -1265,6 +1270,7 @@ ProcessResult MessageRecv::blockArrived(JabberDataBlockRef block, const Resource
     std::string nick;
 
     bool mucMessage= block->getAttribute("type")=="groupchat";
+	bool tuneerror=	 block->getAttribute("type")=="error";//проверяем-на ошибку обработки сервером 
     Contact::ref c;
     if (mucMessage) {
         Jid roomNode;
@@ -1283,6 +1289,7 @@ ProcessResult MessageRecv::blockArrived(JabberDataBlockRef block, const Resource
         nick=c->getName();
     }
 	//tune
+	if(!tuneerror){
 JabberDataBlockRef zz=block->getChildByName("event");
 if(zz){//Log::getInstance()->msg("ok event");
 JabberDataBlockRef zzz=zz->getChildByName("items");
@@ -1310,7 +1317,7 @@ rc->roster->makeViewList();
 
 }
 
-}
+}}
     //xep-085
     if (block->findChildNamespace("active", "http://jabber.org/protocol/chatstates")) {
         c->composing=false;
@@ -1522,6 +1529,7 @@ AddNotification(hwnvs,(LPCTSTR)messn1.c_str(),0);
 
 		}
 if (mucMessage) {if(Config::getInstance()->signals_muc)Notify::PlayNotify(1);}else{
+	soundjid=c->jid.getBareJid();
 			Notify::PlayNotify(0);}
 	}
 
