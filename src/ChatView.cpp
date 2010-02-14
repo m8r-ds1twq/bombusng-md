@@ -28,6 +28,7 @@
 #include <windows.h> 
 #include <Wingdi.h> 
 
+
 extern std::wstring appRootPath;
 extern HINSTANCE			g_hInst;
 extern int tabHeight;
@@ -1419,7 +1420,7 @@ bool MessageElement::OnMenuCommand(int cmdId, HWND parent, HWND edithwnd){
                 return true;
             }
 		case CCLRMSGS:{
-			PostMessage(edithwnd, CLEARMESS, NULL, false);
+			PostMessage(parent, CLEARMESS, NULL, false);
 			return true;}
 		case CGETNICK:{
 			if (!edithwnd) return true;

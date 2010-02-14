@@ -10,6 +10,7 @@ private:
 
     //static Log::ref instance;
 
+
     VirtualListView::ref odrLog;
 
 public:
@@ -19,4 +20,5 @@ public:
 
 private:
     virtual void addLog(const wchar_t * msg);
+	virtual void delLog(void);
 };

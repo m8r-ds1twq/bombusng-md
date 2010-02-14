@@ -13,6 +13,7 @@ extern HINSTANCE			g_hInst;
 #define VK_9 0x39
 #define VK_5 0x35
 #define MSGListFocus					42374
+#define CLEARMESS   42365
 extern int tabHeight;
 extern int COLORS[];
 ATOM VirtualListView::RegisterWindowClass() {
@@ -36,6 +37,7 @@ ATOM VirtualListView::RegisterWindowClass() {
 LRESULT CALLBACK VirtualListView::WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam ) {
     VirtualListView *p=(VirtualListView *) GetWindowLong(hWnd, GWL_USERDATA);
  int klav=0;
+ 
     switch (message) {
     case WM_CREATE:
         {
@@ -50,6 +52,14 @@ LRESULT CALLBACK VirtualListView::WndProc( HWND hWnd, UINT message, WPARAM wPara
             break;
 
         }
+
+	case CLEARMESS:
+		{/*int result=MessageBox(
+				p->getHWnd(), 
+				L"Очистить окно от сообщений?", 
+				L"Очистить", 
+				MB_YESNO | MB_ICONWARNING);*/
+		PostMessage(p->parentHWnd, CLEARMESS, NULL, false);}
 
     case WM_PAINT:
 
@@ -71,7 +81,7 @@ LRESULT CALLBACK VirtualListView::WndProc( HWND hWnd, UINT message, WPARAM wPara
 
             int y=-p->winTop;
             int index=0;
-
+		
             if (p->odrlist.get()) {
                 ODRList::const_iterator i=p->odrlist->begin();
                 while (i!=p->odrlist->end()) {
@@ -602,8 +612,12 @@ void VirtualListView::moveCursor( int direction ) {
 void VirtualListView::addODR( ODRRef odr, bool redraw ) {
     odrlist->push_back(odr);
     notifyListUpdate(redraw);
+	
 }
-
+void VirtualListView::delODR(void ) {
+    odrlist->erase(odrlist->begin(),odrlist->end());
+	notifyListUpdate(1);
+}
 HMENU VirtualListView::getContextMenu() { return NULL; }
 void VirtualListView::OnCommand( int cmdId, LONG lParam ) {};
 

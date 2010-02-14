@@ -10,7 +10,7 @@
 #include "utf8.hpp"
 #include "base64.h"
 #include "../gsgetfile/include/gsgetlib.h"
-
+#include "config.h"
 #include "ResourceContext.h"
 #include "Roster.h"
 extern std::wstring appRootPath;
@@ -285,7 +285,7 @@ size_t i=0;
     std::wstring imageFile=appRootPath + L"userdata\\avatars\\" + utf8::utf8_wchar(vcard_to) + L".jpg";
 	//int result=MessageBox(NULL, new_path.c_str(), TEXT("123"), MB_YESNO | MB_ICONWARNING );
 	LPCTSTR path_save=imageFile.c_str();
-	Log::getInstance()->msg("[***Get.]("+vcard_to+")");
+	if(Config::getInstance()->isLOG)Log::getInstance()->msg("[***Get.]("+vcard_to+")");
 
     HANDLE file=CreateFile(path_save,
         GENERIC_WRITE, 
@@ -308,7 +308,7 @@ size_t i=0;
 	 contact->img_avatar=ImageRef(new Image(imageFile.c_str()));
 	 img.reset();
 	 img=ImageRef(new Image(imageFile.c_str()));
-	Log::getInstance()->msg("[***SUCCESS.]("+contact->statusMessage+")");
+	if(Config::getInstance()->isLOG)Log::getInstance()->msg("[***SUCCESS.]("+contact->statusMessage+")");
 	//привязка к контакту
 
 

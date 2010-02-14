@@ -9,6 +9,7 @@ class Config
 public:
     ~Config(){};
 
+
     typedef boost::shared_ptr<Config> ref;
 
     static Config::ref getInstance();
@@ -36,6 +37,7 @@ public:
 	bool confchat;
 	bool confclient;
 	bool xmllog;
+	bool isLOG;
 	int avatarWidth;
 	int tabconf;
 	std::string  avtomessage;

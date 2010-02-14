@@ -113,6 +113,8 @@ void Config::serialize( Serialize &s ) {
 	s.streamBool(his_ch_d, true);
 	s.streamBool(tune_status_pep, false);
     s.streamBool(xmllog, false);
+	s.streamBool(isLOG, false);
+
 	s.streamInt(vibra_port, 0);
 	s.streamBool(dop_infa, false);
 	s.streamBool(signals_muc, true);

@@ -13,7 +13,6 @@
 
 /////////////////////////////////////////////////////////////////////////////
 #undef APSTUDIO_READONLY_SYMBOLS
-
 /////////////////////////////////////////////////////////////////////////////
 // Russian resources
 
@@ -58,8 +57,8 @@ BEGIN
             MENUITEM "Мой vCard",                   ID_TOOLS_MYVCARD
             MENUITEM SEPARATOR
             MENUITEM "Лог",                         IDM_WINDOWS_LOG
+            MENUITEM "Очистить Лог",                ID_TOOLS_LOGDEL
             MENUITEM "Информация о потоке",         IDM_JABBER_STREAMINFO
-            MENUITEM "Перезагрузить цвет. схему",   ID_TOOLS_COLORRE
         END
         MENUITEM SEPARATOR
         POPUP "Сигналы"
@@ -279,7 +278,7 @@ BEGIN
     LTEXT           "Размер аватарок",IDC_STATIC,11,44,69,10
     EDITTEXT        IDC_X_AWAT,87,42,18,12,ES_LOWERCASE | ES_AUTOHSCROLL
     CONTROL         "Показ клиентов",IDC_AUTOJOINROOM,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,11,31,70,10
-    CONTROL         "XML лог",IDC_XML_LOG,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,11,67,42,10
+    CONTROL         "Лог",IDC_XML_LOG3,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,11,67,28,10
     LTEXT           "Порт вибры",IDC_STATIC,11,56,69,10
     EDITTEXT        IDC_VIBRA,87,55,18,12,ES_LOWERCASE | ES_AUTOHSCROLL
     PUSHBUTTON      "Авто",IDC_GETVIBRA,107,54,45,14
@@ -287,6 +286,7 @@ BEGIN
     CONTROL         "Показывать доп.инфу о клиенте",IDC_DOPINFA,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,11,89,135,12
     COMBOBOX        IDC_LISTCOLORS,37,101,115,30,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_TABSTOP
     LTEXT           "Цвета",IDC_STATIC,11,103,22,8
+    CONTROL         "XML ",IDC_XML_LOG2,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,53,68,31,10
 END
 
 IDD_OPTIONS2 DIALOG  0, 0, 156, 129
