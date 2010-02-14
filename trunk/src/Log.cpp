@@ -5,12 +5,12 @@
 Log::~Log(){}
 
 void Log::addLog(const wchar_t * msg) {}
-
+void Log::delLog(void) {}
 
 void Log::msg(const std::string &message){
     addLog(utf8::utf8_wchar(message).c_str());
 }
-
+void Log::delet(void){delLog();}
 void Log::msg(const std::wstring &message){
     addLog(message.c_str());
 	

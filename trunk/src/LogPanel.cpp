@@ -29,7 +29,12 @@ void LogPanel::addLog(const wchar_t * msg) {
     ODRRef r=ODRRef(new LogMessage(msg));
     odrLog->addODR(r, true);
 }
-
+void LogPanel::delLog(void) {
+    //ListBox_AddString( logWnd->getListBoxHWnd(), msg);
+    //ODRRef r=ODRRef(new IconTextElementContainer(std::wstring(msg), -1));
+   
+    odrLog->delODR();
+}
 void LogPanel::bindLV( VirtualListView::ref odrLog ) {
     LogPanel *lp=new LogPanel();
     setInstance(lp);

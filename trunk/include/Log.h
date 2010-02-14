@@ -12,7 +12,8 @@ public:
 
 protected:
     Log(){};
-
+    
+    
     static void setInstance(Log * log);
     //static Log::ref instance;
 
@@ -21,7 +22,9 @@ public:
 	void msg(const std::string &message);
 	void msg(const char * message);
 	void msg(const char * message, const char * message2);
+	void delet(void);
 
 protected:
     virtual void addLog(const wchar_t * msg);
+	virtual void delLog(void);
 };

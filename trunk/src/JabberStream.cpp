@@ -16,7 +16,7 @@ JabberStream::JabberStream(void){
 }
 extern void reconnect();
 void JabberStream::run(JabberStream * _stream){
-	Log::getInstance()->msg("Reader thread started");
+	if(Config::getInstance()->isLOG)Log::getInstance()->msg("Reader thread started");
 
 	try {
         if (_stream->connection==NULL) {
@@ -26,7 +26,7 @@ void JabberStream::run(JabberStream * _stream){
 	} catch (std::exception ex) {
         _stream->jabberListener->endConversation(&ex);
         _stream->isRunning=false;
-        Log::getInstance()->msg("Reader thread stopped");
+        if(Config::getInstance()->isLOG)Log::getInstance()->msg("Reader thread stopped");
         _stream->rc->jabberStream=JabberStreamRef();
 		HANDLE thread=CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)reconnect, NULL, 0, NULL);
 		SetThreadPriority(thread, THREAD_PRIORITY_IDLE);
@@ -44,7 +44,7 @@ void JabberStream::parseStream() {
     } catch (std::exception ex) {
         jabberListener->endConversation(&ex);
         isRunning=false;
-        Log::getInstance()->msg("Reader thread stopped");
+        if(Config::getInstance()->isLOG)Log::getInstance()->msg("Reader thread stopped");
         rc->jabberStream=JabberStreamRef();
 		HANDLE thread=CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)reconnect, NULL, 0, NULL);
 		SetThreadPriority(thread, THREAD_PRIORITY_IDLE);
@@ -90,7 +90,7 @@ bool JabberStream::tagEnd(const std::string & tagname) {
             err+=xe->toString();
             throw std::exception(err.c_str());
         }
-		if(Config::getInstance()->xmllog){Log::getInstance()->msg("xml.in: ", stanza->toXML()->c_str());}
+		if(Config::getInstance()->xmllog){if(Config::getInstance()->isLOG)Log::getInstance()->msg("xml.in: ", stanza->toXML()->c_str());}
 		JabberStanzaDispatcher * dispatcher= rc->jabberStanzaDispatcherRT.get();
 		if (dispatcher!=NULL) 
             if (! dispatcher->dispatchDataBlock(stanza)) {
@@ -151,7 +151,7 @@ JabberStream::JabberStream(ResourceContextRef rc, JabberListenerRef listener){
 
 JabberStream::~JabberStream(void){
 
-	Log::getInstance()->msg("JabberStream destructor called");
+	if(Config::getInstance()->isLOG)Log::getInstance()->msg("JabberStream destructor called");
 }
 
 void JabberStream::sendStanza(JabberDataBlockRef stanza){
@@ -164,7 +164,7 @@ void JabberStream::sendStanza(JabberDataBlockRef stanza){
 }
 
 void JabberStream::sendStanza(JabberDataBlock &stanza){
-	if(Config::getInstance()->xmllog){Log::getInstance()->msg("xml.out: ", stanza.toXML()->c_str());}
+	if(Config::getInstance()->xmllog){if(Config::getInstance()->isLOG)Log::getInstance()->msg("xml.out: ", stanza.toXML()->c_str());}
     try {
 	    connection->write( stanza.toXML() );
     } catch (std::exception ex) {

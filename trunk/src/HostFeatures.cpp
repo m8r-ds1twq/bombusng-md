@@ -2,6 +2,7 @@
 #include "JabberStream.h"
 #include "TimeFunc.h"
 #include "Log.h"
+#include "config.h"
 
 ProcessResult HostFeatures::blockArrived( JabberDataBlockRef block, const ResourceContextRef rc ) {
     rc->hostFeatures=HostCapsRef(new HostCaps());
@@ -15,7 +16,7 @@ ProcessResult HostFeatures::blockArrived( JabberDataBlockRef block, const Resour
         JabberDataBlockRef qry=block->findChildNamespace("query","http://jabber.org/protocol/disco#info");
         if (!qry) return LAST_BLOCK_PROCESSED;
 
-        Log::getInstance()->msg("Host features queried");
+        if(Config::getInstance()->isLOG)Log::getInstance()->msg("Host features queried");
 
         JabberDataBlockRefList::iterator i=qry->getChilds()->begin();
         while (i!=qry->getChilds()->end()) {

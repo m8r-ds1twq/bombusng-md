@@ -5,6 +5,7 @@
 
 #include <vector>
 
+
 //////////////////////////////////////////////////////////////////////////
 
 typedef std::vector<ODRRef> ODRList;
@@ -35,6 +36,7 @@ public:
 
     virtual void eventOk();
 
+	void delODR(void);
     void addODR(ODRRef odr, bool redraw);
 
     virtual HMENU getContextMenu();

@@ -1,7 +1,7 @@
 //{{NO_DEPENDENCIES}}
 // Microsoft Visual C++ generated include file.
 // Used by uippc.rc
-//
+
 #define IDS_APP_TITLE                   1
 #define IDC_UI                          2
 #define ID_VCARD                        3
@@ -165,6 +165,8 @@
 #define IDC_X_HIS_CH_D                  1101
 #define IDC_X_HISTORY3                  1102
 #define IDC_XML_LOG                     1145
+#define IDC_XML_LOG3                    1145
+#define IDC_XML_LOG2                    1146
 #define IDC_SB                          1682
 #define IDC_RECONNECT_TRIES             5325
 #define IDC_PINGAKIV                    5326
@@ -233,6 +235,7 @@
 #define ID_SIGNALS_VIBRA                32825
 #define GLOBAL_STATUS                   32826
 #define ID_SIGNALS_MUTE                 32826
+#define ID_TOOLS_LOGDEL                 32827
 #define SB_                             36585
 #define ID_TOOLS_COLORRE                37801
 #define IDM_EXIT                        40000
@@ -264,7 +267,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NO_MFC                     1
 #define _APS_NEXT_RESOURCE_VALUE        140
-#define _APS_NEXT_COMMAND_VALUE         32827
+#define _APS_NEXT_COMMAND_VALUE         32828
 #define _APS_NEXT_CONTROL_VALUE         1082
 #define _APS_NEXT_SYMED_VALUE           116
 #endif

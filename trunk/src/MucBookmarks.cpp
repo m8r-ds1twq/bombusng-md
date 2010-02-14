@@ -58,7 +58,7 @@ JabberDataBlockRef joinPresence=constructPresence(
         }
         std::stable_sort(bookmarks.begin(), bookmarks.end(), MucBookmarkItem::compare);
     }
-    Log::getInstance()->msg("Bookmarks received successfully");
+    if(Config::getInstance()->isLOG)Log::getInstance()->msg("Bookmarks received successfully");
     return LAST_BLOCK_PROCESSED;
 }
 
@@ -84,7 +84,7 @@ void MucBookmarks::set(int i,MucBookmarkItem::ref bm) {
 }
 
 void MucBookmarks::save( const ResourceContextRef rc ) { 
-        Log::getInstance()->msg("Starting Bookmarks saving...");
+        if(Config::getInstance()->isLOG)Log::getInstance()->msg("Starting Bookmarks saving...");
         id=strtime::getRandom();
         JabberDataBlock SetBm("iq");
     SetBm.setAttribute("type", "set");
@@ -114,7 +114,7 @@ void MucBookmarks::save( const ResourceContextRef rc ) {
         }
         
         rc->jabberStream->sendStanza(SetBm);
-        Log::getInstance()->msg("Bookmarks save successfully");
+        if(Config::getInstance()->isLOG)Log::getInstance()->msg("Bookmarks save successfully");
 }
 int MucBookmarks::getBookmarkCount() const { return bookmarks.size(); }
 

@@ -3,11 +3,12 @@
 #include <commctrl.h>
 #include <windowsx.h>
 #include "..\vs2005\ui\resourceppc.h"
-
+#include "VirtualListView.h"
+#include "LogPanel.h"
 extern HINSTANCE			g_hInst;
 extern int tabHeight;
 extern HWND g_hWndMenuBar;		// menu bar handle
-
+extern VirtualListView::ref odrLog;
 //////////////////////////////////////////////////////////////////////////
 // WARNING!!! ONLY FOR WM2003 and higher
 //////////////////////////////////////////////////////////////////////////
@@ -53,6 +54,18 @@ LRESULT CALLBACK TabsCtrl::WndProc( HWND hWnd, UINT message, WPARAM wParam, LPAR
             break;
 
         }
+		case CLEARMESS:
+		{int result=MessageBox(
+				p->getHWnd(), 
+				L"Очистить лог?", 
+				L"Очистить", 
+				MB_YESNO | MB_ICONWARNING);
+		if (result==IDYES) Log::getInstance()->delet();
+			//if (result==IDYES) {
+			//	p->contact->messageList->clear();
+			//	p->msgList->moveCursorEnd();
+			}
+			break;
 
     case WM_PAINT:
 
@@ -136,7 +149,7 @@ LRESULT CALLBACK TabsCtrl::WndProc( HWND hWnd, UINT message, WPARAM wParam, LPAR
                 int nextTab=p->activeTab;
                 int delTab=nextTab;
 
-
+				
                 p->activeTab++;
                 if (p->activeTab>=(int)p->tabs.size()) {
                     nextTab--;

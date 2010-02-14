@@ -10,7 +10,7 @@
 #include "crypto/MD5.h"
 #include "crypto/SHA1.h"
 #include "utf8.hpp"
-
+#include "config.h"
 
 typedef boost::shared_ptr<MD5> MD5Ref;
 typedef boost::shared_ptr<SHA1> SHA1Ref;
@@ -19,7 +19,7 @@ NonSASLAuth::NonSASLAuth(ResourceContextRef rc, JabberDataBlockRef streamHeader)
     this->rc=rc;
     streamId=streamHeader->getAttribute("id");
 
-	Log::getInstance()->msg("Non-SASL Login: handshake");
+	if(Config::getInstance()->isLOG)Log::getInstance()->msg("Non-SASL Login: handshake");
 
 	JabberDataBlockRef login=loginStanza(true, false);
 
@@ -140,7 +140,7 @@ ProcessResult SASLAuth::blockArrived(JabberDataBlockRef block, const ResourceCon
 
             //DIGEST-MD5 mechanism
             if (mechanisms->hasChildByValue("DIGEST-MD5")) {
-                Log::getInstance()->msg("DIGEST-MD5 authentication");
+                if(Config::getInstance()->isLOG)Log::getInstance()->msg("DIGEST-MD5 authentication");
 
                 auth.setAttribute("mechanism", "DIGEST-MD5");
 
@@ -157,7 +157,7 @@ ProcessResult SASLAuth::blockArrived(JabberDataBlockRef block, const ResourceCon
                     return LAST_BLOCK_PROCESSED;
                 }
 
-				Log::getInstance()->msg("PLAIN-password authentication");
+				if(Config::getInstance()->isLOG)Log::getInstance()->msg("PLAIN-password authentication");
 					
 				auth.setAttribute("mechanism", "PLAIN");
 
@@ -177,7 +177,7 @@ ProcessResult SASLAuth::blockArrived(JabberDataBlockRef block, const ResourceCon
 		// resource binding session
 		JabberDataBlockRef bindsess=block->getChildByName("bind");
 		if (bindsess.get()!=NULL) {
-			Log::getInstance()->msg("Binding resource");
+			if(Config::getInstance()->isLOG)Log::getInstance()->msg("Binding resource");
 			JabberDataBlock bindIq("iq");
 			bindIq.setAttribute("type", "set");
 			bindIq.setAttribute("id", "bind");
@@ -217,7 +217,7 @@ ProcessResult SASLAuth::blockArrived(JabberDataBlockRef block, const ResourceCon
     }
 
     if (block->getTagName()=="proceed") {
-        Log::getInstance()->msg("Starting TLS connection");
+        if(Config::getInstance()->isLOG)Log::getInstance()->msg("Starting TLS connection");
 #ifndef NOSTARTTLS
 
         CeTLSSocket::ref tlsSocket=boost::dynamic_pointer_cast<CeTLSSocket>(rc->jabberStream->connection);
@@ -230,7 +230,7 @@ ProcessResult SASLAuth::blockArrived(JabberDataBlockRef block, const ResourceCon
     }
 
     if (block->getTagName()=="compressed") {
-		Log::getInstance()->msg("Opening compressed stream");
+		if(Config::getInstance()->isLOG)Log::getInstance()->msg("Opening compressed stream");
 
 #ifndef NOZLIB
 		// switching to compressed stream
@@ -261,7 +261,7 @@ ProcessResult SASLAuth::blockArrived(JabberDataBlockRef block, const ResourceCon
             JabberDataBlockRef resource=bind->getChildByName("jid");
             std::string res=resource->getText();
 
-			Log::getInstance()->msg("Resource: ", res.c_str());
+			if(Config::getInstance()->isLOG)Log::getInstance()->msg("Resource: ", res.c_str());
 
             rc->myJid.setJid(res);
 

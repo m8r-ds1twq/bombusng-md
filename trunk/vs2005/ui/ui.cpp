@@ -1,5 +1,5 @@
 // ui.cpp : Defines the entry point for the application.
-//
+////
 
 //#include "stdafx.h"
 
@@ -88,6 +88,7 @@ extern SOCKET sok2;//
 std::string pamessage;//сохран€ем
 presence::PresenceIndex astatus;
 int idautostatus=0;//0-выкл 1-включЄн 2-выключить
+
 
 #define TIMER_ALIV Config::getInstance()->ping_aliv//¬–≈ћя ѕќ—ЋјЌ»я
 #define TIMER_ALIVP Config::getInstance()->pong_aliv //¬–≈ћя ќ∆»ƒјЌ»я
@@ -310,7 +311,7 @@ void sbros_title(void){std::string muz;	muz+=utf8::wchar_utf8(out_title) + " " +
 	out_OriginalArtist_st=out_OriginalArtist;
 	out_title_st=out_title;
 	if (Config::getInstance()->tune_status) {
-		Log::getInstance()->msg("set notstatus",muz.c_str());
+		if(Config::getInstance()->isLOG)Log::getInstance()->msg("set notstatus",muz.c_str());
 		rc->sendPresence();
 		rc->roster->setMUCStatus(rc->status);
 		}
@@ -327,7 +328,7 @@ void sbros_title(void){std::string muz;	muz+=utf8::wchar_utf8(out_title) + " " +
 	//JabberDataBlockRef artist=tune->addChild("artist",utf8::wchar_utf8(out_OriginalArtist).c_str());
 	//JabberDataBlockRef title=tune->addChild("title",utf8::wchar_utf8(out_title).c_str());
 	rc->jabberStream->sendStanza(iq);
-	Log::getInstance()->msg("set notPEP",muz.c_str());
+	if(Config::getInstance()->isLOG)Log::getInstance()->msg("set notPEP",muz.c_str());
 }
 /*
 				<iq type="set" id="mni">
@@ -353,7 +354,7 @@ muz+=utf8::wchar_utf8(out_title)+" "+utf8::wchar_utf8(out_OriginalArtist);
 if(idautostatus==1){rc->presenceMessage=muz+"("+Config::getInstance()->avtomessage+strtime::toLocalTime(strtime::getCurrentUtc())+")";}else{rc->presenceMessage=muz;}
 		
 	if(Config::getInstance()->tune_status){
-		Log::getInstance()->msg("set status",muz.c_str());
+		if(Config::getInstance()->isLOG)Log::getInstance()->msg("set status",muz.c_str());
 		rc->sendPresence();
 		rc->roster->setMUCStatus(rc->status);
 	}
@@ -370,7 +371,7 @@ if(idautostatus==1){rc->presenceMessage=muz+"("+Config::getInstance()->avtomessa
 	JabberDataBlockRef artist=tune->addChild("artist",utf8::wchar_utf8(out_OriginalArtist).c_str());
 	JabberDataBlockRef title=tune->addChild("title",utf8::wchar_utf8(out_title).c_str());
 	rc->jabberStream->sendStanza(iq);
-	Log::getInstance()->msg("set PEP",muz.c_str());
+	if(Config::getInstance()->isLOG)Log::getInstance()->msg("set PEP",muz.c_str());
 }
 /*
 				<iq type="set" id="mni">
@@ -688,7 +689,8 @@ HMENU hMenu = GetSubMenu(::GetMenu(mainWnd),1);
 
 				    break;*/
                // }
-				case ID_TOOLS_COLORRE:
+				case ID_TOOLS_LOGDEL:
+					Log::getInstance()->delet();
 					 //colorsload();
 					break;
 				case NEWS:
@@ -904,9 +906,15 @@ CheckMenuItem (hMenu, ID_SIGNALS_MUTE,
                     break;
 
 				case IDM_JABBER_STREAMINFO:
-                    Log::getInstance()->msg(
+                    if(Config::getInstance()->isLOG)Log::getInstance()->msg(
 						rc->jabberStream->connection->getStatistics().c_str()
 						);
+					MessageBox(
+                        hWnd, 
+                        utf8::utf8_wchar(rc->jabberStream->connection->getStatistics()).c_str(), 
+                        TEXT("—татистика"), 
+                        MB_OK);
+
 					break;
 
 				case IDM_WINDOWS_LOG:
@@ -954,7 +962,7 @@ CheckMenuItem (hMenu, ID_SIGNALS_MUTE,
 
             { 
                 odrLog = VirtualListView::ref(new VirtualListView(tabs->getHWnd(), std::string("Log")));
-                tabs->addWindow(odrLog);
+                if(Config::getInstance()->isLOG)tabs->addWindow(odrLog);
                 LogPanel::bindLV(odrLog); 
             }
 
@@ -1087,7 +1095,7 @@ public:
 
 
 ProcessResult GetRoster::blockArrived(JabberDataBlockRef block, const ResourceContextRef rc){
-	Log::getInstance()->msg("Roster arrived");
+	if(Config::getInstance()->isLOG)Log::getInstance()->msg("Roster arrived");
 
     rc->roster->blockArrived(block, rc); // forwarding to dispatch roster stanza
     
@@ -1133,7 +1141,7 @@ ProcessResult Version::blockArrived(JabberDataBlockRef block, const ResourceCont
     if (!query) return BLOCK_REJECTED;
     if (query->getAttribute("xmlns")!="jabber:iq:version") return BLOCK_REJECTED;
 
-    Log::getInstance()->msg("version request ", block->getAttribute("from").c_str());
+    if(Config::getInstance()->isLOG)Log::getInstance()->msg("version request ", block->getAttribute("from").c_str());
 	std::string vga;
 	if(sysinfo::screenIsVGA()){
 		vga.append(" VGA ");}else{vga.append(" QVGA ");}
@@ -1169,7 +1177,7 @@ ProcessResult Ping::blockArrived(JabberDataBlockRef block, const ResourceContext
     JabberDataBlockRef ping=block->findChildNamespace("ping","urn:xmpp:ping");
     if (!ping) return BLOCK_REJECTED;
 
-    Log::getInstance()->msg("Ping from ", block->getAttribute("from").c_str());
+    if(Config::getInstance()->isLOG)Log::getInstance()->msg("Ping from ", block->getAttribute("from").c_str());
 
     JabberDataBlock pong("iq");
     pong.setAttribute("to", block->getAttribute("from"));
@@ -1306,10 +1314,10 @@ c->Tartist=blocktune->getChildText("artist");
 c->Ttitle=blocktune->getChildText("title");
 c->Tsource=blocktune->getChildText("source");
 rc->roster->tuneon(from,blocktune->getChildText("artist"),blocktune->getChildText("title"),blocktune->getChildText("source"));
-Log::getInstance()->msg("on tune",c->rosterJid.c_str());}else{c->settuneoff();
+if(Config::getInstance()->isLOG)Log::getInstance()->msg("on tune",c->rosterJid.c_str());}else{c->settuneoff();
 
 rc->roster->tuneoff(from);
-Log::getInstance()->msg("off tune",c->rosterJid.c_str());}
+if(Config::getInstance()->isLOG)Log::getInstance()->msg("off tune",c->rosterJid.c_str());}
 c->update();
 rc->roster->makeViewList();
 }
@@ -1359,7 +1367,7 @@ rc->roster->makeViewList();
 JabberDataBlockRef urlmailblock=block->findChildNamespace("x","jabber:x:oob");
 if(urlmailblock){
 	urlmail=" "+urlmailblock->getChildText("desc")+": "+urlmailblock->getChildText("url");
-Log::getInstance()->msg(c->rosterJid.c_str(),urlmail.c_str());}
+if(Config::getInstance()->isLOG)Log::getInstance()->msg(c->rosterJid.c_str(),urlmail.c_str());}
 
     //processing jabber:x:event - deprecated xep-0022
     JabberDataBlockRef x=block->findChildNamespace("x","jabber:x:event");
@@ -1401,7 +1409,7 @@ Log::getInstance()->msg(c->rosterJid.c_str(),urlmail.c_str());}
 
     if (body.length() || subj.length() ) {
         //constructing message and raising message event
-        Log::getInstance()->msg("Message from ", from.c_str()); 
+        if(Config::getInstance()->isLOG)Log::getInstance()->msg("Message from ", from.c_str()); 
 		std::string messbod;
 		if(body.length()){
 			messbod=body;
@@ -1654,8 +1662,9 @@ void JabberStreamEvents::beginConversation(JabberDataBlockRef streamHeader){
     }
 }
 void JabberStreamEvents::endConversation(const std::exception *ex){
-    if (ex!=NULL)  Log::getInstance()->msg(ex->what());
-    Log::getInstance()->msg("End Conversation");
+    if (ex!=NULL)  if(Config::getInstance()->isLOG)Log::getInstance()->msg(ex->what());
+    if(Config::getInstance()->isLOG)Log::getInstance()->msg("End Conversation");
+	
     rc->roster->setAllOffline();
     rc->roster->makeViewList();
     //tabs->
@@ -1669,7 +1678,7 @@ void setSocketError(int n)
 }
 
 void JabberStreamEvents::loginSuccess(){
-    Log::getInstance()->msg("Login ok");
+    if(Config::getInstance()->isLOG)Log::getInstance()->msg("Login ok");
 
     HostFeatures::discoverFeatures(rc);
     rc->jabberStanzaDispatcherRT->addListener( JabberDataBlockListenerRef( new GetRoster() ));
@@ -1697,7 +1706,7 @@ void JabberStreamEvents::loginSuccess(){
 }
 
 void JabberStreamEvents::loginFailed(const char * errMsg){
-    Log::getInstance()->msg("Login failed: ", errMsg);
+    if(Config::getInstance()->isLOG)Log::getInstance()->msg("Login failed: ", errMsg);
     rc->jabberStream->sendXmppEndHeader();
     rosterWnd->setIcon(icons::ICON_ERROR_INDEX);
 }
@@ -1707,7 +1716,7 @@ bool JabberStreamEvents::connect(){
     Socket::initWinsocks();
 
     if (rc->account->networkUp) {
-        Log::getInstance()->msg("Raising up network");
+        if(Config::getInstance()->isLOG)Log::getInstance()->msg("Raising up network");
         Socket::networkUp();
     }
 
@@ -1715,7 +1724,7 @@ bool JabberStreamEvents::connect(){
     int port=5222;
 
     if (rc->account->useSRV) {
-        Log::getInstance()->msg("Searching SRV for ", rc->account->getServer().c_str() );
+        if(Config::getInstance()->isLOG)Log::getInstance()->msg("Searching SRV for ", rc->account->getServer().c_str() );
 
         dns::DnsSrvQuery d;
         int retries=3;
@@ -1728,7 +1737,7 @@ bool JabberStreamEvents::connect(){
                     host=a->target;
                     port=a->port;
 
-                    Log::getInstance()->msg(boost::str(boost::format("Using %s:%d") % host.c_str() % port));
+                    if(Config::getInstance()->isLOG)Log::getInstance()->msg(boost::str(boost::format("Using %s:%d") % host.c_str() % port));
                     break;
                 }
             }
@@ -1744,11 +1753,11 @@ bool JabberStreamEvents::connect(){
         if (port==5222) port=5223;
     }
 
-    Log::getInstance()->msg("Resolving ", host.c_str());
+    if(Config::getInstance()->isLOG)Log::getInstance()->msg("Resolving ", host.c_str());
 
     long ip=Socket::resolveUrl(host);
 
-    Log::getInstance()->msg(boost::str(boost::format("Connecting to %u.%u.%u.%u:%u") 
+    if(Config::getInstance()->isLOG)Log::getInstance()->msg(boost::str(boost::format("Connecting to %u.%u.%u.%u:%u") 
         % (ip &0xff) % ((ip>>8) &0xff) % ((ip>>16) &0xff) % ((ip>>24)&0xff) % port));
 
     if (rc->account->useEncryption) {
@@ -1924,7 +1933,7 @@ if(idautostatus==0 &&(rosterStatus)){
 	idautostatus=1;
 
 	//rc->status=presence::AWAY;
-  Log::getInstance()->msg("Autostatus ");
+  if(Config::getInstance()->isLOG)Log::getInstance()->msg("Autostatus ");
 //s.streamString(rc->presenceMessage, "");
   pamessage=(rc->presenceMessage);
   astatus=(rc->status);
@@ -1958,7 +1967,7 @@ std::string idVer;
 if(timealivid  ){if(timaliv>=1000*(TIMER_ALIV+TIMER_ALIVP)){
 timealivid=0;//непришло
 timaliv=0;
-Log::getInstance()->msg("ERROR pong ",rc->account->getServer().c_str());
+if(Config::getInstance()->isLOG)Log::getInstance()->msg("ERROR pong ",rc->account->getServer().c_str());
 //тут всЄ заработало уже-и незачем сме€ца)))
 
 Notify::PlayNotify(5);Notify::PlayNotify(5);Notify::PlayNotify(5);
@@ -2014,7 +2023,7 @@ rc->sendPresence();
 
 if(!timealivid &&(rosterStatus)){if(timaliv>=1000*TIMER_ALIV){timealivid=1;//послали пинг
 JabberDataBlockRef qry;
-Log::getInstance()->msg("ping ",rc->account->getServer().c_str());
+if(Config::getInstance()->isLOG)Log::getInstance()->msg("ping ",rc->account->getServer().c_str());
 JabberDataBlock req("iq");
     req.setAttribute("to", rc->account->getServer().c_str());
     req.setAttribute("type", "get");
