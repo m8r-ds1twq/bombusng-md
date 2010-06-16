@@ -7,6 +7,7 @@
 
 #include "wmuser.h"
 #include "TabCtrl.h"    
+
 extern TabsCtrlRef tabs;
 extern HINSTANCE			g_hInst;
 #define VK_3 0x33
@@ -33,11 +34,14 @@ ATOM VirtualListView::RegisterWindowClass() {
     return RegisterClass(&wc);
 }
 
-
+int xmouse,ymouse,zaderzhka,xmouse_d,ymouse_d;
+int movemode;bool movetrue=0;bool taptrue=1;
+LPARAM lParamst;
 LRESULT CALLBACK VirtualListView::WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam ) {
     VirtualListView *p=(VirtualListView *) GetWindowLong(hWnd, GWL_USERDATA);
  int klav=0;
- 
+ lParamst=lParam;
+//printf(" \nmess: 0x%06X  x:%d  y:%d",message,GET_X_LPARAM(lParam),GET_Y_LPARAM(lParam));
     switch (message) {
     case WM_CREATE:
         {
@@ -191,7 +195,15 @@ LRESULT CALLBACK VirtualListView::WndProc( HWND hWnd, UINT message, WPARAM wPara
 
 
     case WM_LBUTTONDOWN:
-        {
+		{	
+			xmouse=GET_X_LPARAM(lParam);
+			ymouse=GET_Y_LPARAM(lParam);
+			movemode=0;//неопределили пока
+			zaderzhka=0;
+			xmouse_d=0;
+			ymouse_d=0;
+			taptrue=1;
+			if(movetrue){break;}
 			SetFocus(hWnd);
             ODRRef focused=p->moveCursorTo(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
             if (!(focused)) break;
@@ -249,6 +261,63 @@ LRESULT CALLBACK VirtualListView::WndProc( HWND hWnd, UINT message, WPARAM wPara
             InvalidateRect(p->getHWnd(), NULL, true);
             break;
         }
+
+	case WM_MOUSEMOVE:
+		{//скролл тасканием 
+			//movetrue=1;
+			
+			if(zaderzhka>0){
+			printf("mode %d X: %d  Y: %d\n",movemode,xmouse_d,ymouse_d);
+			
+			if(movemode){
+			//собственно само движение
+				if(movemode==1){
+				//верт
+					if(ymouse_d<0){
+					PostMessage(p->getHWnd(), WM_VSCROLL, SB_LINEDOWN, 0);
+					//PostMessage(p->getHWnd(), WM_VSCROLL, SB_LINEDOWN, 0);
+					}else{
+					 PostMessage(p->getHWnd(), WM_VSCROLL, SB_LINEUP, 0);
+					// PostMessage(p->getHWnd(), WM_VSCROLL, SB_LINEUP, 0);
+					}
+				}else{
+				//гориз
+					if (abs(xmouse_d)>50){
+						if (xmouse_d<0){ PostMessage(tabs->getHWnd(), WM_COMMAND, TabsCtrl::NEXTTAB, 0);}
+						else{PostMessage(tabs->getHWnd(), WM_COMMAND, TabsCtrl::PREVTAB, 0);}
+						xmouse_d=0;
+					}}
+			
+			
+			}
+			else     
+			//определяем movemode 1-вертик   2-гориз
+			{int absx,absy;
+			 absx=xmouse_d;absy=ymouse_d;
+			 if(xmouse_d<0)absx=xmouse_d*(-1);
+			 if(ymouse_d<0)absy=ymouse_d*(-1);
+			 
+				if(absx > absy){movemode=2;}else{movemode=1;}
+				movetrue=1;taptrue=0;
+				printf("mode %d ax: %d  ay: %d\n",movemode,absx,absy);
+			}
+		zaderzhka=0;ymouse_d=0;
+			}else{zaderzhka++;
+			xmouse_d=xmouse_d+GET_X_LPARAM(lParam)-xmouse;
+			ymouse_d=ymouse_d+GET_Y_LPARAM(lParam)- ymouse;
+			
+			xmouse=GET_X_LPARAM(lParam);
+			ymouse=GET_Y_LPARAM(lParam);
+			}
+		break;}
+	case WM_LBUTTONUP:
+		{if(movetrue==1 && taptrue==1){
+			movetrue=0;
+			PostMessage(p->getHWnd(), WM_LBUTTONDOWN, 0, lParamst);
+		}
+		break;
+		}
+
     case WM_KEYDOWN:
         {bool kl2=1;
           int vKey=(int)wParam;
