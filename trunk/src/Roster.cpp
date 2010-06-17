@@ -305,10 +305,15 @@ void Roster::makeViewList() {
     ODRList *list=new ODRList(); //ј’“”Ќ√ є1
 
     bool showOfflines=Config::getInstance()->showOfflines;
-
+	if( Config::getInstance()->showGroups) {
     for (GroupList::const_iterator gi=groups.begin(); gi!=groups.end(); gi++) {
         RosterGroup::ref group=*gi;
-        list->push_back(group);
+       list->push_back(group);
+//скрываем комнаты  откуда вышли
+MucGroup::ref r= boost::dynamic_pointer_cast<MucGroup>(group);
+if(r){
+	if(r->room->nUnread<=0 && r->selfContact->status==presence::OFFLINE){list->pop_back();  continue;}
+}
 
         int elementsDisplayed=0;
 
@@ -318,18 +323,19 @@ void Roster::makeViewList() {
 
         for (ContactList::const_iterator ci=contacts.begin(); ci!=contacts.end(); ci++) {
             Contact::ref contact=*ci;
+
             if (!group->equals(contact->group)) continue;
 
             // hide offline contacts without new messages.
             // TODO: hide only inactive offlines
 			//Evtomax не скрывать транспорты
 			if (contact->status==presence::OFFLINE && contact->nUnread==0 && !showOfflines && !(group->type==RosterGroup::TRANSPORTS)) continue;
-
             elementsDisplayed++;
             list->push_back(contact);
         }
         //removing group header if nothing to display
-        if (elementsDisplayed==0) { list->pop_back();  continue; } 
+		if(r)continue;//вдруг в комнате сообщение а ты выпал отуда
+        if ( elementsDisplayed==0) { list->pop_back();  continue; } 
 
     }
 
@@ -337,8 +343,30 @@ void Roster::makeViewList() {
     //roster->bindODRList(odrlist);
     PostMessage(roster->getHWnd(), WM_VIRTUALLIST_REPLACE, 0, (LPARAM)list); //ј’“”Ќ√ є2
     //roster->notifyListUpdate(false);
+	}else{
+	for (ContactList::const_iterator ci=contacts.begin(); ci!=contacts.end(); ci++) {
+            Contact::ref contact=*ci;
+		if (contact->status==presence::OFFLINE && contact->nUnread==0 && !showOfflines ) continue;
+            
+            list->push_back(contact);
+		 }
+	
+	for (GroupList::const_iterator gi=groups.begin(); gi!=groups.end(); gi++) {
+        RosterGroup::ref group=*gi;
+       
+//скрываем комнаты  откуда вышли
+MucGroup::ref r= boost::dynamic_pointer_cast<MucGroup>(group);
+if(r){if(r->room->nUnread<=0 && r->selfContact->status==presence::OFFLINE)continue;
+list->push_back(group);
+list->push_back(r->room);
+	
 }
+	
+	}
+	PostMessage(roster->getHWnd(), WM_VIRTUALLIST_REPLACE, 0, (LPARAM)list); //ј’“”Ќ√ є2
+	}
 
+}
 StringVectorRef Roster::getRosterGroups() {
     StringVectorRef result=StringVectorRef(new StringVector());
 

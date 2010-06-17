@@ -295,7 +295,7 @@ size_t i=0;
 
     DWORD dwProcessed;
     if (file==INVALID_HANDLE_VALUE) {
-        delete dst; return FALSE;
+        delete[] dst; return FALSE;
     }
     WriteFile(file, dst, dstLen, &dwProcessed, NULL);
     CloseHandle(file);
@@ -318,7 +318,7 @@ size_t i=0;
 	  }
 	  void Log::addLog(const wchar_t * msg) {}
 	*/
-	delete dst;
+	delete[] dst;
     return TRUE;
 }
 
@@ -438,12 +438,12 @@ void VcardForm::loadPhoto( LPCTSTR path ) {
         encLength=base64::base64Encode(enc, dst, size);
 
         //todo: get mime-type
-        delete dst;
+        delete[] dst;
         vcardTemp->removeChild("PHOTO");
         JabberDataBlockRef photo=vcardTemp->addChild("PHOTO", NULL);
         photo->addChild("BINVAL",enc);
         photo->addChild("TYPE",mime[detectMime(dst)]);
-        delete enc;
+        delete[] enc;
     }
 }
 

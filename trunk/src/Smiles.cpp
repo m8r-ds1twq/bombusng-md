@@ -78,7 +78,7 @@ void SmileParser::loadSmiles() {
 
     }
 
-    delete buf;
+    delete[] buf;
 }
 void SmileParser::addSmile(const char *smile, uint index) {
     BNode *p=root;
@@ -149,7 +149,7 @@ ATOM SmileBox::RegisterWindowClass() {
     return RegisterClass(&wc);
 }
 ATOM SmileBox::windowClass=0;
-
+bool ii=0;
 LRESULT CALLBACK SmileBox::WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam ) {
     SmileBox *p=(SmileBox *) GetWindowLong(hWnd, GWL_USERDATA);
 
@@ -159,7 +159,7 @@ LRESULT CALLBACK SmileBox::WndProc( HWND hWnd, UINT message, WPARAM wParam, LPAR
             p=(SmileBox *) (((CREATESTRUCT *)lParam)->lpCreateParams);
             SetWindowLong(hWnd, GWL_USERDATA, (LONG) p );
             p->num=0;
-			
+			SetActiveWindow(p->thisHwnd);
            
         }
 
@@ -183,6 +183,7 @@ LRESULT CALLBACK SmileBox::WndProc( HWND hWnd, UINT message, WPARAM wParam, LPAR
             }
 
             EndPaint(hWnd, &ps);
+		 
             break;
         }
 
@@ -286,8 +287,10 @@ void SmileBox::showSmileBox(HWND editBoxWnd, int x, int y,HWND parents, SmilePar
 
     //calculate client rect
     RECT parent;
+	
+	
     GetClientRect(parents, &parent);
-
+	
     b->nwidth=(int)sqrt(parser->smileAscii.size());
     int total=parser->smileAscii.size();
 
@@ -314,8 +317,8 @@ void SmileBox::showSmileBox(HWND editBoxWnd, int x, int y,HWND parents, SmilePar
     }
 
     if (windowClass==0) throw std::exception("Can't create window class");
-    b->thisHwnd=CreateWindow((LPCTSTR)windowClass, _T("SmileBox"), WS_DLGFRAME | WS_VSCROLL |WS_BORDER | WS_VISIBLE ,
-        0, 0, width, height,parents, NULL, g_hInst, (LPVOID)b);
+    b->thisHwnd=CreateWindow((LPCTSTR)windowClass, _T("SmileBox"), WS_POPUP|WS_DLGFRAME | WS_VSCROLL |WS_BORDER | WS_VISIBLE ,
+        10, 25, width, height,parents, NULL, g_hInst, (LPVOID)b);
 	
 	
 }

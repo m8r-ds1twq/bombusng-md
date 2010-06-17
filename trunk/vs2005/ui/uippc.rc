@@ -13,6 +13,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 #undef APSTUDIO_READONLY_SYMBOLS
+
 /////////////////////////////////////////////////////////////////////////////
 // Russian resources
 
@@ -273,7 +274,7 @@ EXSTYLE 0x80000000L
 CAPTION "Ростер"
 FONT 8, "MS Shell Dlg"
 BEGIN
-    CONTROL         "Показ групп",IDC_X_GROUPS,"Button",BS_AUTOCHECKBOX | BS_NOTIFY | WS_DISABLED | WS_TABSTOP,11,17,57,10
+    CONTROL         "Показ групп",IDC_X_GROUPS,"Button",BS_AUTOCHECKBOX | BS_NOTIFY | WS_TABSTOP,11,17,57,10
     CONTROL         "Показ offline контактов",IDC_X_OFFLINES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,11,7,96,10
     LTEXT           "Размер аватарок",IDC_STATIC,11,44,69,10
     EDITTEXT        IDC_X_AWAT,87,42,18,12,ES_LOWERCASE | ES_AUTOHSCROLL

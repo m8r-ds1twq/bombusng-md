@@ -223,7 +223,7 @@ const std::string base64::base64Encode( const void* src, unsigned long size ) {
 
     buf[olen]=0;
     std::string result(buf);
-    delete buf;
+    delete[] buf;
     return result;
 }
 
@@ -235,7 +235,7 @@ const std::string base64::base64Decode(const std::string &inbuf) {
     buf[olen]=0;
 
     std::string result(buf);
-    delete buf;
+    delete[] buf;
     return result;
 
     

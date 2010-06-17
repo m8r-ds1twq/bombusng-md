@@ -4,10 +4,10 @@
 #include <windowsx.h>
 #include <aygshell.h>
 #include "utf8.hpp"
-
+#include "config.h"
 #include "wmuser.h"
 #include "TabCtrl.h"    
-
+extern int smile_aktiv;
 extern TabsCtrlRef tabs;
 extern HINSTANCE			g_hInst;
 #define VK_3 0x33
@@ -195,7 +195,7 @@ LRESULT CALLBACK VirtualListView::WndProc( HWND hWnd, UINT message, WPARAM wPara
 
 
     case WM_LBUTTONDOWN:
-		{	
+		{	smile_aktiv=40;
 			xmouse=GET_X_LPARAM(lParam);
 			ymouse=GET_Y_LPARAM(lParam);
 			movemode=0;//неопределили пока
@@ -246,7 +246,7 @@ LRESULT CALLBACK VirtualListView::WndProc( HWND hWnd, UINT message, WPARAM wPara
             break;
         }
     case WM_LBUTTONDBLCLK:
-        {
+        {  smile_aktiv=40 ;
             ODRRef oldCursor=p->cursorPos;
             ODRRef focused=p->moveCursorTo(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
             if (!(focused)) break;
@@ -265,7 +265,7 @@ LRESULT CALLBACK VirtualListView::WndProc( HWND hWnd, UINT message, WPARAM wPara
 	case WM_MOUSEMOVE:
 		{//скролл тасканием 
 			//movetrue=1;
-			
+			smile_aktiv=40 ;
 			if(zaderzhka>0){
 			printf("mode %d X: %d  Y: %d\n",movemode,xmouse_d,ymouse_d);
 			
@@ -320,6 +320,7 @@ LRESULT CALLBACK VirtualListView::WndProc( HWND hWnd, UINT message, WPARAM wPara
 
     case WM_KEYDOWN:
         {bool kl2=1;
+		smile_aktiv=40 ;
           int vKey=(int)wParam;
             int lkeyData=lParam;
             if (lkeyData & 0x80000000) break; //keyRelease 
@@ -458,7 +459,7 @@ LRESULT CALLBACK VirtualListView::WndProc( HWND hWnd, UINT message, WPARAM wPara
             break;
         }
     case WM_VSCROLL:
-        {
+        {   smile_aktiv=40 ;
             int scrollCode=(int)LOWORD(wParam);
             int nPos=(int)HIWORD(wParam);
 

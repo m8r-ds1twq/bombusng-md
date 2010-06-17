@@ -1,10 +1,11 @@
 #include "TabCtrl.h"
-
+#include "config.h"
 #include <commctrl.h>
 #include <windowsx.h>
 #include "..\vs2005\ui\resourceppc.h"
 #include "VirtualListView.h"
 #include "LogPanel.h"
+extern int smile_aktiv;
 extern HINSTANCE			g_hInst;
 extern int tabHeight;
 extern HWND g_hWndMenuBar;		// menu bar handle
@@ -100,11 +101,12 @@ LRESULT CALLBACK TabsCtrl::WndProc( HWND hWnd, UINT message, WPARAM wParam, LPAR
 
         break;
 	case WM_KEYDOWN:
+		smile_aktiv=40;
                 if (wParam==VK_LEFT)    PostMessage(hWnd, WM_COMMAND, TabsCtrl::PREVTAB, 0);
                 if (wParam==VK_RIGHT)   PostMessage(hWnd, WM_COMMAND, TabsCtrl::NEXTTAB, 0);
                 break;
     case WM_LBUTTONDOWN:
-        {
+        {	smile_aktiv=40;
             int mouseX=GET_X_LPARAM(lParam);
             int mouseY=GET_Y_LPARAM(lParam);
 

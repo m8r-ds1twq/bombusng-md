@@ -28,7 +28,7 @@
 #include <windows.h> 
 #include <Wingdi.h> 
 
-
+extern int smile_aktiv;
 extern std::wstring appRootPath;
 extern HINSTANCE			g_hInst;
 extern int tabHeight;
@@ -177,6 +177,7 @@ long WINAPI EditSubClassProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) 
         }
 
     case WM_KEYDOWN:
+		smile_aktiv=40 ;
         if (wParam==VK_CONTROL) editbox::editBoxShifts=true;
         if (wParam==VK_SHIFT)   editbox::editBoxShifts=true;
 		if ((wParam==VK_LEFT) && (SendMessage (hWnd, EM_LINELENGTH,(WPARAM)0, (LPARAM)0)==0)) PostMessage(GetParent(GetParent(hWnd)), WM_COMMAND, TabsCtrl::PREVTAB, 0);
@@ -1237,15 +1238,23 @@ bool MessageElement::OnMenuCommand(int cmdId, HWND parent, HWND edithwnd){
 				strurl2=wcstok(strurl2,L" \n;\,<>*\"\'\[\]\{\}");
 				strurl2[wcslen(strurl2)-1]='\0';
 				int result=MessageBox(GetParent(edithwnd), strurl2, TEXT("Открыть URL?"), MB_YESNOCANCEL | MB_ICONWARNING );
-				if (result==IDYES){ExecFile(strurl2,L"");return true;}
-					if (result==IDCANCEL){ return true;}
+			    	if (result==IDYES){
+				ExecFile(strurl2,L"");
+				delete[] strurl;
+				delete[] strurl2;
+				return true;}
+					if (result==IDCANCEL){ 
+				delete[] strurl;
+				delete[] strurl2;
+				return true;}
 				memset(strurl,20,2);
  //result=MessageBox(NULL, strurl, TEXT("Открыть URL?1"), MB_YESNO | MB_ICONWARNING );
 
 				strurl=wcsstr(strurl,L"http://");	
 //result=MessageBox(NULL, strurl, TEXT("Открыть URL?2"), MB_YESNO | MB_ICONWARNING );
-							}
-
+			}
+				delete[] strurl;
+				delete[] strurl2;
                 return true;
 		 }
         

@@ -63,6 +63,7 @@
 #include "boostheaders.h"
 
 #include "ChatView.h"
+
 char ***strcom;//массив быстрых команд
 char ***snd;//массив персональных мелодий
 int linesCountcom;//количество быстрых команд
@@ -93,6 +94,7 @@ int idautostatus=0;//0-выкл 1-включЄн 2-выключить
 #define TIMER_ALIV Config::getInstance()->ping_aliv//¬–≈ћя ѕќ—ЋјЌ»я
 #define TIMER_ALIVP Config::getInstance()->pong_aliv //¬–≈ћя ќ∆»ƒјЌ»я
 #define TIMER_INT_ Config::getInstance()->timer_int //¬–≈ћя “ј…ћ≈–ј
+int smile_aktiv=40;
 std::wstring out_title;//чЄ играет
 std::wstring out_OriginalArtist;
 std::wstring out_title_st;
@@ -604,7 +606,7 @@ if(hInst2){
 
 	strcom=getConfig(compatch.c_str(),&linesCountcom);//загрузка быстрых команд в массив
 	snd=getConfig(sndpatch.c_str(),&linesCountsnd);//загрузка персональных мелодий в массив
-timerid=SetTimer(0,MAIN_TIMER_ID,Config::getInstance()->timer_int,TimerProc);
+    timerid=SetTimer(0,MAIN_TIMER_ID,Config::getInstance()->timer_int,TimerProc);
     if (!MyRegisterClass(hInstance, szWindowClass)) 	return FALSE;
 
     mainWnd=hWnd = CreateWindow(szWindowClass, szTitle, WS_VISIBLE,
@@ -777,7 +779,20 @@ HMENU hMenu = GetSubMenu(::GetMenu(mainWnd),1);
 					case IDM_STATUS_OFFLINE:
 						rc->status=presence::OFFLINE;
 						if (rc->roster)rc->roster->setMUCStatus(presence::OFFLINE);
-						
+						s.streamString(rc->presenceMessage, "");
+					s.streamInt(rc->priority, 0);
+					rosterWnd->setIcon(rc->status);
+					rc->sendPresence();
+					initJabber(rc);
+					rc->roster->setAllOffline();
+					
+						initJabber(rc);
+						rc->jabberStream->sendXmppEndHeader();initJabber(rc);
+						rc->jabberStream->connection->close();
+						initJabber(rc);
+						streamShutdown(rc);
+						closesocket(sok2);//закроем соединение чтоб не висеть невидимкой
+						initJabber(rc);
 						break;
 					}
 					idautostatus=0;
@@ -1454,7 +1469,7 @@ if(Config::getInstance()->isLOG)Log::getInstance()->msg(c->rosterJid.c_str(),url
 std::wstring messn1;
 //std::wstring mesfrom2;
 
-char * cnotif=new char[55];
+
 std::string cnotifs;
 //messn2=utf8::utf8_wchar(msg->body.c_str());
 char *format =" <body bgcolor=\"#%06X\"><br><b><font color=\"#%06X\">--%s--</font></b><br><font color=\"#%06X\">%s</font></body>";
@@ -1878,10 +1893,10 @@ void Shell_NotifyIcon(bool show, HWND hwnd){
 
 void CALLBACK TimerProc(HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime)
 {if (rc) if (rc->jabberStream) rc->jabberStream->parseStream();// ахтунг это было в самом верху в бесконечном цикле-но так позвол€ет не зависать программе на настройках и всплыв менюшках
-	
+//printf("smile_aktiv: %d \n",smile_aktiv);
 	//аним смайлы перерисовка
-	if(Config::getInstance()->anim_smile && hwnvs == GetActiveWindow())//если бомбус не в фокусе то и нах не надо
-	{
+	if(smile_aktiv>1 && Config::getInstance()->anim_smile && hwnvs == GetActiveWindow())//если бомбус не в фокусе то и нах не надо
+	{  
 		if(smile_anim_ind>=3)
 			{smile_anim_ind=0;
 			}
@@ -1892,7 +1907,10 @@ void CALLBACK TimerProc(HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime)
 		tabs->showActiveTab();
 		nofocus=0;
 	}
+	if(smile_aktiv<0)smile_aktiv=0;
+	smile_aktiv--;
 	nofocus=0;
+	
 	//музыка
 	if(Config::getInstance()->tune_status || Config::getInstance()->tune_status_pep){
 	
@@ -1980,7 +1998,8 @@ closesocket(sok2);
 rosterWnd->setIcon(rc->status);
 			socketError = 1;
 rc->jabberStream->sendXmppEndHeader();
-streamShutdown(rc); rc->jabberStream->connection->close();
+streamShutdown(rc);
+rc->jabberStream->connection->close();
 
 
 			

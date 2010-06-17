@@ -146,12 +146,12 @@ void XDataForm::constructForm(){
 
                     DWORD dwProcessed;
                     if (file==INVALID_HANDLE_VALUE) {
-                        delete dst; continue;
+                        delete[] dst; continue;
                     }
                     WriteFile(file, dst, dstLen, &dwProcessed, NULL);
                     CloseHandle(file);
 
-                    delete dst;
+                    delete[] dst;
 
                     img=ImageRef(new Image(imgFile.c_str()));
 
