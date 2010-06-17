@@ -63,7 +63,7 @@ void Serialize::streamString( std::string &data, const char *defValue ) {
     streamData((LPVOID) buf, len);
     buf[len]=0;
     if (read) data=buf;
-    delete buf;
+    delete[] buf;
 }
 
 void eor(char *buf, int len) {
@@ -95,5 +95,5 @@ void Serialize::streamScrambledString( std::string &data ) {
     if (method==1) eor(buf, len);
     buf[len]=0;
     if (read) data=buf;
-    delete buf;
+    delete[] buf;
 }

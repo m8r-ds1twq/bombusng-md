@@ -132,7 +132,7 @@ HDC  hdc2;
 int xf,yf;//для постановки-куда предпологаем ставить
 int z;int z2;
 
-ChessView *p=(ChessView *) GetWindowLong(hWnd, GWL_USERDATA);
+ChessView *p=(ChessView*)(GetWindowLong(hWnd, GWL_USERDATA));
 	switch (message)
 	{case WM_CLOSE:
 		case WM_DESTROY:
