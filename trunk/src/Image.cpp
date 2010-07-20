@@ -83,7 +83,8 @@ Skin::Skin( LPCTSTR path )  {
 	strokicaps=readFileK(Patcaps.c_str(),&(sizecaps));
     names.push_back("");
     iconset.push_back(ImgListRef(new ImgArray(TEXT("skin.png"), 8, 6)));
-
+	//names.push_back("menu");
+    //iconset.push_back(ImgListRef(new ImgArray(TEXT("menu.png"), 8, 9)));
     std::wstring srcPath=skinRootPath+path+TEXT("transports\\*.*");
 
     WIN32_FIND_DATA wfd;
@@ -105,6 +106,7 @@ Skin::Skin( LPCTSTR path )  {
     FindClose(sf);
 	names.push_back("klients");
     iconset.push_back(ImgListRef(new ImgArray(TEXT("klients.png"), 8, 9)));
+
 }
 
 void Skin::drawElement( HDC hdc, int index, int x, int y ) const {

@@ -34,34 +34,42 @@ INT_PTR CALLBACK DlgProcAccountP2(HWND hDlg, UINT message, WPARAM wParam, LPARAM
 INT_PTR CALLBACK DlgProcAccountP3(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam) {
     return DlgProcAccount(hDlg, message, wParam, lParam, 2);
 }
-
+INT_PTR CALLBACK DlgProcAccountP4(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam) {
+    return DlgProcAccount(hDlg, message, wParam, lParam, 3);
+}
 void DialogAccountMP(HINSTANCE g_hInst, HWND parent, JabberAccountRef accnt) {
     dlgAccountParam=accnt;
 
-    PROPSHEETPAGE pages[3];
+    PROPSHEETPAGE pages[4];
     pages[0].dwSize=sizeof(PROPSHEETPAGE);
     pages[1].dwSize=sizeof(PROPSHEETPAGE);
     pages[2].dwSize=sizeof(PROPSHEETPAGE);
+	pages[3].dwSize=sizeof(PROPSHEETPAGE);
 
     pages[0].hInstance=g_hInst;
     pages[1].hInstance=g_hInst;
     pages[2].hInstance=g_hInst;
+	pages[3].hInstance=g_hInst;
 
     pages[0].dwFlags=PSP_DEFAULT;
     pages[1].dwFlags=PSP_DEFAULT;
     pages[2].dwFlags=PSP_DEFAULT;
+	pages[3].dwFlags=PSP_DEFAULT;
 
     pages[0].pszTemplate=(LPCTSTR)IDD_ACCNT1;
     pages[1].pszTemplate=(LPCTSTR)IDD_ACCNT2;
     pages[2].pszTemplate=(LPCTSTR)IDD_ACCNT3;
+	pages[3].pszTemplate=(LPCTSTR)IDD_CANSEL;
 
     pages[0].pfnDlgProc=DlgProcAccountP1;
     pages[1].pfnDlgProc=DlgProcAccountP2;
     pages[2].pfnDlgProc=DlgProcAccountP3;
+	pages[3].pfnDlgProc=DlgProcAccountP3;
 
     pages[0].lParam=0;
     pages[1].lParam=1;
     pages[2].lParam=2;
+	pages[3].lParam=3;
 
     PROPSHEETHEADER psh;
     psh.dwSize=sizeof(PROPSHEETHEADER);
@@ -69,7 +77,7 @@ void DialogAccountMP(HINSTANCE g_hInst, HWND parent, JabberAccountRef accnt) {
     psh.hwndParent=parent;
     psh.hInstance=g_hInst;
     psh.pszCaption=L"Account";
-    psh.nPages=3;
+    psh.nPages=4;
     psh.nStartPage=0;
     psh.ppsp=pages;
 	psh.pfnCallback = PropSheetCallback;
@@ -164,6 +172,14 @@ INT_PTR CALLBACK DlgProcAccount(HWND hDlg, UINT message, WPARAM wParam, LPARAM l
 
         if (LOWORD(wParam) == IDCANCEL) {
             return TRUE;
+        }
+		if (LOWORD(wParam) == ID_CANSEL) {
+        PostMessage(GetParent(hDlg), WM_COMMAND, IDCANCEL, 0);
+		return TRUE;
+        }
+		if (LOWORD(wParam) == ID_OK) {
+        PostMessage(GetParent(hDlg), WM_COMMAND, IDOK, 0);
+		return TRUE;
         }
         break;
     }

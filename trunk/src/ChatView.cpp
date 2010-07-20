@@ -22,11 +22,11 @@
 #include "config.h"
 
 #include "stringutils.h"
-#include "VcardForm.h"	
+#include "VcardForm.h"
 #include <string.h>
 #include "Log.h"
-#include <windows.h> 
-#include <Wingdi.h> 
+#include <windows.h>
+#include <Wingdi.h>
 
 extern int smile_aktiv;
 extern std::wstring appRootPath;
@@ -98,19 +98,18 @@ bool avatbool;
 
 //////////////////////////////////////////////////////////////////////////
 // real WndProc for edit box
-//long (WINAPI *EditWndProc)(HWND w,UINT msg,WPARAM wParam,LPARAM lParam); 
+//long (WINAPI *EditWndProc)(HWND w,UINT msg,WPARAM wParam,LPARAM lParam);
 
 namespace editbox {
     static bool editBoxShifts=false;
 }
 //wchar_t *strcom[5]={L"/me",L"/cry",L"/dance",L"/liver",L"/proba",};
-long WINAPI EditSubClassProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) { 
+long WINAPI EditSubClassProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
     WNDPROC OldWndProc=(WNDPROC) GetWindowLong(hWnd, GWL_USERDATA);
-	
-	switch(msg) { 
+
+	switch(msg) {
     case WM_LBUTTONDOWN:
         {
-
             SHRGINFO    shrg;
             shrg.cbSize = sizeof(shrg);
             shrg.hwndClient = hWnd;
@@ -121,7 +120,7 @@ long WINAPI EditSubClassProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) 
 			if (SHRecognizeGesture(&shrg) == GN_CONTEXTMENU) {
 
                 DWORD sel=SendMessage(hWnd, EM_GETSEL, 0, 0);
- 
+
                 UINT paste = (IsClipboardFormatAvailable(CF_UNICODETEXT))?  MF_STRING : MF_STRING | MF_GRAYED;
                 UINT cut = (LOWORD(sel)!=HIWORD(sel))? MF_STRING : MF_STRING | MF_GRAYED;
                 UINT undo= (SendMessage(hWnd, EM_CANUNDO, 0, 0))? MF_STRING : MF_STRING | MF_GRAYED;;
@@ -187,12 +186,12 @@ long WINAPI EditSubClassProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) 
 			//этот способ реализации подсказал skipyrich :)
 			int ndx1 = 0, ndx2 = 0;
 			SendMessage (hWnd, EM_GETSEL, (WPARAM)&ndx1, (LPARAM)&ndx2);
-			int len = SendMessage (hWnd, EM_LINELENGTH,(WPARAM)0, (LPARAM)0);	//вычисляем длину строки 
+			int len = SendMessage (hWnd, EM_LINELENGTH,(WPARAM)0, (LPARAM)0);	//вычисляем длину строки
 			if (ndx1<=len) //отправляем сообщение о необходимости выделить MessageList
-				PostMessage(GetParent(hWnd), WM_COMMAND, (WPARAM)MSGListFocus, (LPARAM)0);	
+				PostMessage(GetParent(hWnd), WM_COMMAND, (WPARAM)MSGListFocus, (LPARAM)0);
 		}
 
-        break; 
+        break;
 
     case WM_KEYUP:
         editbox::editBoxShifts=false;
@@ -204,24 +203,24 @@ long WINAPI EditSubClassProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) 
 	case JUICK_SEND:{
 			PostMessage(GetParent(hWnd), WM_COMMAND, IDS_SEND, 0);
 			return 0;}
-	
-   
+
+
     case WM_CHAR:
         if (wParam==VK_RETURN && !editbox::editBoxShifts) {
-            if (Config::getInstance()->enter2) 
+            if (Config::getInstance()->enter2)
 			{
 				int ndx1 = 0, ndx2 = 0;
 				SendMessage (hWnd, EM_GETSEL, (WPARAM)&ndx1, (LPARAM)&ndx2); // возвращяет позиции символом с которых начинается и заканчивается выделение
-				int len = SendMessage (hWnd, EM_LINELENGTH, (WPARAM)-1, (LPARAM)0); // длина текста в текущей строке 
+				int len = SendMessage (hWnd, EM_LINELENGTH, (WPARAM)-1, (LPARAM)0); // длина текста в текущей строке
 				int nlines = SendMessage (hWnd, EM_GETLINECOUNT, (WPARAM)0, (LPARAM)0); // сколько всего линий
-				int cline = SendMessage (hWnd, EM_LINEINDEX, (WPARAM)nlines+1, (LPARAM)0); // тут минус -1 когда след строки не существует что нам и надо 
+				int cline = SendMessage (hWnd, EM_LINEINDEX, (WPARAM)nlines+1, (LPARAM)0); // тут минус -1 когда след строки не существует что нам и надо
 				if ((ndx1 == ndx2) & (len == 0) & (cline == -1)) { // проверяем чтобы небыло выделения, длинна = 0 и следующий строки не существует
 					PostMessage(GetParent(hWnd), WM_COMMAND, IDS_SEND, 0);
 					return 0;
 				}
 			} else {
 					PostMessage(GetParent(hWnd), WM_COMMAND, IDS_SEND, 0);
-					return 0;				
+					return 0;
 			}
 
         }
@@ -229,7 +228,7 @@ long WINAPI EditSubClassProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) 
             PostMessage(GetParent(hWnd), WM_COMMAND, IDC_COMPLETE, 0);
             return 0;
         }
-        if (wParam>=' ') 
+        if (wParam>=' ')
             PostMessage(GetParent(hWnd), WM_COMMAND, IDC_COMPOSING, true);
         break;
     case WM_SETFOCUS:
@@ -239,25 +238,25 @@ long WINAPI EditSubClassProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) 
         if (Config::getInstance()->raiseSIP) SipShowIM(SIPF_OFF);
         PostMessage(GetParent(hWnd), WM_COMMAND, IDC_COMPOSING, false);
         break;
-    } 
-    return CallWindowProc(OldWndProc,hWnd,msg,wParam,lParam); 
+    }
+    return CallWindowProc(OldWndProc,hWnd,msg,wParam,lParam);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 HWND WINAPI DoCreateEditControl(HWND hwndParent) {
 
-    HWND hWndEdit; 
-    //TCITEM tie; 
+    HWND hWndEdit;
+    //TCITEM tie;
 
-    hWndEdit=CreateWindow(_T("EDIT"), 
-		NULL, 
+    hWndEdit=CreateWindow(_T("EDIT"),
+		NULL,
         WS_BORDER| WS_CHILD | WS_VISIBLE | WS_VSCROLL
-        | ES_MULTILINE , 
+        | ES_MULTILINE ,
         0, 0, //x,y начало
 		CW_USEDEFAULT, CW_USEDEFAULT, //ширина и высота автоматом
         hwndParent, NULL, g_hInst, NULL);
 
-    WNDPROC OldEditWndProc = (WNDPROC)SetWindowLong(hWndEdit, GWL_WNDPROC,  (LONG)EditSubClassProc); 
+    WNDPROC OldEditWndProc = (WNDPROC)SetWindowLong(hWndEdit, GWL_WNDPROC,  (LONG)EditSubClassProc);
     SetWindowLong(hWndEdit, GWL_USERDATA, (LONG)OldEditWndProc);
     return hWndEdit;
 }
@@ -266,7 +265,7 @@ std::wstring toWString(const std::string& s)
 {
 	std::wstring temp(s.length(),L' ');
 	std::copy(s.begin(), s.end(), temp.begin());
-	return temp; 
+	return temp;
 }
 
 //const wchar_t * MessageElement::getInfo() const { return wstr.c_str(); }
@@ -277,7 +276,7 @@ LRESULT CALLBACK ChatView::WndProc( HWND hWnd, UINT message, WPARAM wParam, LPAR
     PAINTSTRUCT ps;
     HDC hdc;
     ChatView *p=(ChatView *) GetWindowLong(hWnd, GWL_USERDATA);
-   
+
     switch (message) {
     case WM_CREATE:
 		{
@@ -295,7 +294,7 @@ LRESULT CALLBACK ChatView::WndProc( HWND hWnd, UINT message, WPARAM wParam, LPAR
             p->calcEditHeight();
 
             p->msgList->bindODRList(p->contact->messageList);
-			
+
             break;
         }
 
@@ -366,35 +365,35 @@ LRESULT CALLBACK ChatView::WndProc( HWND hWnd, UINT message, WPARAM wParam, LPAR
 				rc.left+=avWidth+1;
 			}
 			if (bmp4) DeleteObject(bmp4);
-			
+
 			}
-			
+
 			if (iconIdx>=0) {
 				skin->drawElement(hdc, p->contact->getIconIndex(), rc.left, rc.top);
 				rc.left+=skin->getElementWidth();//Ширина элемента
 			} else rc.left+=1;
 
-			//LOGFONTW FONT; 
-			strcpy((char*)FONT.lfFaceName, "Tahoma"); 
-			FONT.lfHeight = Config::getInstance()->msg_font_height; 
+			//LOGFONTW FONT;
+			strcpy((char*)FONT.lfFaceName, "Tahoma");
+			FONT.lfHeight = Config::getInstance()->msg_font_height;
 			FONT.lfWidth = Config::getInstance()->msg_font_width;
 			FONT.lfWeight = Config::getInstance()->tolshina;
-			FONT.lfItalic = false; 
-			FONT.lfStrikeOut = false; 
-			FONT.lfUnderline = false; 
-			FONT.lfOrientation = 0; 
-			FONT.lfEscapement = 0; 
-			NormalFont  = CreateFontIndirectW(&FONT); 
+			FONT.lfItalic = false;
+			FONT.lfStrikeOut = false;
+			FONT.lfUnderline = false;
+			FONT.lfOrientation = 0;
+			FONT.lfEscapement = 0;
+			NormalFont  = CreateFontIndirectW(&FONT);
 			SelectObject(hdc, NormalFont);
 			DrawText(hdc, p->contact->getText(), -1, &rc, DT_LEFT | DT_TOP | DT_END_ELLIPSIS);
-	       
+
 
             int iconwidth= skin->getElementWidth();//Получаем ширину иконки
 
 			if(!muc)
 			{//Если конфа,убираем инфо панель
 				if(Config::getInstance()->confclient){
-				int clientIcon;					
+				int clientIcon;
 				Skin * il= dynamic_cast<Skin *>(skin.get());
 				std::string ClientI=p->contact->getClientIdIcon();
 
@@ -431,10 +430,10 @@ LRESULT CALLBACK ChatView::WndProc( HWND hWnd, UINT message, WPARAM wParam, LPAR
     //    p->contact->nUnread=0;
     //    break;
 
-    case WM_SIZE: 
+    case WM_SIZE:
 		{
-            HDWP hdwp; 
-            RECT rc; 
+            HDWP hdwp;
+            RECT rc;
 //
 //#	уменьшаем поле ввода в ландшафтной ориентации
 //#
@@ -443,44 +442,44 @@ LRESULT CALLBACK ChatView::WndProc( HWND hWnd, UINT message, WPARAM wParam, LPAR
             //int ySplit=height-p->editHeight;
 // добавить опуцию в настройки :)
 			int ySplit;
-				if(!Config::getInstance()->editx2){ySplit=//(sysinfo::screenIsRotate())?height-p->editHeight/2 : 
+				if(!Config::getInstance()->editx2){ySplit=//(sysinfo::screenIsRotate())?height-p->editHeight/2 :
 					height-p->editHeight/2;}else{ySplit=height-p->editHeight;}
 			//Оставляем поле ввода сообщения в 2 раза меньше оригинала
 
             p->calcEditHeight();
 
-            // Calculate the display rectangle, assuming the 
-            // tab control is the size of the client area. 
-            SetRect(&rc, 0, 0, 
-                GET_X_LPARAM(lParam), ySplit ); 
+            // Calculate the display rectangle, assuming the
+            // tab control is the size of the client area.
+            SetRect(&rc, 0, 0,
+                GET_X_LPARAM(lParam), ySplit );
 
-            // Size the tab control to fit the client area. 
+            // Size the tab control to fit the client area.
             hdwp = BeginDeferWindowPos(2);
 
-            /*DeferWindowPos(hdwp, dropdownWnd, HWND_TOP, 0, 0, 
-            GET_X_LPARAM(lParam), 20, 
-            SWP_NOZORDER 
+            /*DeferWindowPos(hdwp, dropdownWnd, HWND_TOP, 0, 0,
+            GET_X_LPARAM(lParam), 20,
+            SWP_NOZORDER
             ); */
 
 
-			DeferWindowPos(hdwp, p->msgList->getHWnd(), HWND_TOP, 0, sysinfo::screenIsVGA()?(boost::dynamic_pointer_cast<MucRoom>(p->contact)?tabHeight:65):(boost::dynamic_pointer_cast<MucRoom>(p->contact)?tabHeight:50), 
-                GET_X_LPARAM(lParam), ySplit-(sysinfo::screenIsVGA()?(boost::dynamic_pointer_cast<MucRoom>(p->contact)?tabHeight:65):(boost::dynamic_pointer_cast<MucRoom>(p->contact)?tabHeight:50)), 
-                SWP_NOZORDER 
+			DeferWindowPos(hdwp, p->msgList->getHWnd(), HWND_TOP, 0, sysinfo::screenIsVGA()?(boost::dynamic_pointer_cast<MucRoom>(p->contact)?tabHeight:65):(boost::dynamic_pointer_cast<MucRoom>(p->contact)?tabHeight:50),
+                GET_X_LPARAM(lParam), ySplit-(sysinfo::screenIsVGA()?(boost::dynamic_pointer_cast<MucRoom>(p->contact)?tabHeight:65):(boost::dynamic_pointer_cast<MucRoom>(p->contact)?tabHeight:50)),
+                SWP_NOZORDER
                 );
-            /*DeferWindowPos(hdwp, rosterWnd, HWND_TOP, 0, tabHeight, 
-            GET_X_LPARAM(lParam), height-tabHeight, 
-            SWP_NOZORDER 
+            /*DeferWindowPos(hdwp, rosterWnd, HWND_TOP, 0, tabHeight,
+            GET_X_LPARAM(lParam), height-tabHeight,
+            SWP_NOZORDER
             );*/
 
-            DeferWindowPos(hdwp, p->editWnd, NULL, 0, ySplit+1, 
-                GET_X_LPARAM(lParam), height-ySplit-1, 
-                SWP_NOZORDER 
-                ); 
+            DeferWindowPos(hdwp, p->editWnd, NULL, 0, ySplit+1,
+                GET_X_LPARAM(lParam), height-ySplit-1,
+                SWP_NOZORDER
+                );
 
-            EndDeferWindowPos(hdwp); 
+            EndDeferWindowPos(hdwp);
 
-            break; 
-        } 
+            break;
+        }
 	case COMMAND_STR://обработка вставки быстрых команд
 		{p->comstr((int)wParam);break;}
 	case JUICK_COMMAND:{
@@ -508,12 +507,12 @@ LRESULT CALLBACK ChatView::WndProc( HWND hWnd, UINT message, WPARAM wParam, LPAR
 		if((int)wParam==7)
 			{SendMessage(p->editWnd, WM_SETTEXT, 1, (LPARAM) L"VCARD");
 			SendMessage(p->editWnd, JUICK_SEND, 0, 0);}
-					   
+
 					   }
 
 
-		
-    case WM_COMMAND: 
+
+    case WM_COMMAND:
 		{   if( wParam==8000){SmileBox::showSmileBox(p->editWnd, 0, 0,p->msgList->getHWnd(), smileParser);
 		}
             if (wParam==IDS_SEND) {
@@ -532,13 +531,13 @@ LRESULT CALLBACK ChatView::WndProc( HWND hWnd, UINT message, WPARAM wParam, LPAR
 			if (wParam==CLEARED) {
                 SendMessage(p->editWnd, WM_SETTEXT, 1, (LPARAM) L"");
             }
-			
+
 			if (wParam==MSGListFocus) {
 				/*
 				ODRRef a = p->msgList->getCursorPos();
 				// определить что a несуществует
 				// ено
-				// иначе приходится два раза нажиматтоесть ничего не выдель чтобы было видно курсор в поле 
+				// иначе приходится два раза нажиматтоесть ничего не выдель чтобы было видно курсор в поле
 				if (a ???? )
 				{
 					p->msgList->moveCursorEnd();
@@ -548,11 +547,11 @@ LRESULT CALLBACK ChatView::WndProc( HWND hWnd, UINT message, WPARAM wParam, LPAR
 				SendMessage(p->msgList->getHWnd(), MSGListFocus, 0, 0);
 			}
 
-            break;             
+            break;
         }
         /*case WM_CTLCOLORSTATIC:
         case WM_CTLCOLORLISTBOX:
-        case WM_CTLCOLOREDIT: 
+        case WM_CTLCOLOREDIT:
         {
         //HGDIOBJ brush= GetStockObject(GRAY_BRUSH);
         //HGDIOBJ pen= GetStockObject(WHITE_PEN);
@@ -567,7 +566,7 @@ LRESULT CALLBACK ChatView::WndProc( HWND hWnd, UINT message, WPARAM wParam, LPAR
 
 
 
-		skin->drawElement(hdc, icons::ICON_CLOSE, avatarWidth,iconwidth*2);        
+		skin->drawElement(hdc, icons::ICON_CLOSE, avatarWidth,iconwidth*2);
 		skin->drawElement(hdc, icons::ICON_TRASHCAN_INDEX,p->width-2-iconwidth, 0);
 
 		skin->drawElement(hdc, icons::ICON_TRASHCAN_INDEX,avatarWidth+iconwidth*2+10,iconwidth*2 );
@@ -578,9 +577,9 @@ LRESULT CALLBACK ChatView::WndProc( HWND hWnd, UINT message, WPARAM wParam, LPAR
         }*/
 	case CLEARMESS:
 		{int result=MessageBox(
-				p->getHWnd(), 
-				L"Очистить окно от сообщений?", 
-				L"Очистить", 
+				p->getHWnd(),
+				L"Очистить окно от сообщений?",
+				L"Очистить",
 				MB_YESNO | MB_ICONWARNING);
 			if (result==IDYES) {
 				p->contact->messageList->clear();
@@ -598,9 +597,9 @@ LRESULT CALLBACK ChatView::WndProc( HWND hWnd, UINT message, WPARAM wParam, LPAR
 		}
 		if (GET_X_LPARAM(lParam) > (p->width)-2-(skin->getElementWidth())*2) {
 			int result=MessageBox(
-				p->getHWnd(), 
-				L"Очистить окно от сообщений?", 
-				L"Очистить", 
+				p->getHWnd(),
+				L"Очистить окно от сообщений?",
+				L"Очистить",
 				MB_YESNO | MB_ICONWARNING);
 			if (result==IDYES) {
 				p->contact->messageList->clear();
@@ -608,7 +607,7 @@ LRESULT CALLBACK ChatView::WndProc( HWND hWnd, UINT message, WPARAM wParam, LPAR
 			}
 
 			//if(!(boost::dynamic_pointer_cast<MucRoom>(p->contact))){
-				
+
 			//}
 			break;
 		}
@@ -637,7 +636,7 @@ if(!boost::dynamic_pointer_cast<MucRoom>(p->contact))
     return 0;
 }
 
-ChatView::ChatView( HWND parent, Contact::ref contact ) 
+ChatView::ChatView( HWND parent, Contact::ref contact )
 {
     BOOST_ASSERT(parent);
 
@@ -655,7 +654,7 @@ ChatView::ChatView( HWND parent, Contact::ref contact )
     this->contact=contact;
 
     thisHWnd=CreateWindow((LPCTSTR)windowClass, _T("chat"), WS_CHILD |WS_VISIBLE,
-        0, 0, 
+        0, 0,
 		CW_USEDEFAULT, CW_USEDEFAULT,//ширина+высота
 		parent, NULL, g_hInst, (LPVOID)this);
 
@@ -692,7 +691,7 @@ bool ChatView::showWindow( bool show ) {
     if (show) msgList->notifyListUpdate(true);
     //if (show) InvalidateRect(msgList->getHWnd(), NULL, false);
 
-  if (show && !nofocus) SetFocus(editWnd);//нефокусировать при перерисовке по таймеру 
+  if (show && !nofocus) SetFocus(editWnd);//нефокусировать при перерисовке по таймеру
 
     return oldState;
 }
@@ -729,7 +728,7 @@ void ChatView::sendJabberMessage() {
     wchar_t *buf=new wchar_t[len+1];
     int actualLen=SendMessage(editWnd, WM_GETTEXT, len, (LPARAM) buf);
     std::string body=utf8::wchar_utf8(buf);
-    delete[] buf; 
+    delete[] buf;
 
     std::trimTail(body);
     if (body.length()==0) return;
@@ -751,10 +750,10 @@ if (Config::getInstance()->saveHistoryMuc){
 	}else{
        if (!muc) {
          contact->messageList->push_back(msg);
-        
+
        }
 	}
-if(!muc)msg->body.erase(0,3);//перед отправкой убираем ME> 
+if(!muc)msg->body.erase(0,3);//перед отправкой убираем ME>
     msgList->moveCursorEnd();
     redraw();
 
@@ -762,11 +761,11 @@ if(!muc)msg->body.erase(0,3);//перед отправкой убираем ME>
 
     std::string to=(muc)?contact->jid.getBareJid() : contact->jid.getJid();
     JabberDataBlockRef out=msg->constructStanza(to);
-    if (muc) out->setAttribute("type","groupchat"); 
+    if (muc) out->setAttribute("type","groupchat");
     else {
         /* xep-0022; deprecated; will be re-enabled with entity caps
         JabberDataBlockRef x=out->addChildNS("x", "jabber:x:event");
-        x->addChild("delivered", NULL); 
+        x->addChild("delivered", NULL);
         x->addChild("composing", NULL);
         */
 
@@ -774,7 +773,7 @@ if(!muc)msg->body.erase(0,3);//перед отправкой убираем ME>
             out->addChildNS("active","http://jabber.org/protocol/chatstates");
 
         if (Config::getInstance()->delivered)
-            //if (! contact->jid.getResource().empty() ) 
+            //if (! contact->jid.getResource().empty() )
             out->addChildNS("request","urn:xmpp:receipts");
     }
     composing=false;
@@ -800,11 +799,11 @@ void ChatView::sendJabberMessagesb() {
     int actualLen=SendMessage(editWnd, WM_GETTEXT, len, (LPARAM) buf);
 	wcscpy(buf2,L"Тема:");
 	wcscat(buf2,(const wchar_t*)buf);
-	
-	
+
+
     std::string body=utf8::wchar_utf8(buf2);
-    delete[] buf; 
-	delete[] buf2; 
+    delete[] buf;
+	delete[] buf2;
 
     std::trimTail(body);
     if (body.length()==0) return;
@@ -812,7 +811,7 @@ void ChatView::sendJabberMessagesb() {
     bool muc=boost::dynamic_pointer_cast<MucRoom>(contact);
 	if (!muc)return;
 
- 
+
     msgList->moveCursorEnd();
     redraw();
 
@@ -820,9 +819,9 @@ void ChatView::sendJabberMessagesb() {
 if(idautostatus==1)idautostatus=2;
     std::string to=contact->jid.getBareJid();
     JabberDataBlockRef out=msg->constructStanzasb(to);
-    
-    
-    
+
+
+
     rc->jabberStream->sendStanza(*out);
 
     LastActivity::update();
@@ -902,14 +901,14 @@ void ChatView::mucNickComplete() {
     while (loop) {
         std::wstring &s=(*i);
 
-        i++; 
-        if (i==nicks.end()) 
+        i++;
+        if (i==nicks.end())
             i=nicks.begin();
         loop--;
 
         if (s.length()==nlen) {
             if (_wcsnicmp(buf+nbegin, s.c_str(), nlen)==0) break;
-        } 
+        }
     }
 
 
@@ -930,7 +929,7 @@ void ChatView::setComposingState( bool composing ) {
     this->composing=composing;
 
     std::string to=contact->jid.getJid();
-    JabberDataBlockRef out=JabberDataBlockRef(new JabberDataBlock("message", NULL)); 
+    JabberDataBlockRef out=JabberDataBlockRef(new JabberDataBlock("message", NULL));
     out->setAttribute("to", to);
     out->addChildNS(
         (composing)? "composing" : "paused",
@@ -946,7 +945,7 @@ void ChatView::setComposingState( bool composing ) {
 
 //////////////////////////////////////////////////////////////////////////
 class FontMetricCache {
-public: 
+public:
 	FontMetricCache();
 	~FontMetricCache();
 	inline int getWidth(HDC hdc, wchar_t chr);
@@ -976,7 +975,7 @@ int FontMetricCache::getWidth(HDC hdc, wchar_t chr){
 FontMetricCache fmc;
  //Пользовательский шрифт чата,сделать соотв. опции
 
-//////////////////////////////////////////////////////////////////////////  
+//////////////////////////////////////////////////////////////////////////
 // WARNING!!! ONLY FOR WM2003 and higher
 //////////////////////////////////////////////////////////////////////////
 #ifndef DT_END_ELLIPSIS
@@ -996,8 +995,8 @@ void MessageElement::init() {
 
 void MessageElement::measure(HDC hdc, RECT &rt) {
 	//fmc.getWidth(hdc, ' ');
-	if (width==rt.right-rt.left) { 
-		rt.bottom=rt.top+height; return; 
+	if (width==rt.right-rt.left) {
+		rt.bottom=rt.top+height; return;
 	}//already measured уже свернуто
 
 	//if (width>220) { //debug code
@@ -1005,7 +1004,7 @@ void MessageElement::measure(HDC hdc, RECT &rt) {
 	//}
 	render(hdc, rt, true);
 	width=rt.right-rt.left;
-	height=rt.bottom-rt.top;  
+	height=rt.bottom-rt.top;
 }
 
 void MessageElement::draw(HDC hdc, RECT &rt) const {
@@ -1036,21 +1035,21 @@ void MessageElement::render( HDC hdc, RECT &rt, bool measure ) const{
 		xbegin=xpos;
 	}
 
-	strcpy((char*)FONT.lfFaceName, "Tahoma"); 
+	strcpy((char*)FONT.lfFaceName, "Tahoma");
 	FONT.lfHeight = Config::getInstance()->msg_font_height;//11-8 слишком толстый шрифт
 	FONT.lfWidth = Config::getInstance()->msg_font_width;
 	FONT.lfWeight = Config::getInstance()->tolshina;
-	FONT.lfItalic = false; 
-	FONT.lfStrikeOut = false; 
-	FONT.lfUnderline = false; 
-	FONT.lfOrientation = 0; 
+	FONT.lfItalic = false;
+	FONT.lfStrikeOut = false;
+	FONT.lfUnderline = false;
+	FONT.lfOrientation = 0;
 	FONT.lfEscapement = 0;
-	NormalFont  = CreateFontIndirectW(&FONT); 
+	NormalFont  = CreateFontIndirectW(&FONT);
 	SelectObject(hdc, NormalFont);
 
 
 	wchar_t c;
-	do { 
+	do {
 		c=*end;
 		switch (c) {
 			case 0: break; //newline;
@@ -1058,7 +1057,7 @@ void MessageElement::render( HDC hdc, RECT &rt, bool measure ) const{
 			case 0x0d: if (*(end+1)==0x0a) end++;
 			case 0x0a: end++; if (!singleLine) break; //newline;
 
-			case 0x01: 
+			case 0x01:
 				if (hbr==NULL) {
 					hbr=CreatePen(PS_SOLID, 0, GetTextColor(hdc));
 					SelectObject(hdc, hbr);
@@ -1100,12 +1099,12 @@ void MessageElement::render( HDC hdc, RECT &rt, bool measure ) const{
 						}
 						int smileWidth=smileParser->icons->getElementWidth();
 						lHeight=smileWidth;
-						
-						
 
-						lineBegin=end=smileEnd; wordBegin=NULL; 
+
+
+						lineBegin=end=smileEnd; wordBegin=NULL;
 						xbegin=xpos+smileWidth;
-						if (xbegin>=mw) {ypos+=smileWidth;xpos=rt.left;xbegin=xpos+smileWidth;wordBegin=smileEnd;} 
+						if (xbegin>=mw) {ypos+=smileWidth;xpos=rt.left;xbegin=xpos+smileWidth;wordBegin=smileEnd;}
 
 						if (!measure) {
 							if (ypos<rt.bottom && ypos+smileWidth>=rt.top)
@@ -1113,7 +1112,7 @@ void MessageElement::render( HDC hdc, RECT &rt, bool measure ) const{
 						}
 
 						xpos=xbegin;
-						
+
 
 						continue;
 					}
@@ -1121,7 +1120,7 @@ void MessageElement::render( HDC hdc, RECT &rt, bool measure ) const{
 
 				xpos+=fmc.getWidth(hdc, c);
 				if (xpos<mw) {
-					end++; continue; 
+					end++; continue;
 				} else if (wordBegin) end=wordBegin;
 		}
 
@@ -1168,8 +1167,8 @@ int MessageElement::getColor() const { return 0; }
 
 
 HMENU MessageElement::getContextMenu( HMENU menu ) {
-	if (!menu) 
-		menu=CreatePopupMenu(); 
+	if (!menu)
+		menu=CreatePopupMenu();
 	else
 		AppendMenu(menu, MF_SEPARATOR , 0, NULL);
         HMENU subMenuju=CreatePopupMenu();//подменю juick
@@ -1195,7 +1194,7 @@ HMENU MessageElement::getContextMenu( HMENU menu ) {
 
 
 bool MessageElement::OnMenuCommand(int cmdId, HWND parent, HWND edithwnd){
-   
+
 	switch (cmdId) {
         case WM_COPY:
             {
@@ -1222,22 +1221,33 @@ bool MessageElement::OnMenuCommand(int cmdId, HWND parent, HWND edithwnd){
                 return true;
             }
 
-		
+
      case GOTOURL:
 		 {
-      
+
 				wchar_t *strurl=new wchar_t[wstr.length()+1];
-				wcscpy(strurl,wstr.c_str()); 
-				wchar_t *strurl2=new wchar_t[wstr.length()+1]; 
-			
-               
-					strurl=wcsstr(strurl,L"http://");	
+				wcscpy(strurl,wstr.c_str());
+				wchar_t *strurl2=new wchar_t[wstr.length()+1];
+
+
+					strurl=wcsstr(strurl,L"http://");
 			while(strurl!=NULL){
 
 				wcscpy(strurl2,strurl);
 				strurl2=wcstok(strurl2,L" \n;\,<>*\"\'\[\]\{\}");
 				strurl2[wcslen(strurl2)-1]='\0';
 				int result=MessageBox(GetParent(edithwnd), strurl2, TEXT("Открыть URL?"), MB_YESNOCANCEL | MB_ICONWARNING );
+<<<<<<< .mine
+			    	if (result==IDYES){
+				ExecFile(strurl2,L"");
+				delete[] strurl;
+				delete[] strurl2;
+				return true;}
+					if (result==IDCANCEL){
+				delete[] strurl;
+				delete[] strurl2;
+				return true;}
+=======
 			    	if (result==IDYES){
 				ExecFile(strurl2,L"");
 				delete[] strurl;
@@ -1247,17 +1257,18 @@ bool MessageElement::OnMenuCommand(int cmdId, HWND parent, HWND edithwnd){
 				delete[] strurl;
 				delete[] strurl2;
 				return true;}
+>>>>>>> .r57
 				memset(strurl,20,2);
  //result=MessageBox(NULL, strurl, TEXT("Открыть URL?1"), MB_YESNO | MB_ICONWARNING );
 
-				strurl=wcsstr(strurl,L"http://");	
+				strurl=wcsstr(strurl,L"http://");
 //result=MessageBox(NULL, strurl, TEXT("Открыть URL?2"), MB_YESNO | MB_ICONWARNING );
 			}
 				delete[] strurl;
 				delete[] strurl2;
                 return true;
 		 }
-        
+
 		 case JUICK_COM_K:
 			 {std::wstring copy=wstr;
                 // striping formating
@@ -1270,7 +1281,7 @@ bool MessageElement::OnMenuCommand(int cmdId, HWND parent, HWND edithwnd){
                     i++;
                 }
 								if(copy.find(L"http://juick.com/")!=-1){
-					
+
 					copy.erase(0,copy.rfind(L"http://juick.com/"));
 					copy.erase(0,copy.rfind('/')+1);
 					i=0;
@@ -1310,7 +1321,7 @@ bool MessageElement::OnMenuCommand(int cmdId, HWND parent, HWND edithwnd){
                     i++;
                 }
 								if(copy.find(L"http://juick.com/")!=-1){
-					
+
 					copy.erase(0,copy.rfind(L"http://juick.com/"));
 					copy.erase(0,copy.rfind('/')+1);
 					i=0;
@@ -1347,7 +1358,7 @@ bool MessageElement::OnMenuCommand(int cmdId, HWND parent, HWND edithwnd){
                     i++;
                 }
 								if(copy.find(L"http://juick.com/")!=-1){
-					
+
 					copy.erase(0,copy.rfind(L"http://juick.com/"));
 					copy.erase(0,copy.rfind('/')+1);
 					i=0;
@@ -1384,7 +1395,7 @@ bool MessageElement::OnMenuCommand(int cmdId, HWND parent, HWND edithwnd){
                     i++;
                 }
 				if(copy.find(L"http://juick.com/")!=-1){
-					
+
 					copy.erase(0,copy.rfind(L"http://juick.com/"));
 					copy.erase(0,copy.rfind('/')+1);
 					i=0;
@@ -1408,7 +1419,7 @@ bool MessageElement::OnMenuCommand(int cmdId, HWND parent, HWND edithwnd){
 					SendMessage(edithwnd, WM_SETTEXT, 1, (LPARAM)copy.c_str());}
 				SetFocus(edithwnd);
 					  return true;
-			 
+
 			 }
 		 case IDOK://это должно быть обязательно перед смайлами-они связаны
             {
@@ -1433,9 +1444,9 @@ bool MessageElement::OnMenuCommand(int cmdId, HWND parent, HWND edithwnd){
 			return true;}
 		case CGETNICK:{
 			if (!edithwnd) return true;
-			
+
 				std::wstring copy=wstr;
-				
+
                 // striping formating
                 size_t i=0;bool okflag=0;
                 while (i<copy.length()) {
@@ -1446,9 +1457,9 @@ bool MessageElement::OnMenuCommand(int cmdId, HWND parent, HWND edithwnd){
                     }
                     i++;
                 }
-				
+
 				copy.erase(0,11);
-				
+
 				if(okflag){
 					copy.replace(copy.find('>'),copy.length(),L": ");
 				}

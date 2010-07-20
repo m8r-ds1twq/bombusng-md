@@ -63,13 +63,14 @@
 #include "boostheaders.h"
 
 #include "ChatView.h"
-
+#include "menu.h"
 char ***strcom;//массив быстрых команд
 char ***snd;//массив персональных мелодий
 int linesCountcom;//количество быстрых команд
 int linesCountsnd;//количество персональных мелодий
 std::string soundjid;
 #define MAX_LOADSTRING 100
+#define MENU_OWR_IS    Config::getInstance()->is_gmenu //граф меню /классик
 int sizecaps;
 bool nofocus=0;
 char **strokicaps;
@@ -77,6 +78,7 @@ bool pongOnline=0;
 extern char ***getConfig(const wchar_t *fileName,int *count);
 //#define TIMER_TIME 700 //ВРЕМЯ ОПРОСА ТАЙМЕРА
 //#define TIMER_STATUS 60 //ВРЕМЯ АВТОСТАТУСА
+#define SHMenuBar_GetMenu(hWndMB,ID_MENU) (HMENU)SendMessage((hWndMB), SHCMBM_GETSUBMENU, (WPARAM)0, (LPARAM)ID_MENU);
 void CALLBACK TimerProc(HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime);
 #define STREAM_READ_IDLE 50
 void recvStreamThread(void);//Поток обработки потока jabber
@@ -143,6 +145,62 @@ return 1;
 	
 }
 
+std::wstring appRootPath;
+HINSTANCE			g_hInst;			// current instance
+
+Menu* root;
+void close()
+{
+    PostQuitMessage (0);
+}
+#define ID_ITEM 123
+void createMenus(HWND hWnd)
+{
+    root = new Menu(hWnd,L"Root",0);
+    //Menu* menu = root->addMenu(L"Menu1",0);
+   // Menu* subMenu = root->addMenu(L"SubMenu1",0x01);
+    //subMenu->addItem(L"Подменю",0x42,0,IDM_EXIT);
+  //root->addItem(L"MenuItem",0x50,NULL)->check(true);
+
+	root->addItem(L"Статус",icons_menu::ICON_STATUS,0,IDM_JABBER_STATUS);
+	Menu* popup_status = root->addMenu(L"Быстро статус",icons_menu::ICON_STATUS_BR);
+			popup_status->addItem(L"On line",icons_menu::ICON_STATUS_BR_ONLINE,0,IDM_STATUS_ONLINE);
+			popup_status->addItem(L"Чат",icons_menu::ICON_STATUS_BR_FFC,0,IDM_STATUS_FFC);
+			popup_status->addItem(L"Отошёл",icons_menu::ICON_STATUS_BR_AWEY,0,IDM_STATUS_AWAY);
+			popup_status->addItem(L"Давно отошёл",icons_menu::ICON_STATUS_BR_EXAWEY,0,IDM_STATUS_EXTENDEDAWAY);
+			popup_status->addItem(L"Не беспокоить",icons_menu::ICON_STATUS_BR_DND,0,IDM_STATUS_DND);
+			popup_status->addItem(L"Off line",icons_menu::ICON_STATUS_BR_OFFLINE,0,IDM_STATUS_OFFLINE);
+	Menu* pep = root->addMenu(L"PEP статус",icons_menu::ICON_PEP_STATUS);
+			pep->addItem(L"Настроение",icons_menu::ICON_PEP_N,0,MOODS_AKTIV);
+			pep->addItem(L"Активность",icons_menu::ICON_PEP_A,0,AKTIV_PEP);
+	root->addSeparator();
+	root->addItem(L"Добавить контакт",icons_menu::ICON_ADDCONTACT,0,ID_JABBER_ADDACONTACT);
+	root->addItem(L"Войти в комнату",icons_menu::ICON_JOINCONFERENCE,0,ID_JABBER_JOINCONFERENCE);
+	root->addItem(L"Аккаунт",icons_menu::ICON_ACCOUNT,0,IDM_JABBER_ACCOUNT);
+	Menu* instr = root->addMenu(L"Инструменты",icons_menu::ICON_INS);
+			instr->addItem(L"Обзор сервисов",icons_menu::ICON_SERV,0,ID_TOOLS_SERVICEDISCOVERY);
+			instr->addItem(L"Файлы",icons_menu::ICON_FILETRANSFERS,0,ID_TOOLS_FILETRANSFERS);
+			instr->addItem(L"Мой VCARD",icons_menu::ICON_VCARD,0,ID_TOOLS_MYVCARD);
+			instr->addSeparator();
+			instr->addItem(L"Лог",icons_menu::ICON_LOG,0,IDM_WINDOWS_LOG);
+			instr->addItem(L"Очистить Лог",icons_menu::ICON_LOG_DEL,0,ID_TOOLS_LOGDEL);
+			instr->addItem(L"Трафик",icons_menu::ICON_TRAF,0,IDM_JABBER_STREAMINFO);
+	root->addSeparator();
+	Menu* signals = root->addMenu(L"Сигналы",icons_menu::ICON_SIGN);
+			signals->addItem(L"Звук+вибра",icons_menu::ICON_SIGN  ,0,ID_SIGNALS_SOUNDANDVIBRA)->check(true);
+			signals->addItem(L"Звук",      icons_menu::ICON_SIGN_S,0,ID_SIGNALS_SOUND);
+			signals->addItem(L"Вибра",     icons_menu::ICON_SIGN_V,0,ID_SIGNALS_VIBRA);
+			signals->addItem(L"Отключить", icons_menu::ICON_SIGN_MUTE,0,ID_SIGNALS_MUTE);
+	root->addItem(L"Настройки",icons_menu::ICON_OPTIONS,0,ID_JABBER_OPTIONS);
+	root->addSeparator();
+	Menu* info = root->addMenu(L"Справка",icons_menu::ICON_INFO);
+			info->addItem(L"О программе",       icons_menu::ICON_INFOP ,0,IDM_HELP_ABOUT);
+			info->addItem(L"Комната поддержки", icons_menu::ICON_SUPP,0,ID_SUPP);
+			info->addItem(L"Новости",           icons_menu::ICON_NEWS,0,NEWS);
+
+			root->addItem(L"Выход",icons_menu::ICON_EXIT,0,IDM_EXIT);
+    //root->set();
+}
 
 
 //utf8::wchar_utf8(out);
@@ -152,7 +210,7 @@ return 1;
 
 BOOL timealivid=0;//0-счет 1-послали 
 // Global Variables:
-HINSTANCE			g_hInst;			// current instance
+
 HWND				g_hWndMenuBar;		// menu bar handle
 HWND		mainWnd;
 HCURSOR     cursorWait;
@@ -167,20 +225,23 @@ RosterListView::ref rosterWnd;
 ResourceContextRef rc;
 HINSTANCE m_hInstanceDll;
 ImgListRef skin;
-
+ImgListRef ImgMenu;
 SmileParser *smileParser;
 int smile_anim_ind=0;//номер кадра
-std::wstring appRootPath;
+
 std::wstring skinRootPath;
 std::string appVersion;
 std::string appName;
-
+ bool menu_font_is_s;
+ bool menu_font_is_m;
+ bool menu_font_is_f;
+ bool menu_font_is_p;
 int tabHeight;
 int rosterStatus = 0;
 int reconnectTry = 3;
 int socketError = 0;
 Contact::ref bufc;
-int COLORS[30];
+DWORD COLORS[30];
 int prepareAccount();
 int initJabber(ResourceContextRef rc);
 //void streamShutdown();
@@ -540,6 +601,7 @@ ATOM MyRegisterClass(HINSTANCE hInstance, LPTSTR szWindowClass)
 //        create and display the main program window.
 //
 const std::string responseMd5Digest( const std::string &user, const std::string &pass, const std::string &realm, const std::string &digestUri, const std::string &nonce, const std::string cnonce);
+HBITMAP bmp_m;BITMAP bm_m;COLORREF transparentColor_m;
 
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
@@ -583,16 +645,21 @@ if(hInst2){
     wchar_t * skinRelPath;
 
 //
+	std::wstring filePatchmenu;
     tabsconf=Config::getInstance()->tabconf;
     if (sysinfo::screenIsVGA()) {
         skinRelPath=TEXT("vga\\");
+		//filePatchmenu=appRootPath+L"vga\\menu_icon.png";
         tabHeight=34 + tabsconf; //TODO: remove hardcode
     } else {
         skinRelPath=TEXT("qvga\\");
+		//filePatchmenu=appRootPath+L"qvga\\menu_icon.png";
         tabHeight=18 + tabsconf; //TODO: remove hardcode
     }
     skinRootPath=appRootPath+skinRelPath;
 
+	
+			
     LoadString(g_hInst, IDS_VERSION, wbuf, sizeof(wbuf));
     appVersion=utf8::wchar_utf8(wbuf);
     appName="Bombusng-MD";//
@@ -620,6 +687,7 @@ hwnvs=mainWnd;
     // When the main window is created using CW_USEDEFAULT the height of the menubar (if one
     // is created is not taken into account). So we resize the window after creating it
     // if a menubar is present
+	//g_hWndMenuBar = ::SHFindMenuBar(hWnd);
     if (g_hWndMenuBar)
     {
         RECT rc;
@@ -634,7 +702,7 @@ hwnvs=mainWnd;
 
     ShowWindow(hWnd, nCmdShow);
     UpdateWindow(hWnd);
-
+	DrawMenuBar(hWnd);
     Shell_NotifyIcon(true, hWnd);
     prepareAccount();
 
@@ -660,15 +728,18 @@ hwnvs=mainWnd;
 //
 
 
-
+HMENU gMenu_;
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {std::wstring bufff=L"";
     int wmId, wmEvent;
     PAINTSTRUCT ps;
     HDC hdc;
 WndRef chat2;int result;
-
-HMENU hMenu = GetSubMenu(::GetMenu(mainWnd),1);
+HMENU hMenu2;
+int cmd2;
+RECT rcMenuBar;
+MENUITEMINFO mi;
+HMENU hMenu = (HMENU)SHMenuBar_GetMenu(g_hWndMenuBar, 0);
     static SHACTIVATEINFO s_sai;
 	Serialize s(L"config\\status", Serialize::READ);
     switch (message) 
@@ -821,75 +892,47 @@ HMENU hMenu = GetSubMenu(::GetMenu(mainWnd),1);
 
 					// Evtomax: Быстрое включение/отключение звука и вибро 
 				// Надо ещё сделать, чтобы галочки показывались..
-
+				// fuze:Добавил галочки 
 
 
 				case ID_SIGNALS_SOUNDANDVIBRA:
 					   
-					 /*  
-					SendDlgItemMessage(mainWnd,ID_SIGNALS_SOUNDANDVIBRA,BM_SETCHECK,1,0);
-					SendDlgItemMessage(mainWnd,ID_SIGNALS_SOUND,BM_SETCHECK,0,0);
-					SendDlgItemMessage(mainWnd,ID_SIGNALS_VIBRA,BM_SETCHECK,0,0);
-					SendDlgItemMessage(mainWnd,ID_SIGNALS_MUTE,BM_SETCHECK,0,0);
-*/
-				CheckMenuItem (hMenu, ID_SIGNALS_SOUNDANDVIBRA,MF_UNCHECKED);
-				CheckMenuItem (hMenu, ID_SIGNALS_SOUND,MF_CHECKED);
-				CheckMenuItem (hMenu, ID_SIGNALS_VIBRA,MF_CHECKED);
-				CheckMenuItem (hMenu, ID_SIGNALS_MUTE,MF_CHECKED);
+					
+
+				CheckMenuItem (hMenu, ID_SIGNALS_SOUNDANDVIBRA,MF_CHECKED| MF_BYCOMMAND);
+				CheckMenuItem (hMenu, ID_SIGNALS_SOUND,MF_UNCHECKED| MF_BYCOMMAND);
+				CheckMenuItem (hMenu, ID_SIGNALS_VIBRA,MF_UNCHECKED| MF_BYCOMMAND);
+				CheckMenuItem (hMenu, ID_SIGNALS_MUTE,MF_UNCHECKED| MF_BYCOMMAND);
 				DrawMenuBar(mainWnd);
 						Config::getInstance()->sounds = true;	
 						Config::getInstance()->vibra = true;
 					break;
 				
 				case ID_SIGNALS_SOUND:
-					SendDlgItemMessage(mainWnd,ID_SIGNALS_SOUNDANDVIBRA,BM_SETCHECK,0,0);
-					SendDlgItemMessage(mainWnd,ID_SIGNALS_SOUND,BM_SETCHECK,1,0);
-					SendDlgItemMessage(mainWnd,ID_SIGNALS_VIBRA,BM_SETCHECK,0,0);
-					SendDlgItemMessage(mainWnd,ID_SIGNALS_MUTE,BM_SETCHECK,0,0);
-					/*CheckMenuItem (hMenu, ID_SIGNALS_SOUNDANDVIBRA,
-               MF_CHECKED);
-CheckMenuItem (hMenu, ID_SIGNALS_SOUND,
-                  MF_UNCHECKED);
-CheckMenuItem (hMenu, ID_SIGNALS_VIBRA,
-                  MF_CHECKED);
-CheckMenuItem (hMenu, ID_SIGNALS_MUTE,
-                  MF_CHECKED);*/
+				CheckMenuItem (hMenu, ID_SIGNALS_SOUNDANDVIBRA,MF_UNCHECKED| MF_BYCOMMAND);
+				CheckMenuItem (hMenu, ID_SIGNALS_SOUND,MF_CHECKED| MF_BYCOMMAND);
+				CheckMenuItem (hMenu, ID_SIGNALS_VIBRA,MF_UNCHECKED| MF_BYCOMMAND);
+				CheckMenuItem (hMenu, ID_SIGNALS_MUTE,MF_UNCHECKED| MF_BYCOMMAND);
+				DrawMenuBar(mainWnd);
 						Config::getInstance()->sounds = true;	
 						Config::getInstance()->vibra = false;
 					break;
 
 				case ID_SIGNALS_VIBRA:
-					SendDlgItemMessage(mainWnd,ID_SIGNALS_SOUNDANDVIBRA,BM_SETCHECK,0,0);
-					SendDlgItemMessage(mainWnd,ID_SIGNALS_SOUND,BM_SETCHECK,0,0);
-					SendDlgItemMessage(mainWnd,ID_SIGNALS_VIBRA,BM_SETCHECK,1,0);
-					SendDlgItemMessage(mainWnd,ID_SIGNALS_MUTE,BM_SETCHECK,0,0);
-					/*
-					CheckMenuItem (hMenu, ID_SIGNALS_SOUNDANDVIBRA,
-               MF_CHECKED);
-CheckMenuItem (hMenu, ID_SIGNALS_SOUND,
-                  MF_CHECKED);
-CheckMenuItem (hMenu, ID_SIGNALS_VIBRA,
-                  MF_UNCHECKED);
-CheckMenuItem (hMenu, ID_SIGNALS_MUTE,
-                  MF_CHECKED);*/
+				CheckMenuItem (hMenu, ID_SIGNALS_SOUNDANDVIBRA,MF_UNCHECKED| MF_BYCOMMAND);
+				CheckMenuItem (hMenu, ID_SIGNALS_SOUND,MF_UNCHECKED| MF_BYCOMMAND);
+				CheckMenuItem (hMenu, ID_SIGNALS_VIBRA,MF_CHECKED| MF_BYCOMMAND);
+				CheckMenuItem (hMenu, ID_SIGNALS_MUTE,MF_UNCHECKED| MF_BYCOMMAND);
+				DrawMenuBar(mainWnd);
 						Config::getInstance()->sounds = false;	
 						Config::getInstance()->vibra = true;						
 					break;
 
 				case ID_SIGNALS_MUTE:
-					SendDlgItemMessage(mainWnd,ID_SIGNALS_SOUNDANDVIBRA,BM_SETCHECK,0,0);
-					SendDlgItemMessage(mainWnd,ID_SIGNALS_SOUND,BM_SETCHECK,0,0);
-					SendDlgItemMessage(mainWnd,ID_SIGNALS_VIBRA,BM_SETCHECK,0,0);
-					SendDlgItemMessage(mainWnd,ID_SIGNALS_MUTE,BM_SETCHECK,1,0);
-					/*
-					CheckMenuItem (hMenu, ID_SIGNALS_SOUNDANDVIBRA,
-               MF_CHECKED);
-CheckMenuItem (hMenu, ID_SIGNALS_SOUND,
-                  MF_CHECKED);
-CheckMenuItem (hMenu, ID_SIGNALS_VIBRA,
-                  MF_CHECKED);
-CheckMenuItem (hMenu, ID_SIGNALS_MUTE,
-                  MF_UNCHECKED);*/
+				CheckMenuItem (hMenu, ID_SIGNALS_SOUNDANDVIBRA,MF_UNCHECKED| MF_BYCOMMAND);
+				CheckMenuItem (hMenu, ID_SIGNALS_SOUND,MF_UNCHECKED| MF_BYCOMMAND);
+				CheckMenuItem (hMenu, ID_SIGNALS_VIBRA,MF_UNCHECKED| MF_BYCOMMAND);
+				CheckMenuItem (hMenu, ID_SIGNALS_MUTE,MF_CHECKED| MF_BYCOMMAND);
 						Config::getInstance()->sounds = false;	
 						Config::getInstance()->vibra = false;						
 					break;
@@ -939,10 +982,28 @@ CheckMenuItem (hMenu, ID_SIGNALS_MUTE,
                     }
                     break;
 
-
+				case MENU_IT1:	//ОТЛАДКА ;)
+				 	MessageBox(hWnd, TEXT("Clicked"), TEXT("!"), 0);
+					break;
 				/*case IDM_WINDOWS_ROSTER:
                     tabs->switchByWndRef(rosterWnd);
 					break;*/
+				case ID_MENU_1: //OWNERDRAW  меню
+				GetWindowRect(g_hWndMenuBar, &rcMenuBar);
+				cmd2=TrackPopupMenuEx(root->hMenu(),TPM_BOTTOMALIGN | TPM_RETURNCMD,
+        rcMenuBar.left, rcMenuBar.top,
+		hWnd,NULL);
+
+    if (cmd2!=0) {
+        MENUITEMINFO mi;
+        mi.cbSize=sizeof(mi);
+        mi.fMask=MIIM_DATA;
+        GetMenuItemInfo(root->hMenu(), cmd2, FALSE, &mi);
+        PostMessage(hWnd, WM_COMMAND, cmd2, mi.dwItemData);
+    }
+   // DestroyMenu(root->hMenu());
+				
+					break;
                 case IDS_WINDOWS:
                     SendMessage(tabs->getHWnd(), WM_COMMAND, IDS_WINDOWS, 0);
 
@@ -952,19 +1013,24 @@ CheckMenuItem (hMenu, ID_SIGNALS_MUTE,
 			}
             break;
         case WM_CREATE:
-            SHMENUBARINFO mbi;
-
+			SHMENUBARINFO mbi;
+			menu_font_is_s=1;
+			menu_font_is_m=1;
+			menu_font_is_f=1;
+			menu_font_is_p=1;
+		
             memset(&mbi, 0, sizeof(SHMENUBARINFO));
             mbi.cbSize     = sizeof(SHMENUBARINFO);
             mbi.hwndParent = hWnd;
-            mbi.nToolBarId = IDR_MENU;
+			if(MENU_OWR_IS)  {createMenus(hWnd);mbi.nToolBarId = IDR_MENU1;}else {mbi.nToolBarId = IDR_MENU;}
+			
             mbi.hInstRes   = g_hInst;
-            mbi.dwFlags = SHCMBF_HMENU;
+			mbi.dwFlags = SHCMBF_HMENU;
 
             cursorWait=LoadCursor(NULL, IDC_WAIT);
             //skin=ImgListRef(new ImgArray(TEXT("skin.png"), 8, 6));
             skin=ImgListRef(new Skin(TEXT("")));
-
+			ImgMenu=ImgListRef(new ImgArray(L"menu.png", 8, -1));
             smileParser=new SmileParser();
             //skin->setGridSize(8, 6);
 
@@ -991,7 +1057,7 @@ CheckMenuItem (hMenu, ID_SIGNALS_MUTE,
 
 			//listWnd=logWnd;
 			//dropdownWnd=DoCreateComboControl(hWnd);
-
+		 
             if (!SHCreateMenuBar(&mbi)) 
             {
                 g_hWndMenuBar = NULL;
@@ -999,13 +1065,27 @@ CheckMenuItem (hMenu, ID_SIGNALS_MUTE,
             else
             {
                 g_hWndMenuBar = mbi.hwndMB;
-            }
+			}
 
             // Initialize the shell activate info structure
             memset(&s_sai, 0, sizeof (s_sai));
             s_sai.cbSize = sizeof (s_sai);
+			 
+			 break;
 
+		
+            
+         case WM_DRAWITEM:
+            //std::cout<<"redraw"<<std::endl;
+            root->redraw(reinterpret_cast<DRAWITEMSTRUCT*>(lParam));
             break;
+        case WM_MEASUREITEM:
+            //std::cout<<"measure"<<std::endl;
+            root->measure(reinterpret_cast<MEASUREITEMSTRUCT*>(lParam));
+            break;
+    
+
+
         case WM_PAINT:
             hdc = BeginPaint(hWnd, &ps);
 
@@ -1019,6 +1099,7 @@ CheckMenuItem (hMenu, ID_SIGNALS_MUTE,
             break;
         case WM_DESTROY:
             CommandBar_Destroy(g_hWndMenuBar);
+			if (bmp_m) DeleteObject(bmp_m);
             PostQuitMessage(0);
             break;
 
@@ -1049,19 +1130,10 @@ CheckMenuItem (hMenu, ID_SIGNALS_MUTE,
             SHHandleWMSettingChange(hWnd, wParam, lParam, &s_sai);
             break;
 
-		//case WM_CTLCOLORLISTBOX:
+		
         
         
-        /*case WM_CTLCOLORSTATIC:
-		case WM_CTLCOLOREDIT: 
-			{
-                HDC hdc=(HDC) wParam;
-                HWND hwnd=(HWND) lParam;
-				SetBkColor(hdc, 0x000000);
-				SetTextColor(hdc, 0xffffff);
-				return (BOOL) GetStockObject(BLACK_BRUSH);
-				break;
-			}*/
+       
 
         case SHELLNOTIFYICON:
             SetForegroundWindow((HWND)((ULONG) hWnd | 0x00000001));            

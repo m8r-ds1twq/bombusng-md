@@ -17,7 +17,7 @@
 #include "stringutils.h"
 
 #include <nled.h>
-
+extern bool menu_font_is_f;
 extern std::wstring appRootPath;
 extern void colorsload(std::wstring txtname);
 
@@ -44,43 +44,62 @@ INT_PTR CALLBACK DlgProcConfigP4(HWND hDlg, UINT message, WPARAM wParam, LPARAM 
 INT_PTR CALLBACK DlgProcConfigP5(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam) {
     return DlgProcConfig(hDlg, message, wParam, lParam, 4);
 }
+INT_PTR CALLBACK DlgProcConfigP6(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam) {
+    return DlgProcConfig(hDlg, message, wParam, lParam, 5);
+}
+INT_PTR CALLBACK DlgProcConfigP7(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam) {
+    return DlgProcConfig(hDlg, message, wParam, lParam, 6);
+}
 void DialogConfigMP(HINSTANCE g_hInst, HWND parent) {
 
-    PROPSHEETPAGE pages[5];
+    PROPSHEETPAGE pages[7];
     pages[0].dwSize=sizeof(PROPSHEETPAGE);
     pages[1].dwSize=sizeof(PROPSHEETPAGE);
     pages[2].dwSize=sizeof(PROPSHEETPAGE);
     pages[3].dwSize=sizeof(PROPSHEETPAGE);
 	pages[4].dwSize=sizeof(PROPSHEETPAGE);
+	pages[5].dwSize=sizeof(PROPSHEETPAGE);
+	pages[6].dwSize=sizeof(PROPSHEETPAGE);
+
     pages[0].hInstance=g_hInst;
     pages[1].hInstance=g_hInst;
     pages[2].hInstance=g_hInst;
     pages[3].hInstance=g_hInst;
     pages[4].hInstance=g_hInst;
+	pages[5].hInstance=g_hInst;
+	pages[6].hInstance=g_hInst;
 
     pages[0].dwFlags=PSP_DEFAULT;
     pages[1].dwFlags=PSP_DEFAULT;
     pages[2].dwFlags=PSP_DEFAULT;
     pages[3].dwFlags=PSP_DEFAULT;
     pages[4].dwFlags=PSP_DEFAULT;
+	pages[5].dwFlags=PSP_DEFAULT;
+	pages[6].dwFlags=PSP_DEFAULT;
 
     pages[0].pszTemplate=(LPCTSTR)IDD_OPTIONS1;
     pages[1].pszTemplate=(LPCTSTR)IDD_OPTIONS2;
     pages[2].pszTemplate=(LPCTSTR)IDD_OPTIONS3;
     pages[3].pszTemplate=(LPCTSTR)IDD_OPTIONS4;
     pages[4].pszTemplate=(LPCTSTR)IDD_STATUSY;
+	pages[5].pszTemplate=(LPCTSTR)IDD_OPTIONS5;
+	pages[6].pszTemplate=(LPCTSTR)IDD_CANSEL;
 
     pages[0].pfnDlgProc=DlgProcConfigP1;
     pages[1].pfnDlgProc=DlgProcConfigP2;
     pages[2].pfnDlgProc=DlgProcConfigP3;
     pages[3].pfnDlgProc=DlgProcConfigP4;
     pages[4].pfnDlgProc=DlgProcConfigP5;
+	pages[5].pfnDlgProc=DlgProcConfigP6;
+	pages[6].pfnDlgProc=DlgProcConfigP7;
 
     pages[0].lParam=0;
     pages[1].lParam=1;
     pages[2].lParam=2;
     pages[3].lParam=3;
     pages[4].lParam=4;
+	pages[5].lParam=5;
+	pages[6].lParam=6;
 
     PROPSHEETHEADER psh;
     psh.dwSize=sizeof(PROPSHEETHEADER);
@@ -88,7 +107,7 @@ void DialogConfigMP(HINSTANCE g_hInst, HWND parent) {
     psh.hwndParent=parent;
     psh.hInstance=g_hInst;
     psh.pszCaption=L"Options";
-    psh.nPages=5;
+    psh.nPages=7;
     psh.nStartPage=0;
     psh.ppsp=pages;
 	psh.pfnCallback = PropSheetCallback;
@@ -237,6 +256,16 @@ INT_PTR CALLBACK DlgProcConfig(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
 				SetDlgCheckBox(hDlg, IDC_TUN_STATUS, cfg->tune_status);
 				SetDlgCheckBox(hDlg, IDC_TUN_PEP, cfg->tune_status_pep);
 			}
+			if (npage==5){
+			//Menu
+				SetDlgCheckBox(hDlg, IDC_G_MENU  , cfg->is_gmenu);
+				SetDlgItemInt(hDlg, IDC_G_MENU_HEIGHT, cfg->menu_Height , false);
+				SetDlgItemInt(hDlg, IDC_G_MENU_WIDTH ,cfg->menu_Width, false);
+				SetDlgItemInt(hDlg, IDC_G_MENU_TOLSH ,cfg->menu_Weight, false);
+			}
+			/*if (npage==6){
+			//Cansel
+			}*/
             //finally
         }
         return (INT_PTR)TRUE;
@@ -355,6 +384,30 @@ INT_PTR CALLBACK DlgProcConfig(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
 
 				
 				}
+				if (npage==5){
+			//Menu
+					BOOL hei1,wei1,wid1;
+					int menu___;
+					
+					GetDlgCheckBox(hDlg, IDC_G_MENU  , cfg->is_gmenu);
+					menu___=cfg->menu_Height;
+					cfg->menu_Height = GetDlgItemInt(hDlg, IDC_G_MENU_HEIGHT, &hei1 , false);
+					if (!hei1) cfg->menu_Height = 15;
+					if(cfg->menu_Height != menu___) menu_font_is_f=1;
+					menu___=cfg->menu_Width;
+					cfg->menu_Width = GetDlgItemInt(hDlg, IDC_G_MENU_WIDTH, &wid1 , false);
+					if (!wid1) cfg->menu_Width = 5;
+					if(cfg->menu_Width != menu___) menu_font_is_f=1;
+					menu___=cfg->menu_Weight;
+					cfg->menu_Weight = GetDlgItemInt(hDlg, IDC_G_MENU_TOLSH , &wei1 , false);
+					if (!wid1) cfg->menu_Weight = 600;
+					if(cfg->menu_Weight != menu___) menu_font_is_f=1;
+
+
+			}
+				/*if (npage==6){
+			//Cansel
+			}*/
                 return TRUE;
             }
             return FALSE;
@@ -364,6 +417,14 @@ INT_PTR CALLBACK DlgProcConfig(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
 
         if (LOWORD(wParam) == IDCANCEL) {
             return TRUE;
+        }
+		if (LOWORD(wParam) == ID_CANSEL) {
+        PostMessage(GetParent(hDlg), WM_COMMAND, IDCANCEL, 0);
+		return TRUE;
+        }
+		if (LOWORD(wParam) == ID_OK) {
+        PostMessage(GetParent(hDlg), WM_COMMAND, IDOK, 0);
+		return TRUE;
         }
 		if (LOWORD(wParam) == IDC_GETVIBRA) {
 			SetDlgItemInt(hDlg, IDC_VIBRA, GetVibratorLedNum(), false);

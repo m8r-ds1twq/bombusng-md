@@ -10,7 +10,7 @@
 #include "Log.h"
 extern std::string statusMessage2;
 extern std::string typevs;
-extern int COLORS[];
+extern DWORD COLORS[];
 //////////////////////////////////////////////////////////////////////////
 extern ImgListRef skin;
 

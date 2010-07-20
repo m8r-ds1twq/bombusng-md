@@ -1,7 +1,7 @@
 //{{NO_DEPENDENCIES}}
 // Microsoft Visual C++ generated include file.
 // Used by uippc.rc
-
+//
 #define IDS_APP_TITLE                   1
 #define IDC_UI                          2
 #define ID_VCARD                        3
@@ -11,6 +11,7 @@
 #define IDR_MENU                        102
 #define IDS_WINDOWS                     102
 #define IDS_EXIT                        103
+#define IDR_MENU1                       103
 #define IDS_HELP                        104
 #define IDD_ABOUTBOX                    105
 #define IDS_SEND                        107
@@ -47,6 +48,8 @@
 #define IDD_BLAGO1                      140
 #define IDD_HISTOR                      140
 #define IDD_ACTIVITY                    141
+#define IDD_OPTIONS5                    142
+#define IDD_CANSEL                      143
 #define IDC_STATIC_2                    202
 #define IDC_STATIC_3                    203
 #define IDC_STATIC_4                    204
@@ -159,6 +162,13 @@
 #define IDC_COMBO1                      1080
 #define IDC_LISTCOLORS                  1080
 #define IDC_TIMER_INT                   1081
+#define IDC_G_MENU                      1083
+#define IDC_G_MENU_TOLSH                1084
+#define IDC_G_MENU_HEIGHT               1085
+#define IDC_G_MENU_WIDTH                1086
+#define ID_CANSEL                       1087
+#define ID_CANSEL2                      1088
+#define ID_OK                           1088
 #define IDC_AHW                         1095
 #define IDC_X_HISTORY                   1098
 #define IDC_X_SIP                       1099
@@ -236,6 +246,9 @@
 #define GLOBAL_STATUS                   32826
 #define ID_SIGNALS_MUTE                 32826
 #define ID_TOOLS_LOGDEL                 32827
+#define DEL_ID                          32828
+#define GMENU                           32829
+#define ID_MENU_1                       32830
 #define SB_                             36585
 #define ID_TOOLS_COLORRE                37801
 #define IDM_EXIT                        40000
@@ -259,6 +272,7 @@
 #define JUICK_COMMAND                   42372
 #define JUICK_NUM_U                     42373
 #define MSGListFocus                    42374
+#define MENU_IT1                        42375
 #define IDC_STATIC                      -1
 
 // Next default values for new objects
@@ -267,8 +281,8 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NO_MFC                     1
 #define _APS_NEXT_RESOURCE_VALUE        140
-#define _APS_NEXT_COMMAND_VALUE         32828
-#define _APS_NEXT_CONTROL_VALUE         1082
+#define _APS_NEXT_COMMAND_VALUE         32831
+#define _APS_NEXT_CONTROL_VALUE         1088
 #define _APS_NEXT_SYMED_VALUE           116
 #endif
 #endif

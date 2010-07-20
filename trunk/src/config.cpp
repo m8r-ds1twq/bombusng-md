@@ -76,13 +76,13 @@ void Config::serialize( Serialize &s ) {
 	s.streamBool(saveHistoryHtml, false);
 	s.streamBool(confchat, true);
 	s.streamBool(confclient, true);
-	
+	s.streamBool(is_gmenu, false);                         //граф меню 
 	s.streamInt(avatarWidth, 50);
 	s.streamInt(tabconf, 1);							// размер табов
 	
 	s.streamInt(reconnectTries, 3);						// кол-во попыток реконнекта
 	s.streamInt(tolshina, 600);							// толщина ? 
-
+	s.streamInt(menu_Weight, 600);	
 	// настройка высоты и ширины шрифтов для qVGA для VGA 
 	if (sysinfo::screenIsWVGA())
 	{
@@ -90,16 +90,22 @@ void Config::serialize( Serialize &s ) {
 		s.streamInt(msg_font_width,10);
 		s.streamInt(roster_font_height,30);
 		s.streamInt(roster_font_width,10);
+		s.streamInt(menu_Height,30);
+		s.streamInt(menu_Width,10);
 	} else if (sysinfo::screenIsVGA())	{
 		s.streamInt(msg_font_height,30);					// высота
 		s.streamInt(msg_font_width,10);
 		s.streamInt(roster_font_height,30);
 		s.streamInt(roster_font_width,10);
+		s.streamInt(menu_Height,30);
+		s.streamInt(menu_Width,10);
 	} else 	{
 		s.streamInt(msg_font_height,15);					// высота
 		s.streamInt(msg_font_width,6);
 		s.streamInt(roster_font_height,16);
 		s.streamInt(roster_font_width,6);
+		s.streamInt(menu_Height,16);
+		s.streamInt(menu_Width,6);
 	};
 
 	s.streamInt(time_avtostatus,300);
