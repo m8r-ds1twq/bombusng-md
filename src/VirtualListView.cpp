@@ -16,7 +16,7 @@ extern HINSTANCE			g_hInst;
 #define MSGListFocus					42374
 #define CLEARMESS   42365
 extern int tabHeight;
-extern int COLORS[];
+extern DWORD COLORS[];
 ATOM VirtualListView::RegisterWindowClass() {
     WNDCLASS wc;
 

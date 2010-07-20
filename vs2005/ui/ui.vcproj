@@ -554,6 +554,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\menu.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\Message.cpp"
 				>
 			</File>
@@ -877,6 +881,10 @@
 			</File>
 			<File
 				RelativePath="..\..\include\crypto\MD5.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\menu.h"
 				>
 			</File>
 			<File

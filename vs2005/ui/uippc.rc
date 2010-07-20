@@ -84,6 +84,12 @@ BEGIN
     MENUITEM "Окна",                        IDS_WINDOWS
 END
 
+IDR_MENU1 MENU 
+BEGIN
+    MENUITEM "Меню",                        ID_MENU_1
+    MENUITEM "Окна",                        IDS_WINDOWS
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -454,6 +460,32 @@ BEGIN
     COMBOBOX        IDC_ACTIV,48,13,102,71,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
 END
 
+IDD_OPTIONS5 DIALOG  0, 0, 156, 129
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_POPUP | WS_CAPTION
+EXSTYLE 0x80000000L
+CAPTION "Меню"
+FONT 8, "MS Shell Dlg"
+BEGIN
+    LTEXT           "Настройка шрифта: ",-1,12,47,85,8
+    LTEXT           "Высота Сообщений",-1,12,73,69,9
+    EDITTEXT        IDC_G_MENU_HEIGHT,90,72,18,12,ES_LOWERCASE | ES_AUTOHSCROLL
+    CONTROL         "Графическое меню",IDC_G_MENU,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,12,7,120,10
+    LTEXT           "Толщина",-1,12,60,69,9
+    EDITTEXT        IDC_G_MENU_TOLSH,90,59,18,12,ES_LOWERCASE | ES_AUTOHSCROLL
+    EDITTEXT        IDC_G_MENU_WIDTH,90,85,18,12,ES_AUTOHSCROLL | ES_NUMBER
+    LTEXT           "Ширина Сообщений",-1,12,85,70,9
+END
+
+IDD_CANSEL DIALOG  0, 0, 156, 129
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_POPUP | WS_CAPTION
+EXSTYLE 0x80000000L
+CAPTION "Закрыть"
+FONT 8, "MS Shell Dlg"
+BEGIN
+    PUSHBUTTON      "Отмена",ID_CANSEL,84,48,54,24
+    PUSHBUTTON      "OK",ID_OK,12,48,53,24
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -665,6 +697,38 @@ BEGIN
         TOPMARGIN, 7
         BOTTOMMARGIN, 115
         HORZGUIDE, 26
+    END
+
+    IDD_OPTIONS5, DIALOG
+    BEGIN
+        LEFTMARGIN, 4
+        RIGHTMARGIN, 152
+        VERTGUIDE, 12
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 122
+        HORZGUIDE, 19
+        HORZGUIDE, 30
+        HORZGUIDE, 35
+    END
+
+    IDD_CANSEL, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 149
+        VERTGUIDE, 12
+        VERTGUIDE, 65
+        VERTGUIDE, 84
+        VERTGUIDE, 138
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 121
+        HORZGUIDE, 30
+        HORZGUIDE, 36
+        HORZGUIDE, 48
+        HORZGUIDE, 54
+        HORZGUIDE, 66
+        HORZGUIDE, 72
+        HORZGUIDE, 110
+        HORZGUIDE, 121
     END
 END
 #endif    // APSTUDIO_INVOKED

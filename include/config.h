@@ -69,6 +69,11 @@ public:
 	bool enter2;
 	bool anim_smile;
 	int  timer_int;
+	//menu
+	bool is_gmenu;
+	int menu_Weight;
+	int menu_Width;
+	int menu_Height;
 	std::string colorfile;
 private:
     void serialize(Serialize &s);

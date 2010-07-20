@@ -21,8 +21,10 @@ extern std::wstring appRootPath;
 		0xffffff
     }; 
 */
-
-extern int COLORS[];
+extern bool menu_font_is_m;
+extern bool menu_font_is_s;
+extern bool menu_font_is_p;
+extern DWORD COLORS[];
 
 int chartoint(char liter){
 	if(liter>='a' && liter<='f')	return (liter+10-'a');
@@ -33,6 +35,9 @@ int chartoint(char liter){
 int iii;
 
 void colorsload(std::wstring txtname){
+	 menu_font_is_m=1;
+	menu_font_is_s=1;
+	menu_font_is_p=1;
 	std::wstring pathc=appRootPath;
 	pathc+=L"color\\"+txtname;
 
@@ -53,8 +58,9 @@ void colorsload(std::wstring txtname){
 
     colorch[rd]=NULL;
 
-	for ( int fff=0 ; fff<=18 ; fff++ ){
+	for ( int fff=0 ; fff<=24 ; fff++ ){
 		iii=fff*7;
 		COLORS[fff]=1048576*chartoint(colorch[iii])+65536*chartoint(colorch[iii+1])+4096*chartoint(colorch[iii+2])+256*chartoint(colorch[iii+3])+16*chartoint(colorch[iii+4])+chartoint(colorch[iii+5]);
+	printf("COLORS[%d] #%06X \n",fff,COLORS[fff]);
 	}
 }
