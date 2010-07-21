@@ -16,7 +16,7 @@ public:
 
     void setIcon(int icon);
     void setText(const character_t* text);
-
+	bool _separator;
     void ownerdraw(DRAWITEMSTRUCT* di);
     void measureitem(HDC dc, MEASUREITEMSTRUCT* mi);
 
@@ -78,7 +78,7 @@ public:
     bool call(MenuItem::itemid_t itemid);
 
     Menu* addMenu(const character_t* text, int icon);
-    MenuItem* addSeparator();
+    void addSeparator();
     MenuItem* addItem(const character_t* text, int icon, MenuItem::Handler proc);
     MenuItem* addItem(const character_t* text, int icon, MenuItem::Handler proc, MenuItem::itemid_t itemid);
 
