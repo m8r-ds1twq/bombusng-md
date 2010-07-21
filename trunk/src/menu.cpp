@@ -28,6 +28,7 @@ MenuElement::MenuElement(Menu* rootmenu)
     _text = NULL;
     _icon = 0;
     _root = rootmenu;
+	_separator=0;
 }
 
 MenuElement::MenuElement(Menu* rootmenu, const character_t* text, int icon)
@@ -36,6 +37,7 @@ MenuElement::MenuElement(Menu* rootmenu, const character_t* text, int icon)
     _root = rootmenu;
     setText(text);
     setIcon(icon);
+	_separator=0;
 }
 
 void MenuElement::setIcon(int icon)
@@ -111,7 +113,7 @@ static HBRUSH NewBrush_2;
     }
     di->rcItem.left = di->rcItem.left + si.cx+ DELTA_ICON_LEFT ;
     SetBkMode(di->hDC, TRANSPARENT);
-	if(wcsstr(_text,L"Separator")== 0){
+	if(_separator== 0){
 
 		if (menu_font_is_f){
 			menu_font_is_f=0;
@@ -151,7 +153,7 @@ void MenuElement::measureitem(HDC dc, MEASUREITEMSTRUCT* mi)
         GetTextExtentPoint32(dc,_text,STRLEN(_text),&s);
     }
     mi->itemWidth = s.cx + si.cx+5;
-	if(wcsstr(_text,L"Separator")== 0){mi->itemHeight= (s.cy>si.cy)?s.cy+2:si.cy+2;
+	if(_separator== 0){mi->itemHeight= (s.cy>si.cy)?s.cy+2:si.cy+2;
 	}else{mi->itemHeight=6;}
     #if DEBUG == 1
     std::cout<<s.cx<<","<<s.cy<<std::endl;
@@ -275,12 +277,13 @@ Menu* Menu::addMenu(const character_t* text, int icon)
     return m;
 }
 
-Menu::MenuItem* Menu::addSeparator()
+void Menu::addSeparator()
 {
-    MenuItem* item = new MenuItem(_root, L"Separator", 0, 0);
-    _subitems->push_back(item);
-    AppendMenu(_hmenu, MF_OWNERDRAW, item->_id, reinterpret_cast<LPCWSTR>(item));
-    return item;
+    MenuItem* item = new MenuItem(_root, L"Separator", 0, NULL);
+	item->_separator=true;
+   _subitems->push_back(item);
+    AppendMenu(_hmenu,  MF_SEPARATOR| MF_OWNERDRAW, item->_id, reinterpret_cast<LPCWSTR>(item));
+  
 }
 
 Menu::MenuItem* Menu::addItem(const character_t* text, int icon, MenuItem::Handler proc)
